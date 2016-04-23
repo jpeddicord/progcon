@@ -1,0 +1,42 @@
+{
+  "name": "progcon",
+  "version": "0.0.1",
+  "description": "programming contest website",
+  "main": "index.js",
+  "scripts": {
+    "release": "NODE_ENV=production gulp"
+  },
+  "author": "Jacob Peddicord <jacob@peddicord.net>",
+  "license": "MIT",
+  "dependencies": {
+    "babel-polyfill": "^6.7.4",
+    "history": "^2.0.1",
+    "koa": "^2.0.0",
+    "koa-jwt": "^1.1.2",
+    "react": "^15.0.1",
+    "react-dom": "^15.0.1",
+    "react-router": "^2.0.1",
+    "react-router-redux": "^4.0.2",
+    "redux": "^3.4.0",
+    "redux-thunk": "^2.0.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.7.6",
+    "babel-eslint": "^6.0.2",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.6.0",
+    "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-1": "^6.5.0",
+    "eslint": "^2.7.0",
+    "eslint-plugin-react": "^4.3.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-plumber": "^1.1.0",
+    "node-sass": "^3.4.2",
+    "pg-promise": "^3.7.0",
+    "sass-loader": "^3.2.0",
+    "webpack": "^1.12.14",
+    "webpack-dev-server": "^1.14.1",
+    "webpack-stream": "^3.1.0"
+  }
+}

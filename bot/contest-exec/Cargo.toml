@@ -1,0 +1,7 @@
+[package]
+name = "contest-exec"
+version = "0.1.0"
+authors = ["Jacob Peddicord <jacob@peddicord.net>"]
+
+[dependencies]
+libc = "^0.2.8"
