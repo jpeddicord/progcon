@@ -1,43 +1,45 @@
 import 'babel-polyfill';
 import Koa from 'koa';
+import bodyParser from 'koa-bodyparser';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+import { Provider } from 'react-redux';
 import { RouterContext, match } from 'react-router';
-import createLocation from 'history/lib/createLocation';
 import apiRoutes from './api';
 import uiRoutes from '../shared/routes';
+import store from '../shared/store';
 
 const app = new Koa();
 
+app.use(bodyParser());
 app.use(apiRoutes);
 
 app.use(async (ctx, next) => {
-  const location = createLocation(ctx.req.url);
-
-  let component;
-  await new Promise((resolve, reject) => {
-    match({uiRoutes, location}, (err, redirectLocation, renderProps) => {
+  const component = await new Promise((resolve, reject) => {
+    match({routes: uiRoutes, location: ctx.req.url}, (err, redirectLocation, renderProps) => {
       if (err) {
         return reject(err);
       }
       if (!renderProps) {
-        ctx.status = 404;
         return resolve();
       }
 
-      component = (<RouterContext {...renderProps} />);
-      resolve();
+      resolve(
+        <Provider store={store}>
+          <RouterContext {...renderProps} />
+        </Provider>
+      );
     });
   });
 
   if (component == null) {
     ctx.status = 404;
-    ctx.body = 'not found';
     return;
   }
 
   const rendered = ReactDOMServer.renderToString(component);
 
+  const script = 'http://localhost:3030/assets/app.js';
   const html = `<!DOCTYPE html>
   <html>
     <head>
@@ -46,7 +48,7 @@ app.use(async (ctx, next) => {
     </head>
     <body>
       <div id="app">${rendered}</div>
-      <script src="http://localhost:3030/assets/app.js" charset="utf-8"></script>
+      <script src="${script}" charset="utf-8"></script>
     </body>
   </html>`;
 

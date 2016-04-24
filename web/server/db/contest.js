@@ -1,16 +1,16 @@
 import db from './index';
 
 export function listContests(activeOnly) {
-  db.any('select * from contest');
+  return db.any('select * from contests');
 }
 
 export function getContest(contest_id) {
-  db.one('select * from contest where id = $1', [contest_id]);
+  return db.one('select * from contests where id = $1', [contest_id]);
 }
 
 export function createContest(title, start_time, end_time) {
-  db.one(
-    'insert into contest(title, start_time, end_time) values($1, $2, $3) returning id',
+  return db.one(
+    'insert into contests(title, start_time, end_time, registration_mode) values($1, $2, $3, "code") returning id',
     [title, start_time, end_time],
   );
 }
