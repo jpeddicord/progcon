@@ -10,9 +10,11 @@
   "license": "MIT",
   "dependencies": {
     "babel-polyfill": "^6.7.4",
+    "basic-auth": "^1.0.3",
     "history": "^2.0.1",
     "koa": "^2.0.0",
     "koa-jwt": "^1.1.2",
+    "koa-router": "^7.0.1",
     "react": "^15.0.1",
     "react-dom": "^15.0.1",
     "react-router": "^2.0.1",

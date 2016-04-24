@@ -16,7 +16,7 @@ if (prod) {
 }
 
 module.exports = {
-  entry: './browser/app.js',
+  entry: './browser/app.jsx',
   module: {
     loaders: [
       {
@@ -29,6 +29,9 @@ module.exports = {
         loaders: ['style', 'css', 'sass'],
       },
     ],
+  },
+  resolve: {
+    extensions: ['', '.js', '.jsx'],
   },
   output: {
     path: path.join(__dirname, 'build/browser'),

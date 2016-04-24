@@ -4,6 +4,7 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { RouterContext, match } from 'react-router';
 import createLocation from 'history/lib/createLocation';
+import apiRoutes from './api';
 import uiRoutes from '../shared/routes';
 
 const app = new Koa();
@@ -20,7 +21,7 @@ app.use(async (ctx, next) => {
         return reject(err);
       }
       if (!renderProps) {
-        ctx.res.status = 404;
+        ctx.status = 404;
         return resolve();
       }
 
