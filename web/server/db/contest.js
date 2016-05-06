@@ -10,7 +10,7 @@ export function getContest(contest_id) {
 
 export function createContest(title, start_time, end_time) {
   return db.one(
-    'insert into contests(title, start_time, end_time, registration_mode) values($1, $2, $3, "code") returning id',
-    [title, start_time, end_time],
+    'insert into contests(title, start_time, end_time, registration_mode) values($1, $2, $3, $4) returning id',
+    [title, start_time, end_time, 'code'],
   );
 }
