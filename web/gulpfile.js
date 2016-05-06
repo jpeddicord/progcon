@@ -31,16 +31,15 @@ gulp.task('build-shared', () => {
 });
 
 let node;
-gulp.task('dev-server', () => {
+gulp.task('dev-server', ['build-server'], () => {
   if (node) {
     node.kill();
   }
   node = spawn('node', ['build/server/index.js'], {stdio: 'inherit'});
 });
 
-gulp.task('dev', ['build-server', 'dev-server'], () => {
-  gulp.watch(['server/**/*.js?(x)', 'shared/**/*.js?(x)'], {debounceDelay: 500}, ['build-server']);
-  gulp.watch(['build/server/**/*.js', 'build/shared/**/*.js'], {debounceDelay: 500}, ['dev-server']);
+gulp.task('dev', ['dev-server'], () => {
+  gulp.watch(['server/**/*.js?(x)', 'shared/**/*.js?(x)'], {debounceDelay: 500}, ['dev-server']);
 
   const compiler = webpack(require('./webpack.config.js'));
   new WebpackDevServer(compiler, {

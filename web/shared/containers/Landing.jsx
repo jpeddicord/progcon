@@ -5,16 +5,24 @@ import { fetchContests } from '../modules/contests';
 class Landing extends React.Component {
   static propTypes = {
     dispatch: React.PropTypes.func.isRequired,
+    contests: React.PropTypes.array.isRequired,
+    active: React.PropTypes.object,
   };
 
-  componentWillMount() {
+  static needs = [
+    params => fetchContests(),
+  ];
+
+  componentDidMount() {
     const { dispatch } = this.props;
 
     dispatch(fetchContests());
   }
 
   render() {
-    return (<div>Some list here.</div>);
+    return (<div>
+      Some list here. {JSON.stringify(this.props.contests)}
+    </div>);
   }
 
 }

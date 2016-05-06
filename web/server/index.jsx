@@ -6,8 +6,9 @@ import ReactDOMServer from 'react-dom/server';
 import { Provider } from 'react-redux';
 import { RouterContext, match } from 'react-router';
 import apiRoutes from './api';
+import fetchComponentData from './util/needs';
 import uiRoutes from '../shared/routes';
-import store from '../shared/store';
+import create from '../shared/store';
 
 const app = new Koa();
 
@@ -15,6 +16,8 @@ app.use(bodyParser());
 app.use(apiRoutes);
 
 app.use(async (ctx, next) => {
+
+  let stateStr;
   const component = await new Promise((resolve, reject) => {
     match({routes: uiRoutes, location: ctx.req.url}, (err, redirectLocation, renderProps) => {
       if (err) {
@@ -24,11 +27,19 @@ app.use(async (ctx, next) => {
         return resolve();
       }
 
-      resolve(
-        <Provider store={store}>
-          <RouterContext {...renderProps} />
-        </Provider>
-      );
+      // build up our redux store
+      const store = create();
+
+      // grab component state, then return a resolved component
+      fetchComponentData(store.dispatch, renderProps.components, renderProps.params)
+        .then(() => {
+          stateStr = JSON.stringify(store.getState());
+          resolve(
+            <Provider store={store}>
+              <RouterContext {...renderProps} />
+            </Provider>
+          );
+        });
     });
   });
 
@@ -48,6 +59,7 @@ app.use(async (ctx, next) => {
     </head>
     <body>
       <div id="app">${rendered}</div>
+      <script charset="utf-8">window._initialState = ${stateStr}</script>
       <script src="${script}" charset="utf-8"></script>
     </body>
   </html>`;

@@ -9,12 +9,10 @@ routes.get('/contests/', async (ctx, next) => {
   // TODO: list contests (admin -> all; non-admin -> active)
   const contests = await db.listContests();
   ctx.body = {contests};
-  ctx.status = 501;
 });
 routes.post('/contests/', async (ctx, next) => {
   const { title, start_time, end_time } = ctx.req.body;
   await db.createContest(title, start_time, end_time);
-  ctx.status = 501;
 });
 routes.get('/contests/:contest_id', (ctx, next) => {
   // TODO: get contest details (questions, timing, etc)
