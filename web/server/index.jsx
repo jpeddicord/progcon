@@ -6,9 +6,9 @@ import ReactDOMServer from 'react-dom/server';
 import { Provider } from 'react-redux';
 import { RouterContext, match } from 'react-router';
 import apiRoutes from './api';
-import fetchComponentData from './util/needs';
 import uiRoutes from '../shared/routes';
 import create from '../shared/store';
+import { fetchComponentData } from '../shared/util/needs';
 
 const app = new Koa();
 

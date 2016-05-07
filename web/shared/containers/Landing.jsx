@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { fetchContests } from '../modules/contests';
+import { fetchNeeds } from '../util/needs';
 
 class Landing extends React.Component {
   static propTypes = {
@@ -14,9 +15,10 @@ class Landing extends React.Component {
   ];
 
   componentDidMount() {
-    const { dispatch } = this.props;
-
-    dispatch(fetchContests());
+    const { contests } = this.props;
+    if (contests == null || contests.length === 0) {
+      fetchNeeds(this);
+    }
   }
 
   render() {

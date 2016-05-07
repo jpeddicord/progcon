@@ -1,5 +1,5 @@
 /**
- * Fetch things a component "needs" for initial render.
+ * Fetch things components "need" for initial render.
  *
  * Needed to pull in data for server-side rendering. Components should
  * speficy a "needs" property containing a list of functions to call.
@@ -7,7 +7,7 @@
  * promise that resolves on completion. Functions will be run as
  * redux actions.
  */
-export default function fetchComponentData(dispatch, components, params) {
+export function fetchComponentData(dispatch, components, params) {
   const promises = components.reduce((list, current) => {
     // break open redux-connected components to get their needs
     if (current.WrappedComponent != null && current.WrappedComponent.needs != null) {
@@ -20,4 +20,17 @@ export default function fetchComponentData(dispatch, components, params) {
   }, []);
 
   return Promise.all(promises);
+}
+
+/**
+ * Fetch a single component's needs.
+ *
+ * Intended for use on client side, inside componentDidMount, for
+ * container/connected components. Can fetch data for an object
+ * for client renders.
+ */
+export function fetchNeeds(inst) {
+  const needs = inst.constructor.needs;
+  const { dispatch, params } = inst.props;
+  needs.map(need => dispatch(need(params)));
 }
