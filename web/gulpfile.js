@@ -4,6 +4,7 @@ const spawn = require('child_process').spawn;
 const gulp = require('gulp');
 const gutil = require('gulp-util');
 const babel = require('gulp-babel');
+const plumber = require('gulp-plumber');
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 const WebpackDevServer = require('webpack-dev-server');
@@ -14,6 +15,7 @@ if (process.env.NODE_ENV == null) {
 
 gulp.task('build-server', ['build-shared'], () => {
   return gulp.src('server/**/*.js?(x)')
+    .pipe(plumber())
     .pipe(babel())
     .pipe(gulp.dest('build/server'));
 });
@@ -26,6 +28,7 @@ gulp.task('build-browser', () => {
 
 gulp.task('build-shared', () => {
   return gulp.src('shared/**/*.js?(x)')
+    .pipe(plumber())
     .pipe(babel())
     .pipe(gulp.dest('build/shared'));
 });
