@@ -1,7 +1,7 @@
 import db from './index';
 
 export function listContests(activeOnly) {
-  return db.any('select * from contests');
+  return db.any('select id, title from contests');
 }
 
 export function getContest(contest_id) {

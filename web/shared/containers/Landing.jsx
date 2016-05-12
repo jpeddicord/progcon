@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 import { fetchContests } from '../modules/contests';
 import { fetchNeeds } from '../util/needs';
 
@@ -22,9 +23,15 @@ class Landing extends React.Component {
   }
 
   render() {
-    return (<div>
-      Some list here. {JSON.stringify(this.props.contests)}
-    </div>);
+    const { contests } = this.props;
+
+    return (
+      <ul>
+        {contests.map((c, i) => (
+          <li key={i}><Link to={`/contests/${c.id}`}>{c.title}</Link></li>
+        ))}
+      </ul>
+    );
   }
 
 }
@@ -32,6 +39,5 @@ class Landing extends React.Component {
 export default connect(state => {
   return {
     contests: state.contests.list,
-    active: state.contests.active,
   };
 })(Landing);

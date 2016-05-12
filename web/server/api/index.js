@@ -14,10 +14,9 @@ routes.post('/contests/', async (ctx, next) => {
   const { title, start_time, end_time } = ctx.req.body;
   await db.createContest(title, start_time, end_time);
 });
-routes.get('/contests/:contest_id', (ctx, next) => {
-  // TODO: get contest details (questions, timing, etc)
-  ctx.body = ctx.params.contest_id;
-  ctx.status = 501;
+routes.get('/contests/:contest_id', async (ctx, next) => {
+  const contest = await db.getContest(ctx.params.contest_id);
+  ctx.body = contest;
 });
 routes.post('/contests/:contest_id', (ctx, next) => {
   // TODO: contest C&C (start/stop/edit/etc)
@@ -27,9 +26,11 @@ routes.get('/contests/:contest_id/register', (ctx, next) => {
   // TODO: register for a contest
   ctx.status = 501;
 });
-routes.get('/contests/:contest_id/problems/:problem', (ctx, next) => {
+routes.get('/contests/:contest_id/problems/:problem_name', (ctx, next) => {
   // TODO: get problem details & submission status (good/bad/pending/etc)
-  ctx.status = 501;
+  ctx.body = {name: ctx.params.problem_name, status: 'unsolved'};
+  console.log(ctx.body);
+  //.config/ctx.status = 501;
 });
 routes.post('/contests/:contest_id/problems/:problem', (ctx, next) => {
   // TODO: submit a problem solution

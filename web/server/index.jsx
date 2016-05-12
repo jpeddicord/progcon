@@ -39,7 +39,8 @@ app.use(async (ctx, next) => {
               <RouterContext {...renderProps} />
             </Provider>
           );
-        });
+        })
+        .catch(reject);
     });
   });
 
