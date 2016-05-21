@@ -3,6 +3,7 @@ extern crate nanomsg;
 mod testers;
 
 use std::io::Read;
+use std::io::Write;
 use nanomsg::{Socket, Protocol, Error};
 
 fn main() {
@@ -18,6 +19,13 @@ fn main() {
         let mut msg = String::new();
         socket_commands.read_to_string(&mut msg).unwrap();
         println!(">>> {}", &*msg);
+
+        match socket_commands.write_all(b"yay") {
+            Ok(..) => println!("wahoo"),
+            Err(err) => {
+                println!("oh dear: {}", err)
+            }
+        }
     }
 
 }
@@ -27,5 +35,5 @@ fn accept_submission() {
     unimplemented!();
 
     // using mioco
-    // 
+    //
 }

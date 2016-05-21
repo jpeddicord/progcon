@@ -6,6 +6,7 @@ import { fetchNeeds } from '../util/needs';
 
 class ContestOverview extends React.Component {
   static propTypes = {
+    children: React.PropTypes.element,
     dispatch: React.PropTypes.func.isRequired,
     params: React.PropTypes.object.isRequired,
     active: React.PropTypes.object,
@@ -24,14 +25,14 @@ class ContestOverview extends React.Component {
 
   // XXX: problem is just a string
   mapProblem = (problem, index) => {
-    const { params: { problem_name } } = this.props;
+    const { children, params: { contest_id, problem_name } } = this.props;
     if (problem_name != null && problem_name === problem) {
       return (
-        <ProblemCard key={index} name={problem}><div>me too</div></ProblemCard>
+        <ProblemCard key={index} contestId={contest_id} name={problem}>{children}</ProblemCard>
       );
     }
 
-    return (<ProblemCard key={index} name={problem} />);
+    return (<ProblemCard key={index} contestId={contest_id} name={problem} />);
   };
 
   render() {

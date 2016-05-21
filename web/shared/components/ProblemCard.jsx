@@ -3,17 +3,17 @@ import { Link } from 'react-router';
 
 export default class ProblemCard extends React.Component {
   static propTypes = {
-    name: React.PropTypes.string.isRequired,
     children: React.PropTypes.element,
+    contestId: React.PropTypes.string.isRequired,
+    name: React.PropTypes.string.isRequired,
   };
 
   render() {
-    const { name, children } = this.props;
+    const { children, contestId, name } = this.props;
 
-    // XXX: bad link
     return (
       <div>
-        <h4><Link to={`/contests/1/problems/${name}`}>{name}</Link></h4>
+        <h4><Link to={`/contests/${contestId}/problems/${name}`}>{name}</Link></h4>
         {children}
       </div>
     );

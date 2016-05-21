@@ -1,32 +1,46 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { fetchProblem } from '../modules/problems';
+import SolutionUploader from '../components/SolutionUploader';
+import { fetchProblem, submitAnswer } from '../modules/problems';
 import { fetchNeeds } from '../util/needs';
 
 class ProblemDetail extends React.Component {
   static propTypes = {
     dispatch: React.PropTypes.func.isRequired,
     params: React.PropTypes.object.isRequired,
-    active: React.PropTypes.object,
+    problems: React.PropTypes.object.isRequired,
   };
 
   static needs = [
-    params => fetchProblem(params.problem_name),
+    params => fetchProblem(params.contest_id, params.problem_name),
   ];
 
   componentDidMount() {
-    /*
-    const { active, params: { contest_id } } = this.props;
-    if (active == null || active.id !== parseInt(contest_id)) {
+    const { problems, params: { problem_name } } = this.props;
+    const problem = problems[problem_name];
+    if (problem == null) {
       fetchNeeds(this);
     }
-    */
   }
 
+  submitAnswer = content => {
+    const { dispatch, params: { contest_id, problem_name } } = this.props;
+
+    console.log(content);
+    dispatch(submitAnswer(contest_id, problem_name, content));
+  };
+
   render() {
+    const { problems, params: { problem_name } } = this.props;
+    const problem = problems[problem_name];
+    if (problem == null) {
+      return (<div>...</div>);
+    }
+
     return (
       <div>
-        [[ DETAILS HERE ]]
+        Status: {problem.status}<br/>
+        <SolutionUploader onSubmit={this.submitAnswer} />
       </div>
     );
   }
