@@ -5,9 +5,9 @@ create table contests (
     title text not null,
     start_time timestamp with time zone,
     end_time timestamp with time zone,
-    mode registration_mode not null,
+    mode registration_mode not null default 'code',
     code text,
-    problems text[]
+    problems text[] not null default array[]::text[]
 );
 
 create table users (

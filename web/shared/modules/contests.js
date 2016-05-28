@@ -55,3 +55,34 @@ export function fetchContestDetail(id) {
       .then(json => dispatch(receiveContestDetail(json)));
   };
 }
+
+export function createContest(title) {
+  return dispatch => {
+    return fetchAuth('/api/contests/', {
+      method: 'post',
+      body: JSON.stringify({title}),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(resp => resp.json())
+      .then(json => {
+        dispatch(fetchContests());
+        dispatch(receiveContestDetail(json));
+      });
+  };
+}
+
+export function updateContest(id, values) {
+  return dispatch => {
+    return fetchAuth(`/api/contests/${id}`, {
+      method: 'post',
+      body: JSON.stringify(values),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(resp => resp.json())
+      .then(json => dispatch(receiveContestDetail(json)));
+  };
+}

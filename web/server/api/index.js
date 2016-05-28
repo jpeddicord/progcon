@@ -6,25 +6,34 @@ import { commands } from '../bot/ipc';
 
 const routes = new Router({prefix: '/api'});
 
+// list contests
 routes.get('/contests/', async (ctx, next) => {
-  // TODO: list contests (admin -> all; non-admin -> active)
+  // TODO: permission restrictions (admin -> all; non-admin -> active)
   const contests = await db.listContests();
   ctx.body = {contests};
 });
 
+// create a new contest
+// TODO: admin auth required
 routes.post('/contests/', async (ctx, next) => {
-  const { title, start_time, end_time } = ctx.req.body;
-  await db.createContest(title, start_time, end_time);
+  const { title } = ctx.request.body;
+  const id = await db.createContest(title);
+  ctx.body = {id};
 });
 
+// get a single contest's details
 routes.get('/contests/:contest_id', async (ctx, next) => {
   const contest = await db.getContest(ctx.params.contest_id);
   ctx.body = contest;
 });
 
-routes.post('/contests/:contest_id', (ctx, next) => {
-  // TODO: contest C&C (start/stop/edit/etc)
-  ctx.status = 501;
+// edit a contest
+// TODO: admin auth required
+routes.post('/contests/:contest_id', async (ctx, next) => {
+  const body = ctx.request.body;
+  const { title, start_time, end_time, mode, code, problems } = body;
+  await db.updateContest(ctx.params.contest_id, title, start_time, end_time, mode, code, problems);
+  ctx.body = {id: ctx.params.contest_id, ...body};
 });
 
 routes.get('/contests/:contest_id/register', (ctx, next) => {
