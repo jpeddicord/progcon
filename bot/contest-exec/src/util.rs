@@ -3,19 +3,30 @@ use std::ffi::CString;
 use std::fs::{File, remove_file, remove_dir_all};
 use std::path::{Path, PathBuf};
 use libc::chown;
+use walkdir::WalkDir;
 
 pub fn own_path(path: &Path, uid: u32) -> Result<(), Box<Error>> {
     let path_str = match path.to_str() {
         Some(s) => s,
-        None => return Err(From::from("empty CString from path".to_string())),
+        None => return Err(From::from(format!("empty CString from path {}", path.display()))),
     };
     unsafe {
         let path_ptr = try!(CString::new(path_str)).as_ptr();
-        chown(path_ptr, uid, uid); // FIXME: check result
+        if chown(path_ptr, uid, uid) != 0 {
+            return Err(From::from(format!("chown failed on path {}", path.display())));
+        }
     }
     Ok(())
+}
 
-    // TODO: recurse for dirs? different method?
+pub fn own_dir(dir: &Path, uid: u32) -> Result<(), Box<Error>> {
+    for entry in WalkDir::new(dir) {
+        // there should never be any files that we can't chown here, but check anyway
+        let e = try!(entry);
+        println!("entry: {:?}", e);
+        try!(own_path(e.path(), uid));
+    }
+    Ok(())
 }
 
 pub struct Lock {
@@ -36,7 +47,7 @@ impl Lock {
 
 impl Drop for Lock {
     fn drop(&mut self) {
-        remove_file(self.path.as_path());
+        remove_file(self.path.as_path()).unwrap();
     }
 }
 
@@ -46,7 +57,7 @@ pub struct OwnedDir {
 
 impl OwnedDir {
     pub fn new(path: &Path, uid: u32) -> Result<OwnedDir, Box<Error>> {
-        try!(own_path(path, uid)); // XXX: own_dir?
+        try!(own_dir(path, uid));
         Ok(OwnedDir {
             path: path.to_path_buf(),
         })
@@ -55,6 +66,6 @@ impl OwnedDir {
 
 impl Drop for OwnedDir {
     fn drop(&mut self) {
-        remove_dir_all(self.path.as_path());
+        remove_dir_all(self.path.as_path()).unwrap();
     }
 }

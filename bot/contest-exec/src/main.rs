@@ -1,19 +1,18 @@
 extern crate libc;
 extern crate rand;
+extern crate walkdir;
 
 mod util;
 
 use std::env;
 use std::error::Error;
-use std::fs;
-use std::fs::File;
-use std::io;
 use std::os::unix::fs::MetadataExt;
 use std::path::Path;
 use std::process::{Command, exit};
-use libc::{chmod, chown, geteuid, setgid, setuid};
+use std::ptr::null;
+use libc::{geteuid, setgid, setgroups, setuid};
 use rand::random;
-use util::{Lock, OwnedDir, own_path};
+use util::{Lock, OwnedDir};
 
 const PREFIX: &'static str = "/var/tmp/progcon-";
 const LOCK_PREFIX: &'static str = "/var/tmp/progconuser-";
@@ -83,27 +82,30 @@ fn pick_uid() -> Result<Lock, Box<Error>> {
     Lock::new(path, uid)
 }
 
-fn su_exec(workdir: &Path, uid: u32, command: String, args: &Vec<String>) -> Result<(), String> {
+fn su_exec(workdir: &Path, uid: u32, command: String, args: &Vec<String>) -> Result<(), Box<Error>> {
     // claim our working directory
     // Drop will delete the directory
-    let owned = OwnedDir::new(workdir, uid);
+    let _owned = OwnedDir::new(workdir, uid);
 
     // time to drop to our user
     unsafe {
+        if setgroups(0, null()) != 0 {
+            return Err(From::from("couldn't drop groups".to_string()));
+        }
         if setgid(uid) != 0 {
-            return Err("couldn't setgid".to_string());
+            return Err(From::from("couldn't setgid".to_string()));
         }
         if setuid(uid) != 0 {
-            return Err("couldn't setuid".to_string());
+            return Err(From::from("couldn't setuid".to_string()));
         }
     }
 
     // chdir to it
-    try!(env::set_current_dir(&workdir).map_err(|e| e.to_string()));
+    try!(env::set_current_dir(&workdir));
 
     // run it!
-    let mut run = try!(Command::new(command).args(args).spawn().map_err(|e| e.to_string()));
-    try!(run.wait().map_err(|e| e.to_string()));
+    let mut run = try!(Command::new(command).args(args).spawn());
+    try!(run.wait());
 
     Ok(())
 }
