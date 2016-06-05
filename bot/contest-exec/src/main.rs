@@ -1,75 +1,109 @@
 extern crate libc;
 extern crate rand;
 
+mod util;
+
 use std::env;
-use std::ffi::CString;
+use std::error::Error;
 use std::fs;
+use std::fs::File;
+use std::io;
+use std::os::unix::fs::MetadataExt;
 use std::path::Path;
+use std::process::{Command, exit};
 use libc::{chmod, chown, geteuid, setgid, setuid};
 use rand::random;
+use util::{Lock, OwnedDir, own_path};
 
-const BASE_RUN_DIR: &'static str = "/var/tmp/progcon";
+const PREFIX: &'static str = "/var/tmp/progcon-";
+const LOCK_PREFIX: &'static str = "/var/tmp/progconuser-";
 const MIN_UID: u32 = 20000;
 
 fn main() {
-    // sanity check
+    // find out what we're working with
+    let mut args: Vec<String> = env::args().collect();
+    if args.len() < 3 {
+        println!("usage: contest-exec {}workingdir command", PREFIX);
+        exit(1);
+    }
+    let workdir = args[1].clone();
+    let command = args[2].clone();
+    let args = args.split_off(3);
+
+    // be safe!
+    sanity_check(&workdir);
+
+    // pick a random uid; "reserve" it with a lock file
+    let lock = pick_uid().unwrap();
+
+    // wrapping up errors; save them for later (cleanup) instead of panicing
+    su_exec(Path::new(&workdir), lock.uid, command, &args).unwrap();
+}
+
+fn sanity_check(workdir: &str) {
+    // gotta be root
     let uid = unsafe { geteuid() };
     if uid != 0 {
         panic!("must be run root (setuid root)");
     }
 
-    let base = Path::new(BASE_RUN_DIR);
-
-    // make sure our working dir is there
-    fs::create_dir_all(base).unwrap();
-
-    // sticky allows users to delete their own directories and clean up after themselves,
-    // but not other users' files. this is similar to how /tmp works.
-    unsafe {
-        let base_ptr = CString::new(BASE_RUN_DIR).unwrap().as_ptr();
-        chmod(base_ptr, 0o1777);
+    // ensure dir matches prefix
+    if !workdir.starts_with(PREFIX) {
+        panic!("given workdir doesn't start with {} ({})", PREFIX, workdir);
     }
 
-    // pick a random uid
+    // ensure dir exists
+    if !Path::new(workdir).exists() {
+        panic!("workdir {} doesn't exist", workdir);
+    }
+}
+
+fn pick_uid() -> Result<Lock, Box<Error>> {
     let mut uid;
-    let mut working;
+    let mut name;
     loop {
         uid = MIN_UID + random::<u16>() as u32;
-        println!("chose {}", uid);
+        name = format!("{}{}.lock", LOCK_PREFIX, uid);
+        let path = Path::new(&name);
 
-        // check if that directory already exists; if it does then it's likely
-        // in use by another runner.
-        working = base.join(uid.to_string());
-        if !working.exists() {
+        if !path.exists() {
+            break;
+        }
+
+        // if the lock file isn't actually owned by the user we expect,
+        // then something isn't right -- remove the lock and claim it anyway.
+        let metadata = try!(path.metadata());
+        let lock_uid = metadata.uid();
+        if lock_uid != uid {
             break;
         }
     }
 
-    // give it a working dir
-    fs::create_dir(&working).unwrap();
-    unsafe {
-        let working_ptr = CString::new(working.to_str().unwrap()).unwrap().as_ptr();
-        chown(working_ptr, uid, uid);
-    }
+    let path = Path::new(&name);
+    Lock::new(path, uid)
+}
+
+fn su_exec(workdir: &Path, uid: u32, command: String, args: &Vec<String>) -> Result<(), String> {
+    // claim our working directory
+    // Drop will delete the directory
+    let owned = OwnedDir::new(workdir, uid);
 
     // time to drop to our user
-    // XXX don't panic, need to clean up afterwards
     unsafe {
         if setgid(uid) != 0 {
-            panic!("couldn't setgid");
+            return Err("couldn't setgid".to_string());
         }
         if setuid(uid) != 0 {
-            panic!("couldn't setuid");
+            return Err("couldn't setuid".to_string());
         }
     }
 
     // chdir to it
-    env::set_current_dir(&working);
+    try!(env::set_current_dir(&workdir).map_err(|e| e.to_string()));
 
-    let newuid = unsafe { geteuid() };
-    println!("i'm now {}", newuid);
+    // run it!
+    let mut run = try!(Command::new(command).args(args).spawn().map_err(|e| e.to_string()));
+    try!(run.wait().map_err(|e| e.to_string()));
 
-    // TODO: run the thing
-
-    fs::remove_dir_all(&working).unwrap();
+    Ok(())
 }
