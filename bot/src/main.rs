@@ -27,10 +27,20 @@ fn main() {
     loop {
         let mut msg = String::new();
         socket_commands.read_to_string(&mut msg).unwrap();
-        println!(">>> {}", msg);
 
         let sub = Submission::parse(msg);
         println!("{:?}", sub);
+
+        let problem = library.get_problem_from_submission(&sub); // XXX unwrap
+        match problem {
+            Some(p) => {
+                p.test_submission(&sub);
+            },
+            None => {
+                socket_commands.write(b"invalid problem");
+                continue;
+            },
+        }
 
         match socket_commands.write_all(b"yay") {
             Ok(..) => println!("wahoo"),

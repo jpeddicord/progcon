@@ -4,6 +4,7 @@ use std::fs::{File, read_dir};
 use std::io::Read;
 use std::path::Path;
 use toml;
+use submission::Submission;
 
 pub struct ProblemLibrary {
     problems: HashMap<String, Box<Problem>>,
@@ -48,6 +49,10 @@ impl ProblemLibrary {
     pub fn get_problem(&self, name: String) -> Option<&Box<Problem>> {
         self.problems.get(&name)
     }
+
+    pub fn get_problem_from_submission(&self, sub: &Submission) -> Option<&Box<Problem>> {
+        self.problems.get(&sub.get_problem_name())
+    }
 }
 
 struct Problem {
@@ -59,5 +64,12 @@ impl Problem {
         Problem {
             name: name,
         }
+    }
+
+    pub fn test_submission(&self, sub: &Submission) -> Result<(), Box<Error>> {
+        let mut tester = sub.get_tester().unwrap(); // XXX unwrap
+        tester.build(sub.get_answer());
+        tester.test(String::new()); // TODO
+        Ok(())
     }
 }
