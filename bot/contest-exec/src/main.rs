@@ -90,13 +90,13 @@ fn su_exec(workdir: &Path, uid: u32, command: String, args: &Vec<String>) -> Res
     // time to drop to our user
     unsafe {
         if setgroups(0, null()) != 0 {
-            return Err(From::from("couldn't drop groups".to_string()));
+            return Err(From::from("couldn't drop groups"));
         }
         if setgid(uid) != 0 {
-            return Err(From::from("couldn't setgid".to_string()));
+            return Err(From::from("couldn't setgid"));
         }
         if setuid(uid) != 0 {
-            return Err(From::from("couldn't setuid".to_string()));
+            return Err(From::from("couldn't setuid"));
         }
     }
 

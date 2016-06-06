@@ -1,10 +1,16 @@
 extern crate nanomsg;
+extern crate rustc_serialize;
+extern crate toml;
 
+mod problems;
+mod submission;
 mod testers;
 
-use std::io::Read;
-use std::io::Write;
+use std::io::{Read, Write};
+use std::path::Path;
 use nanomsg::{Socket, Protocol, Error};
+use problems::ProblemLibrary;
+use submission::Submission;
 
 fn main() {
     let mut socket_events = Socket::new(Protocol::Pub).unwrap();
@@ -13,12 +19,18 @@ fn main() {
     let mut socket_commands = Socket::new(Protocol::Rep).unwrap();
     let mut endpoint_commands = socket_commands.bind("ipc:///tmp/progcon-bot_commands.ipc").unwrap();
 
+    let mut library = ProblemLibrary::new();
+    library.scan_dir(Path::new("../sample-problems"));
+
     println!("Started up. Listening for commands.");
 
     loop {
         let mut msg = String::new();
         socket_commands.read_to_string(&mut msg).unwrap();
-        println!(">>> {}", &*msg);
+        println!(">>> {}", msg);
+
+        let sub = Submission::parse(msg);
+        println!("{:?}", sub);
 
         match socket_commands.write_all(b"yay") {
             Ok(..) => println!("wahoo"),
@@ -28,12 +40,4 @@ fn main() {
         }
     }
 
-}
-
-// brainstorming here
-fn accept_submission() {
-    unimplemented!();
-
-    // using mioco
-    //
 }

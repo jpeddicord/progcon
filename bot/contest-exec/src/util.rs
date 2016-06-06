@@ -23,7 +23,6 @@ pub fn own_dir(dir: &Path, uid: u32) -> Result<(), Box<Error>> {
     for entry in WalkDir::new(dir) {
         // there should never be any files that we can't chown here, but check anyway
         let e = try!(entry);
-        println!("entry: {:?}", e);
         try!(own_path(e.path(), uid));
     }
     Ok(())

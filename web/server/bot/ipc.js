@@ -9,3 +9,11 @@ commands.connect(config.bot.ipcCommands);
 commands.on('data', buf => {
   console.log('got some stuff:', buf.toString());
 });
+
+export function submitAnswer(userId, problem, answer) {
+  commands.send(JSON.stringify({
+    user: userId,
+    problem,
+    answer,
+  }));
+}

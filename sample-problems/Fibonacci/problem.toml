@@ -1,2 +1,5 @@
-[java]
+
+
+
+[lang.java]
 jvmargs = "-Xmx1M"

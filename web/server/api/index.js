@@ -2,7 +2,7 @@ import Router from 'koa-router';
 import auth from 'basic-auth';
 import { tryAuth } from './auth';
 import * as db from '../db/contest';
-import { commands } from '../bot/ipc';
+import { submitAnswer } from '../bot/ipc';
 
 const routes = new Router({prefix: '/api'});
 
@@ -47,8 +47,8 @@ routes.get('/contests/:contest_id/problems/:problem_name', (ctx, next) => {
 });
 
 routes.post('/contests/:contest_id/problems/:problem', (ctx, next) => {
-  // TODO: some data validation
-  commands.send(ctx.request.body.answer);
+  // TODO: some data validation; ensure problem exists in contest, user validation, etc
+  submitAnswer(9999, ctx.params.problem, ctx.request.body.answer);
 
   ctx.body = {status: 'submitted'};
 });
