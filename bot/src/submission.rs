@@ -1,5 +1,6 @@
+use std::path::Path;
 use rustc_serialize::json;
-use testers::get_tester_for_language;
+use testers::new_tester;
 use testers::base::Tester;
 
 #[derive(RustcDecodable, Debug)]
@@ -14,9 +15,13 @@ impl Submission {
         json::decode(&encoded).unwrap() // XXX unwrap
     }
 
-    pub fn get_tester(&self) -> Option<Box<Tester>> {
+    pub fn get_tester(&self, workdir: &Path) -> Option<Box<Tester>> {
         // TODO: support multiple languages in the future
-        get_tester_for_language("java")
+        new_tester(self.problem.as_ref(), "java", &workdir)
+    }
+
+    pub fn get_user(&self) -> u32 {
+        self.user
     }
 
     pub fn get_problem_name(&self) -> String {

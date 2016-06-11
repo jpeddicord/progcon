@@ -1,10 +1,12 @@
 use std::collections::HashMap;
 use std::error::Error;
-use std::fs::{File, read_dir};
+use std::fs::{File, copy, read_dir};
 use std::io::Read;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use toml;
+use response::SubmissionResult;
 use submission::Submission;
+use testers::base::set_up_workdir;
 
 pub struct ProblemLibrary {
     problems: HashMap<String, Box<Problem>>,
@@ -25,7 +27,7 @@ impl ProblemLibrary {
                 continue;
             }
 
-            self.load_problem(&path);
+            try!(self.load_problem(&path));
         }
         Ok(())
     }
@@ -40,9 +42,11 @@ impl ProblemLibrary {
         let val = toml::Parser::new(&s).parse().unwrap(); // XXX unwrap
 
         // build a problem struct
-        let problem = Box::new(Problem::new(name.to_string()));
+        println!("Loading problem {}", name);
+        let problem = Box::new(Problem::new(name.to_string(), &path));
+
+        // put it in the library
         self.problems.insert(name.to_string(), problem);
-        println!("loaded problem {}", name);
         Ok(())
     }
 
@@ -55,21 +59,66 @@ impl ProblemLibrary {
     }
 }
 
-struct Problem {
+pub struct Problem {
     name: String,
+    path: PathBuf,
+    tests: Vec<String>,
 }
 
 impl Problem {
-    fn new(name: String) -> Problem {
-        Problem {
+    fn new(name: String, path: &Path) -> Problem {
+        let mut p = Problem {
             name: name,
-        }
+            path: path.to_path_buf(),
+            tests: vec![],
+        };
+        p.scan_tests().unwrap();
+        p
     }
 
-    pub fn test_submission(&self, sub: &Submission) -> Result<(), Box<Error>> {
-        let mut tester = sub.get_tester().unwrap(); // XXX unwrap
-        tester.build(sub.get_answer());
-        tester.test(String::new()); // TODO
+    fn get_test_dir(&self) -> PathBuf {
+        self.path.join("tests")
+    }
+
+    fn scan_tests(&mut self) -> Result<(), Box<Error>> {
+        for entry in try!(read_dir(self.get_test_dir())) {
+            let e = try!(entry);
+            let filename = e.file_name().to_str().unwrap().to_string();
+
+            // only look for .in files; we'll check for .out when loading
+            if filename.ends_with(".in") {
+                let name = filename.trim_right_matches(".in");
+                self.load_test(&name);
+            }
+        }
         Ok(())
+    }
+
+    fn load_test(&mut self, name: &str) {
+        let path = self.get_test_dir().join(format!("{}.out", name));
+        if !path.exists() {
+            panic!("test output file {} does not exist", path.display());
+        }
+        println!("  added test {}", name);
+        self.tests.push(name.to_string());
+    }
+
+    /// Copy files needed for a tester to run.
+    /// XXX: This is not currently language-agnostic.
+    pub fn copy_work_files(&self, workdir: &Path) -> Result<(), Box<Error>> {
+        let src_runner = self.path.join("Runner.java");
+        let dest_runner = workdir.join("Runner.java");
+        try!(copy(src_runner, dest_runner));
+        Ok(())
+    }
+
+    pub fn test_submission(&self, sub: &Submission) -> Result<SubmissionResult, Box<Error>> {
+        let workdir = try!(set_up_workdir());
+        try!(self.copy_work_files(&workdir));
+        let mut tester = sub.get_tester(&workdir).unwrap(); // XXX unwrap
+        try!(tester.build(sub.get_answer()));
+        // TODO: read tests directory for test names
+        let test_result = try!(tester.test(String::new())); // TODO
+        Ok(test_result)
     }
 }

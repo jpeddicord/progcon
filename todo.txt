@@ -1,0 +1,12 @@
+(A) run answer against tests +runner
+(A) store submission results in database +web
+(A) calculate scores, penalties +web
+(A) add registration form +web
+(A) remove hardcoded problems directory
+(A) display problem descriptions
+(B) output test diffs +runner +web
+(B) set time limits for runner +runner +exec
+(C) runner process management +web +runner
+(C) show a timer +web
+(C) make it not look terrible +web
+(C) multi-threaded testing +runner

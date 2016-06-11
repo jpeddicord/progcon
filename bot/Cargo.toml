@@ -6,4 +6,5 @@ authors = ["Jacob Peddicord <jacob@peddicord.net>"]
 [dependencies]
 nanomsg = "0.5.0"
 rustc-serialize = "0.3.19"
+tempdir = "0.3.4"
 toml = "0.1.30"
