@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { createContest, fetchContests } from '../modules/contests';
-import { fetchNeeds } from '../util/needs';
 
 class AdminView extends React.Component {
   static propTypes = {
@@ -10,14 +9,10 @@ class AdminView extends React.Component {
     contests: React.PropTypes.array.isRequired,
   };
 
-  static needs = [
-    params => fetchContests(),
-  ];
-
   componentDidMount() {
-    const { contests } = this.props;
+    const { dispatch, contests } = this.props;
     if (contests == null || contests.length === 0) {
-      fetchNeeds(this);
+      dispatch(fetchContests());
     }
   }
 

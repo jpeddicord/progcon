@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import SolutionUploader from '../components/SolutionUploader';
 import { fetchProblem, submitAnswer } from '../modules/problems';
-import { fetchNeeds } from '../util/needs';
 
 class ProblemDetail extends React.Component {
   static propTypes = {
@@ -11,15 +10,11 @@ class ProblemDetail extends React.Component {
     problems: React.PropTypes.object.isRequired,
   };
 
-  static needs = [
-    params => fetchProblem(params.contest_id, params.problem_name),
-  ];
-
   componentDidMount() {
-    const { problems, params: { problem_name } } = this.props;
+    const { dispatch, problems, params: { contest_id, problem_name } } = this.props;
     const problem = problems[problem_name];
     if (problem == null) {
-      fetchNeeds(this);
+      dispatch(fetchProblem(contest_id, problem_name));
     }
   }
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { fetchContestDetail, updateContest } from '../modules/contests';
-import { fetchNeeds } from '../util/needs';
 
 class ContestEditor extends React.Component {
   static propTypes = {
@@ -11,14 +10,10 @@ class ContestEditor extends React.Component {
     active: React.PropTypes.object,
   };
 
-  static needs = [
-    params => fetchContestDetail(params.contest_id),
-  ];
-
   componentDidMount() {
-    const { active, params: { contest_id } } = this.props;
+    const { dispatch, active, params: { contest_id } } = this.props;
     if (active == null || active.id !== parseInt(contest_id)) {
-      fetchNeeds(this);
+      dispatch(fetchContestDetail(contest_id));
     }
   }
 
