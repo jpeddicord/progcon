@@ -5,10 +5,11 @@ use submission::Submission;
 #[derive(Debug)]
 pub enum SubmissionResult {
     Successful,
+    FailedTests(u8, u8),
     BadCompile,
     Crashed,
     Timeout,
-    FailedTests(u8, u8),
+    InternalError
 }
 
 impl ToJson for SubmissionResult {
@@ -16,10 +17,11 @@ impl ToJson for SubmissionResult {
         // this syntax doesn't feel right... but rustc complains witohut the prefixes
         let string = match *self {
             SubmissionResult::Successful => "successful",
+            SubmissionResult::FailedTests(_, _) => "failed_tests",
             SubmissionResult::BadCompile => "bad_compile",
             SubmissionResult::Crashed => "crashed",
             SubmissionResult::Timeout => "timeout",
-            SubmissionResult::FailedTests(_, _) => "failed_tests",
+            SubmissionResult::InternalError => "internal_error",
         };
         Json::String(string.to_string())
     }

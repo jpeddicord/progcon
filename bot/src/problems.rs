@@ -42,7 +42,7 @@ impl ProblemLibrary {
         let val = toml::Parser::new(&s).parse().unwrap(); // XXX unwrap
 
         // build a problem struct
-        println!("Loading problem {}", name);
+        info!("Loading problem {}", name);
         let problem = Box::new(Problem::new(name.to_string(), &path));
 
         // put it in the library
@@ -76,7 +76,7 @@ impl Problem {
         p
     }
 
-    fn get_test_dir(&self) -> PathBuf {
+    pub fn get_test_dir(&self) -> PathBuf {
         self.path.join("tests")
     }
 
@@ -99,7 +99,7 @@ impl Problem {
         if !path.exists() {
             panic!("test output file {} does not exist", path.display());
         }
-        println!("  added test {}", name);
+        debug!("Added test {}", name);
         self.tests.push(name.to_string());
     }
 
@@ -113,12 +113,25 @@ impl Problem {
     }
 
     pub fn test_submission(&self, sub: &Submission) -> Result<SubmissionResult, Box<Error>> {
+        // get the environment ready
         let workdir = try!(set_up_workdir());
         try!(self.copy_work_files(&workdir));
         let mut tester = sub.get_tester(&workdir).unwrap(); // XXX unwrap
-        try!(tester.build(sub.get_answer()));
-        // TODO: read tests directory for test names
-        let test_result = try!(tester.test(String::new())); // TODO
+
+        // compile...
+        let compile_result = try!(tester.build(sub.get_answer(), &self));
+        match compile_result {
+            SubmissionResult::BadCompile => return Ok(compile_result),
+            _ => (),
+        }
+
+        // and test
+        let test_result = try!(tester.test(String::new())); // TODO: pass in tests here, not during build step
+
         Ok(test_result)
+    }
+
+    pub fn get_tests(&self) -> Vec<String> {
+        self.tests.clone()
     }
 }

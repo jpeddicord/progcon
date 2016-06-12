@@ -36,7 +36,11 @@ fn main() {
     let lock = pick_uid().unwrap();
 
     // wrapping up errors; save them for later (cleanup) instead of panicing
-    su_exec(Path::new(&workdir), lock.uid, command, &args).unwrap();
+    let code = su_exec(Path::new(&workdir), lock.uid, command, &args).unwrap();
+    match code {
+        Some(c) => exit(c),
+        None => panic!("no exit code; killed by signal?"),
+    }
 }
 
 fn sanity_check(workdir: &str) {
@@ -82,7 +86,7 @@ fn pick_uid() -> Result<Lock, Box<Error>> {
     Lock::new(path, uid)
 }
 
-fn su_exec(workdir: &Path, uid: u32, command: String, args: &Vec<String>) -> Result<(), Box<Error>> {
+fn su_exec(workdir: &Path, uid: u32, command: String, args: &Vec<String>) -> Result<Option<i32>, Box<Error>> {
     // claim our working directory
     // Drop will delete the directory
     let _owned = OwnedDir::new(workdir, uid);
@@ -105,7 +109,7 @@ fn su_exec(workdir: &Path, uid: u32, command: String, args: &Vec<String>) -> Res
 
     // run it!
     let mut run = try!(Command::new(command).args(args).spawn());
-    try!(run.wait());
+    let status = try!(run.wait());
 
-    Ok(())
+    Ok(status.code())
 }
