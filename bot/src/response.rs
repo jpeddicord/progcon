@@ -5,7 +5,7 @@ use submission::Submission;
 #[derive(Debug)]
 pub enum SubmissionResult {
     Successful,
-    FailedTests(u8, u8),
+    FailedTests{pass: u8, fail: u8},
     BadCompile,
     Crashed,
     Timeout,
@@ -17,7 +17,7 @@ impl ToJson for SubmissionResult {
         // this syntax doesn't feel right... but rustc complains witohut the prefixes
         let string = match *self {
             SubmissionResult::Successful => "successful",
-            SubmissionResult::FailedTests(_, _) => "failed_tests",
+            SubmissionResult::FailedTests{pass: _, fail: _} => "failed_tests",
             SubmissionResult::BadCompile => "bad_compile",
             SubmissionResult::Crashed => "crashed",
             SubmissionResult::Timeout => "timeout",
@@ -29,6 +29,7 @@ impl ToJson for SubmissionResult {
 
 #[derive(RustcEncodable, Debug)]
 pub struct Response {
+    id: u32,
     user: u32,
     problem: String,
     result: Json,
@@ -37,6 +38,7 @@ pub struct Response {
 impl Response {
     pub fn new(sub: &Submission, result: SubmissionResult) -> Response {
         Response {
+            id: sub.get_id(),
             user: sub.get_user(),
             problem: sub.get_problem_name(),
             result: result.to_json(),

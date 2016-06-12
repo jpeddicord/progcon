@@ -5,6 +5,7 @@ use testers::base::Tester;
 
 #[derive(RustcDecodable, Debug)]
 pub struct Submission {
+    id: u32,
     user: u32,
     problem: String,
     answer: String,
@@ -18,6 +19,10 @@ impl Submission {
     pub fn get_tester(&self, workdir: &Path) -> Option<Box<Tester>> {
         // TODO: support multiple languages in the future
         new_tester(self.problem.as_ref(), "java", &workdir)
+    }
+
+    pub fn get_id(&self) -> u32 {
+        self.id
     }
 
     pub fn get_user(&self) -> u32 {

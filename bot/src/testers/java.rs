@@ -58,13 +58,31 @@ impl Tester for JavaTester {
                                .arg(self.workdir.as_os_str())
                                .arg("/bin/sh").arg("test.sh")
                                .output());
-        trace!("stdout:\n{}", String::from_utf8_lossy(&out.stdout));
+        let stdout = String::from_utf8_lossy(&out.stdout);
         trace!("stderr:\n{}", String::from_utf8_lossy(&out.stderr));
+        trace!("stdout:\n{}", stdout);
         if !out.status.success() {
             error!("Exited unsuccessfully (crashed?)");
             return Ok(SubmissionResult::Crashed);
         }
-        info!("Succeeded.");
+        debug!("Execution finished; checking diff output");
+
+        // scan stdout for pass/fail messages
+        let mut pass = 0;
+        let mut fail = 0;
+        for line in stdout.split('\n') {
+            match line.trim() {
+                "#PASS#" => pass += 1,
+                "#FAIL#" => fail += 1,
+                _ => (),
+            }
+        }
+        if fail > 0 {
+            debug!("Failed {}, passed {}", fail, pass);
+            return Ok(SubmissionResult::FailedTests{pass: pass, fail: fail});
+        }
+
+        debug!("Passed all {} tests", pass);
         Ok(SubmissionResult::Successful)
     }
 }
@@ -75,7 +93,12 @@ impl JavaTester {
         let test_path = test_dir.to_string_lossy();
         let mut sub: Vec<String> = vec![];
         for test in &problem.get_tests() {
-            sub.push(format!("java Runner < {path}/{test}.in > {test}.actual\nstatus=$?\n[ $status -eq 0 ] || exit $status\ndiff {path}/{test}.out {test}.actual >&2", test=test, path=test_path));
+            sub.push(format!("java Runner < {path}/{test}.in > {test}.actual\n\
+                              status=$?\n\
+                              [ $status -eq 0 ] || exit $status\n\
+                              diff -Bbu --label {test}.expected {path}/{test}.out {test}.actual >&2\n\
+                              [ $? -eq 0 ] && echo '#PASS#' || echo '#FAIL#'",
+                test=test, path=test_path));
         }
 
         let script = format!("#!/bin/sh\n\n{}", sub.join("\n\n"));

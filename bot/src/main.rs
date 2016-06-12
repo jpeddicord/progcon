@@ -43,11 +43,14 @@ fn main() {
 
     loop {
         let mut msg = String::new();
-        socket_commands.read_to_string(&mut msg).unwrap();
+        socket_commands.read_to_string(&mut msg).unwrap(); // XXX unwrap
 
         // read in the submission
         let sub = Submission::parse(msg);
         trace!("{:?}", sub);
+
+        // FIXME: we have a scaling problem; uncomment me and try to submit a bunch of stuff
+        //std::thread::sleep(std::time::Duration::new(5,0));
 
         // load the problem
         let problem = library.get_problem_from_submission(&sub);
