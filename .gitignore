@@ -1,3 +1,4 @@
 target/
+.tern-project
 *.sqlite
 *.env
