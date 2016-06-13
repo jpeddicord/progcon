@@ -1,7 +1,7 @@
 import Router from 'koa-router';
 import auth from 'basic-auth';
 import { tryAuth } from './auth';
-import * as db from '../db/contest';
+import * as db from '../db/contests';
 import { submitAnswer } from '../bot/ipc';
 
 const routes = new Router({prefix: '/api'});

@@ -1,5 +1,9 @@
 import db from './index';
 
+export function contestSequence(id) {
+  return `contest_participants__${id}`;
+}
+
 export function listContests(activeOnly) {
   return db.any('select id, title from contests');
 }
@@ -8,11 +12,17 @@ export function getContest(id) {
   return db.one('select * from contests where id = $1', [id]);
 }
 
-export function createContest(title) {
-  return db.one(
+export async function createContest(title) {
+  const row = await db.one(
     'insert into contests(title) values($1) returning id',
     [title],
   );
+  const id = row.id;
+  await db.none(
+    'create sequence $1~ start 1 owned by users.participant_number',
+    [contestSequence(id)]
+  );
+  return id;
 }
 
 export function updateContest(id, title, start_time, end_time, mode, code, problems) {
