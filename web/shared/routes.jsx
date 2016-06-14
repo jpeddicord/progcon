@@ -4,6 +4,7 @@ import App from './components/App';
 import Landing from './containers/Landing';
 import ContestOverview from './containers/ContestOverview';
 import ProblemDetail from './containers/ProblemDetail';
+import RegistrationForm from './containers/RegistrationForm';
 import AdminView from './containers/AdminView';
 import ContestEditor from './containers/ContestEditor';
 
@@ -13,6 +14,7 @@ export default (
     <Route path="contests/:contest_id" component={ContestOverview}>
       <Route path="problems/:problem_name" component={ProblemDetail} />
     </Route>
+    <Route path="contests/:contest_id/register" component={RegistrationForm} />
     <Route path="admin" component={AdminView} />
     <Route path="admin/contests/:contest_id" component={ContestEditor} />
   </Route>

@@ -20,7 +20,6 @@ create table if not exists users (
 
     unique (contest, participant_number)
 );
-create index on users (contest, participant_number desc);
 
 create table if not exists submissions (
     id serial primary key,

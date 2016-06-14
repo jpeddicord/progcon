@@ -3,9 +3,7 @@ import config from '../config';
 
 
 export function tryAuth(creds) {
-  const claims = {
-    name: creds.name,
-  };
+  const claims = {};
 
   if (creds.name === 'admin' && creds.pass === config.admin.password) {
     claims.admin = true;
@@ -15,6 +13,17 @@ export function tryAuth(creds) {
     return null;
   }
 
+  return sign(claims, config.jwt.secret, {
+    expiresIn: '1 day',
+  });
+}
+
+export function issueUserToken(id, contest, participant_number) {
+  const claims = {
+    id,
+    contest,
+    participant_number,
+  };
   return sign(claims, config.jwt.secret, {
     expiresIn: '1 day',
   });

@@ -54,7 +54,7 @@ class ContestEditor extends React.Component {
         start time: <input disabled name="start_time" type="date" defaultValue={active.start_time} /><br/>
         end time: <input disabled name="end_time" type="date" defaultValue={active.end_time} /><br/>
         reg mode: <select disabled name="mode" defaultValue={active.mode}><option value="code">registration code</option></select><br/>
-        reg code: <input disabled name="code" type="text" /><br/>
+        reg code: <input name="code" type="text" defaultValue={active.code} /><br/>
         problems: <textarea name="problems" defaultValue={active.problems.join('\n')} /><br/>
         <button type="submit">save</button>
       </form>

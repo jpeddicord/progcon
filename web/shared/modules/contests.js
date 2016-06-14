@@ -56,15 +56,16 @@ export function fetchContestDetail(id) {
   };
 }
 
+export function registerForContest(id, code, name) {
+  return dispatch => {
+    return fetchAuth.post(`/api/contests/${id}/register`, {code, name})
+      .then(resp => dispatch(fetchContestDetail(id)));
+  };
+}
+
 export function createContest(title) {
   return dispatch => {
-    return fetchAuth('/api/contests/', {
-      method: 'post',
-      body: JSON.stringify({title}),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
+    return fetchAuth.post('/api/contests/', {title})
       .then(resp => resp.json())
       .then(json => {
         dispatch(fetchContests());
@@ -75,13 +76,7 @@ export function createContest(title) {
 
 export function updateContest(id, values) {
   return dispatch => {
-    return fetchAuth(`/api/contests/${id}`, {
-      method: 'post',
-      body: JSON.stringify(values),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
+    return fetchAuth.post(`/api/contests/${id}`, values)
       .then(resp => resp.json())
       .then(json => dispatch(receiveContestDetail(json)));
   };
