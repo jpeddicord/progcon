@@ -3,7 +3,7 @@ import auth from 'basic-auth';
 import { tryAuth } from './auth';
 import * as dbContests from '../db/contests';
 import * as dbUsers from '../db/users';
-import { submitAnswer } from '../bot/ipc';
+import { submitAnswer } from '../bot/tester';
 
 const routes = new Router({prefix: '/api'});
 
@@ -61,7 +61,7 @@ routes.get('/contests/:contest_id/problems/:problem_name', (ctx, next) => {
 
 routes.post('/contests/:contest_id/problems/:problem', (ctx, next) => {
   // TODO: some data validation; ensure problem exists in contest, user validation, etc
-  submitAnswer(9999, ctx.params.problem, ctx.request.body.answer);
+  submitAnswer(9999, ctx.params.contest_id, ctx.params.problem, ctx.request.body.answer);
 
   ctx.body = {status: 'submitted'};
 });

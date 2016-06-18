@@ -1,5 +1,5 @@
 create type registration_mode as enum ('open', 'code', 'preset');
-create type submission_result as enum ('successful', 'failed_test', 'bad_compile', 'crashed', 'timeout', 'internal_error');
+create type submission_result as enum ('successful', 'failed_tests', 'bad_compile', 'crashed', 'timeout', 'internal_error');
 
 create table if not exists contests (
     id serial primary key,
@@ -13,20 +13,20 @@ create table if not exists contests (
 
 create table if not exists users (
     id serial primary key,
-    contest integer not null,
+    contest_id integer not null,
     participant_number integer not null,
     name text,
     password text,
 
-    unique (contest, participant_number)
+    unique (contest_id, participant_number)
 );
 
 create table if not exists submissions (
     id serial primary key,
     user_id integer not null,
-    contest integer not null,
+    contest_id integer not null,
     problem text not null,
-    submission_time timestamp with time zone not null,
+    submission_time timestamp with time zone not null default now(),
     time_score integer,
     result submission_result
 );

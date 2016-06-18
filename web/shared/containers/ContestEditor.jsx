@@ -51,8 +51,8 @@ class ContestEditor extends React.Component {
     return (
       <form onSubmit={this.saveContest}>
         title: <input name="title" type="text" defaultValue={active.title} /><br/>
-        start time: <input disabled name="start_time" type="date" defaultValue={active.start_time} /><br/>
-        end time: <input disabled name="end_time" type="date" defaultValue={active.end_time} /><br/>
+        start time: <input name="start_time" type="datetime-local" defaultValue={active.start_time} /><br/>
+        end time: <input name="end_time" type="datetime-local" defaultValue={active.end_time} /><br/>
         reg mode: <select disabled name="mode" defaultValue={active.mode}><option value="code">registration code</option></select><br/>
         reg code: <input name="code" type="text" defaultValue={active.code} /><br/>
         problems: <textarea name="problems" defaultValue={active.problems.join('\n')} /><br/>
