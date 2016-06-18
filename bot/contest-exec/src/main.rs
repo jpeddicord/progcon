@@ -1,5 +1,6 @@
 extern crate libc;
 extern crate rand;
+extern crate wait_timeout;
 extern crate walkdir;
 
 mod util;
@@ -7,11 +8,14 @@ mod util;
 use std::env;
 use std::error::Error;
 use std::os::unix::fs::MetadataExt;
+use std::os::unix::process::CommandExt;
 use std::path::Path;
 use std::process::{Command, exit};
 use std::ptr::null;
-use libc::{geteuid, setgid, setgroups, setuid};
+use std::time::Duration;
+use libc::{geteuid, kill, setgid, setgroups, setuid};
 use rand::random;
+use wait_timeout::ChildExt;
 use util::{Lock, OwnedDir};
 
 const PREFIX: &'static str = "/var/tmp/progcon-";
@@ -19,15 +23,20 @@ const LOCK_PREFIX: &'static str = "/var/tmp/progconuser-";
 const MIN_UID: u32 = 20000;
 
 fn main() {
+    exit(real_main());
+}
+
+fn real_main() -> i32 {
     // find out what we're working with
     let mut args: Vec<String> = env::args().collect();
-    if args.len() < 3 {
-        println!("usage: contest-exec {}workingdir command", PREFIX);
+    if args.len() < 4 {
+        println!("usage: contest-exec {}workingdir timeout_secs command", PREFIX);
         exit(1);
     }
     let workdir = args[1].clone();
-    let command = args[2].clone();
-    let args = args.split_off(3);
+    let timeout = args[2].clone().parse::<u8>().unwrap();
+    let command = args[3].clone();
+    let args = args.split_off(4);
 
     // be safe!
     sanity_check(&workdir);
@@ -36,10 +45,10 @@ fn main() {
     let lock = pick_uid().unwrap();
 
     // wrapping up errors; save them for later (cleanup) instead of panicing
-    let code = su_exec(Path::new(&workdir), lock.uid, command, &args).unwrap();
+    let code = su_exec(Path::new(&workdir), lock.uid, timeout, command, &args).unwrap();
     match code {
-        Some(c) => exit(c),
-        None => panic!("no exit code; killed by signal?"),
+        Some(c) => c,
+        None => 222,
     }
 }
 
@@ -86,7 +95,7 @@ fn pick_uid() -> Result<Lock, Box<Error>> {
     Lock::new(path, uid)
 }
 
-fn su_exec(workdir: &Path, uid: u32, command: String, args: &Vec<String>) -> Result<Option<i32>, Box<Error>> {
+fn su_exec(workdir: &Path, uid: u32, timeout: u8, command: String, args: &Vec<String>) -> Result<Option<i32>, Box<Error>> {
     // claim our working directory
     // Drop will delete the directory
     let _owned = OwnedDir::new(workdir, uid);
@@ -108,8 +117,23 @@ fn su_exec(workdir: &Path, uid: u32, command: String, args: &Vec<String>) -> Res
     try!(env::set_current_dir(&workdir));
 
     // run it!
-    let mut run = try!(Command::new(command).args(args).spawn());
-    let status = try!(run.wait());
+    let mut run = try!(Command::new(command)
+                               .args(args)
+                               .spawn());
+    let pid = run.id() as i32;
 
-    Ok(status.code())
+    // wait up to the timeout
+    match run.wait_timeout(Duration::new(timeout as u64, 0)).unwrap() {
+        // exited on-time; pass the result up
+        Some(status) => {
+            return Ok(status.code());
+        },
+        // did not exit on time, so kill the process group
+        None => {
+            unsafe {
+                kill(-1 * pid, 9);
+            }
+            return Ok(None);
+        },
+    }
 }

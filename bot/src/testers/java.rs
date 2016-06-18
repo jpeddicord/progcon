@@ -1,6 +1,7 @@
 use std::error::Error;
 use std::fs::File;
 use std::io::Write;
+use std::os::unix::process::ExitStatusExt;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use problems::{Problem};
@@ -53,16 +54,27 @@ impl Tester for JavaTester {
 
     // TODO: return test diffs
     fn test(&mut self, testdata: String) -> Result<SubmissionResult, Box<Error>> {
-        debug!("Launching java (runtime)");
+        debug!("Launching testing script");
         let out = try!(Command::new("contest-exec")
                                .arg(self.workdir.as_os_str())
+                               .arg("5")
+                               // TODO: once https://github.com/rust-lang/rust/issues/31398
+                               // is implemented, use that replacement inside contest-exec
+                               .arg("/usr/bin/setsid")
                                .arg("/bin/sh").arg("test.sh")
                                .output());
         let stdout = String::from_utf8_lossy(&out.stdout);
         trace!("stderr:\n{}", String::from_utf8_lossy(&out.stderr));
         trace!("stdout:\n{}", stdout);
         if !out.status.success() {
-            error!("Exited unsuccessfully (crashed?)");
+            warn!("Exited unsuccessfully");
+            match out.status.code() {
+                Some(222) => {
+                    warn!("Killed (timeout)");
+                    return Ok(SubmissionResult::Timeout);
+                },
+                _ => {},
+            }
             return Ok(SubmissionResult::Crashed);
         }
         debug!("Execution finished; checking diff output");

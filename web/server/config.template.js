@@ -13,7 +13,6 @@ const config = {
   },
   bot: {
     ipcCommands: 'tcp://localhost:12345',
-    ipcEvents: 'tcp://localhost:12346',
   },
 };
 

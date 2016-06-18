@@ -27,9 +27,6 @@ use submission::Submission;
 fn main() {
     env_logger::init().unwrap();
 
-    let mut socket_events = Socket::new(Protocol::Pub).unwrap();
-    let mut endpoint_events = socket_events.bind("ipc:///tmp/progcon-bot_events.ipc").unwrap();
-
     let mut socket_commands = Socket::new(Protocol::Rep).unwrap();
     let mut endpoint_commands = socket_commands.bind("ipc:///tmp/progcon-bot_commands.ipc").unwrap();
 
@@ -48,9 +45,6 @@ fn main() {
         // read in the submission
         let sub = Submission::parse(msg);
         trace!("{:?}", sub);
-
-        // FIXME: we have a scaling problem; uncomment me and try to submit a bunch of stuff
-        //std::thread::sleep(std::time::Duration::new(5,0));
 
         // load the problem
         let problem = library.get_problem_from_submission(&sub);
