@@ -21,3 +21,18 @@ export async function registerUser(name, password, contest) {
   );
   return user.id;
 }
+
+// update the user's score, optionally adding a problem to their completed list
+export function updateScore(id, timeScore, problem) {
+  if (problem != null) {
+    return db.none(
+      'update users set (time_score, problems_completed) = (time_score + $2, array_append(problems_completed, $3)) where id = $1',
+      [id, timeScore, problem],
+    );
+  } else {
+    return db.none(
+      'update users set (time_score) = (time_score + $2) where id = $1',
+      [id, timeScore],
+    );
+  }
+}

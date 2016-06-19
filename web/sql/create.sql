@@ -17,6 +17,9 @@ create table if not exists users (
     participant_number integer not null,
     name text,
     password text,
+    problems_completed text[] not null default array[]::text[],
+    time_score integer not null default 0,
+    meta jsonb,
 
     unique (contest_id, participant_number)
 );
