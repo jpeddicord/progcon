@@ -28,5 +28,6 @@ create table if not exists submissions (
     problem text not null,
     submission_time timestamp with time zone not null default now(),
     time_score integer,
-    result submission_result
+    result submission_result,
+    meta jsonb
 );

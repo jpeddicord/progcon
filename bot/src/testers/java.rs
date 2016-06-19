@@ -64,7 +64,8 @@ impl Tester for JavaTester {
                                .arg("/bin/sh").arg("test.sh")
                                .output());
         let stdout = String::from_utf8_lossy(&out.stdout);
-        trace!("stderr:\n{}", String::from_utf8_lossy(&out.stderr));
+        let stderr = String::from_utf8_lossy(&out.stderr);
+        trace!("stderr:\n{}", stderr);
         trace!("stdout:\n{}", stdout);
         if !out.status.success() {
             warn!("Exited unsuccessfully");
@@ -91,7 +92,7 @@ impl Tester for JavaTester {
         }
         if fail > 0 {
             debug!("Failed {}, passed {}", fail, pass);
-            return Ok(SubmissionResult::FailedTests{pass: pass, fail: fail});
+            return Ok(SubmissionResult::FailedTests{pass: pass, fail: fail, diff: stderr.to_string()});
         }
 
         debug!("Passed all {} tests", pass);

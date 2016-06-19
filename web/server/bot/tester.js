@@ -15,7 +15,6 @@ export async function submitAnswer(userId, contestId, problem, answer) {
 
   // send it out for grading
   // (long-running operation, especially if there's a queue)
-  console.log(sub);
   const buffer = await broker.send(JSON.stringify({
     id: sub.id,
     user: userId,
@@ -23,10 +22,9 @@ export async function submitAnswer(userId, contestId, problem, answer) {
     answer,
   }));
   const result = JSON.parse(buffer.toString());
-  console.log('promise finished');
+  console.log(result);
 
   if (sub.id !== result.id) {
-    console.log('oh no', sub, result);
     throw new Error(`submission result id mismatch (expected ${sub.id}, got ${result.id})`);
   }
 
@@ -40,5 +38,5 @@ export async function submitAnswer(userId, contestId, problem, answer) {
   }
 
   // record the result
-  await dbSubmissions.updateSubmission(sub.id, timeScore, result.result);
+  await dbSubmissions.updateSubmission(sub.id, timeScore, result.result, result.meta);
 }

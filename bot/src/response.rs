@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use rustc_serialize::Encodable;
 use rustc_serialize::json::{self, ToJson, Json};
 use submission::Submission;
@@ -5,7 +6,7 @@ use submission::Submission;
 #[derive(Debug)]
 pub enum SubmissionResult {
     Successful,
-    FailedTests{pass: u8, fail: u8},
+    FailedTests{pass: u8, fail: u8, diff: String},
     BadCompile,
     Crashed,
     Timeout,
@@ -14,10 +15,10 @@ pub enum SubmissionResult {
 
 impl ToJson for SubmissionResult {
     fn to_json(&self) -> Json {
-        // this syntax doesn't feel right... but rustc complains witohut the prefixes
+        // this syntax doesn't feel right... but rustc complains without the prefixes
         let string = match *self {
             SubmissionResult::Successful => "successful",
-            SubmissionResult::FailedTests{pass: _, fail: _} => "failed_tests",
+            SubmissionResult::FailedTests{pass: _, fail: _, diff: _} => "failed_tests",
             SubmissionResult::BadCompile => "bad_compile",
             SubmissionResult::Crashed => "crashed",
             SubmissionResult::Timeout => "timeout",
@@ -33,15 +34,28 @@ pub struct Response {
     user: u32,
     problem: String,
     result: Json,
+    meta: Json,
 }
 
 impl Response {
     pub fn new(sub: &Submission, result: SubmissionResult) -> Response {
+        let meta = match result {
+            SubmissionResult::FailedTests{pass, fail, ref diff} => {
+                let mut map = BTreeMap::new();
+                map.insert("pass".to_string(), pass.to_json());
+                map.insert("fail".to_string(), fail.to_json());
+                map.insert("diff".to_string(), diff.to_json());
+                Json::Object(map)
+            },
+            _ => Json::Null,
+        };
+
         Response {
             id: sub.get_id(),
             user: sub.get_user(),
             problem: sub.get_problem_name(),
             result: result.to_json(),
+            meta: meta,
         }
     }
 
