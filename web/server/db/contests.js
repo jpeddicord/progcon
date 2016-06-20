@@ -9,7 +9,7 @@ export function listContests(activeOnly) {
 }
 
 export function getContest(id) {
-  return db.one('select * from contests where id = $1', [id]);
+  return db.oneOrNone('select * from contests where id = $1', [id]);
 }
 
 export async function createContest(title) {

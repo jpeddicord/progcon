@@ -1,19 +1,25 @@
 import 'isomorphic-fetch';
+import { loadToken, injectTokenHeader } from './token';
 
-export function fetchAuth(url, options) {
-  // TODO: authentication
-  return fetch(url, options);
+export async function fetchAuth(url, options, retry = true) {
+  // load or fetch our token
+  let token = loadToken();
+  if (token == null) {
+    // TODO: oh no!
+    throw new Error('no auth token; unregistered?');
+  }
+
+  return fetch(url, injectTokenHeader(options, token));
 }
 
-fetchAuth.post = function(url, json, options) {
-  const extraHeaders = options != null ? options.headers : {};
+fetchAuth.post = function(url, json, options = {}) {
   return fetchAuth(url, {
     ...options,
     method: 'post',
     body: JSON.stringify(json),
     headers: {
       'Content-Type': 'application/json',
-      ...extraHeaders,
+      ...options.headers,
     },
   });
 };

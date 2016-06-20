@@ -1,7 +1,7 @@
 import db from './index';
 
 export function getSubmission(id) {
-  return db.one('select * from submissions where id = $1', [id]);
+  return db.oneOrNone('select * from submissions where id = $1', [id]);
 }
 
 export async function createSubmission(user, contest, problem) {

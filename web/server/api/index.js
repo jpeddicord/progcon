@@ -1,6 +1,6 @@
 import Router from 'koa-router';
 import auth from 'basic-auth';
-import { tryAuth } from './auth';
+import { tryAuth, issueUserToken, generateUserPassword, adminOnly, contestAccess } from './auth';
 import * as dbContests from '../db/contests';
 import * as dbUsers from '../db/users';
 import { submitAnswer } from '../bot/tester';
@@ -15,22 +15,20 @@ routes.get('/contests/', async (ctx, next) => {
 });
 
 // create a new contest
-// TODO: admin auth required
-routes.post('/contests/', async (ctx, next) => {
+routes.post('/contests/', adminOnly, async (ctx, next) => {
   const { title } = ctx.request.body;
   const id = await dbContests.createContest(title);
   ctx.body = {id};
 });
 
 // get a single contest's details
-routes.get('/contests/:contest_id', async (ctx, next) => {
+routes.get('/contests/:contest_id', contestAccess, async (ctx, next) => {
   const contest = await dbContests.getContest(ctx.params.contest_id);
   ctx.body = contest;
 });
 
 // edit a contest
-// TODO: admin auth required
-routes.post('/contests/:contest_id', async (ctx, next) => {
+routes.post('/contests/:contest_id', adminOnly, async (ctx, next) => {
   const body = ctx.request.body;
   const { title, start_time, end_time, mode, code, problems } = body;
   await dbContests.updateContest(ctx.params.contest_id, title, start_time, end_time, mode, code, problems);
@@ -38,8 +36,7 @@ routes.post('/contests/:contest_id', async (ctx, next) => {
 });
 
 routes.post('/contests/:contest_id/register', async (ctx, next) => {
-  const body = ctx.request.body;
-  const { code, name } = body;
+  const { code, name } = ctx.request.body;
 
   // validate the registration code
   const contest = await dbContests.getContest(ctx.params.contest_id);
@@ -47,31 +44,33 @@ routes.post('/contests/:contest_id/register', async (ctx, next) => {
     throw new Error('invalid registration code');
   }
 
-  // TODO: assign a password (maybe, do we even care? these are session-based contests)
-  const id = await dbUsers.registerUser(name, 'xxx', ctx.params.contest_id);
+  // set up a contest-specific user account
+  const user = await dbUsers.registerUser(name, generateUserPassword(), ctx.params.contest_id);
 
-  // TODO: issue a token
-  ctx.body = {id: id};
+  // issue a token for the newly-created user
+  const jwt = issueUserToken(user.id, contest.id, user.participant_number);
+  ctx.body = {token: jwt};
 });
 
-routes.get('/contests/:contest_id/problems/:problem_name', (ctx, next) => {
+routes.get('/contests/:contest_id/problems/:problem_name', contestAccess, (ctx, next) => {
   // TODO: get problem details & submission status (good/bad/pending/etc)
   ctx.body = {name: ctx.params.problem_name, status: 'unsolved'};
 });
 
-routes.post('/contests/:contest_id/problems/:problem', (ctx, next) => {
+routes.post('/contests/:contest_id/problems/:problem', contestAccess, (ctx, next) => {
   // TODO: some data validation; ensure problem exists in contest, user validation, etc
   submitAnswer(9999, ctx.params.contest_id, ctx.params.problem, ctx.request.body.answer);
 
   ctx.body = {status: 'submitted'};
 });
 
+// TODO: rate limit
 routes.get('/auth', async (ctx, next) => {
   let creds = auth(ctx);
 
   // auth attempt
   if (creds) {
-    const jwt = tryAuth(creds);
+    const jwt = await tryAuth(creds);
     if (jwt != null) {
       ctx.body = jwt;
       return;

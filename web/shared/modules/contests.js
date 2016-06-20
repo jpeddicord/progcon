@@ -1,4 +1,5 @@
 import { fetchAuth } from '../util/fetch';
+import { saveToken } from '../util/token';
 
 const RECEIVE_CONTESTS = 'app/contests/receive-contests';
 const RECEIVE_CONTEST_DETAIL = 'app/contests/receive-contest-detail';
@@ -42,7 +43,7 @@ export function receiveContestDetail(data) {
 
 export function fetchContests() {
   return dispatch => {
-    return fetchAuth('/api/contests/')
+    return fetch('/api/contests/') // XXX: fetchAuth? maybe not here
       .then(resp => resp.json())
       .then(json => dispatch(receiveContests(json.contests)));
   };
@@ -58,8 +59,18 @@ export function fetchContestDetail(id) {
 
 export function registerForContest(id, code, name) {
   return dispatch => {
-    return fetchAuth.post(`/api/contests/${id}/register`, {code, name})
-      .then(resp => dispatch(fetchContestDetail(id)));
+    return fetch(`/api/contests/${id}/register`, {
+      method: 'post',
+      body: JSON.stringify({code, name}),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(resp => resp.json())
+      .then(json => {
+        saveToken(json.token);
+        dispatch(fetchContestDetail(id));
+      });
   };
 }
 
