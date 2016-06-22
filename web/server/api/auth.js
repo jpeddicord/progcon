@@ -1,10 +1,13 @@
 import crypto from 'crypto';
-import { sign } from 'koa-jwt';
+import koaConvert from 'koa-convert';
+import koaJWT, { sign } from 'koa-jwt';
+import koaLimit from 'koa-limit';
 import config from '../config';
 import * as dbUsers from '../db/users';
+import { AccessError } from '../util/errors';
 
-export async function tryAuth(creds) {
-  if (creds.name === 'admin' && creds.pass === config.admin.password) {
+export async function tryAuth(user, pass) {
+  if (user === 'admin' && pass === config.admin.password) {
     // auth as administrator
     return sign({
       admin: true,
@@ -13,13 +16,18 @@ export async function tryAuth(creds) {
     });
 
   } else {
+    const id = parseInt(user);
+    if (Number.isNaN(id)) {
+      return null;
+    }
+
     // user recovery sign-in flow
-    const user = await dbUsers.getUser(parseInt(creds.name));
+    const user = await dbUsers.getUser(id);
     if (user == null) {
       return null;
     }
 
-    if (creds.pass !== user.password) {
+    if (pass !== user.password) {
       return null;
     }
 
@@ -56,10 +64,26 @@ export async function generateUserPassword() {
 }
 
 /**
+ * General JWT middleware.
+ */
+export const jwtMiddleware = koaConvert(koaJWT({secret: config.jwt.secret}));
+
+/**
+ * Pre-initialized rate limiting middleware to protect login spam.
+ */
+export const rateLimiter = koaConvert(koaLimit({
+  limit: 5,
+  interval: 1000 * 30,
+}));
+
+/**
  * Middleware that requires an admin session.
  */
 export async function adminOnly(ctx, next) {
-  await next(); // TODO
+  if (ctx.state.user.admin !== true) {
+    throw new AccessError('no access');
+  }
+  await next();
 }
 
 /**
@@ -68,5 +92,13 @@ export async function adminOnly(ctx, next) {
  * This can either be because they're an administrator, or they're registered for it.
  */
 export async function contestAccess(ctx, next) {
-  await next(); // TODO
+  const url_id = ctx.params.contest_id;
+  if (ctx.state.user.admin === true) {
+    await next();
+    return;
+  }
+  if (parseInt(url_id) !== ctx.state.user.contest) {
+    throw new AccessError('no access to this contest');
+  }
+  await next();
 }
