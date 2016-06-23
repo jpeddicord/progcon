@@ -21,7 +21,6 @@ class ProblemDetail extends React.Component {
   submitAnswer = content => {
     const { dispatch, params: { contest_id, problem_name } } = this.props;
 
-    console.log(content);
     dispatch(submitAnswer(contest_id, problem_name, content));
   };
 
