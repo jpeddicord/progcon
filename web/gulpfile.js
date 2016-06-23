@@ -48,6 +48,7 @@ gulp.task('dev', ['dev-server'], () => {
   new WebpackDevServer(compiler, {
     publicPath: '/assets/',
     proxy: {'*': 'http://localhost:3000'},
+    stats: 'minimal',
   })
     .listen(3030, 'localhost', err => {
       if (err) {

@@ -9,6 +9,10 @@ const plugins = [
   new webpack.DefinePlugin({
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
   }),
+  new webpack.ProvidePlugin({
+    $: 'jquery',
+    jQuery: 'jquery',
+  }),
   new webpack.NoErrorsPlugin(),
 ];
 if (prod) {
@@ -16,7 +20,7 @@ if (prod) {
 }
 
 module.exports = {
-  entry: './browser/app.jsx',
+  entry: ['bootstrap-loader', './browser/app.jsx'],
   module: {
     loaders: [
       {
@@ -27,6 +31,14 @@ module.exports = {
       {
         test: /\.scss$/,
         loaders: ['style', 'css', 'sass'],
+      },
+      {
+        test: /\.(woff2?|svg)$/,
+        loader: 'url?limit=10000',
+      },
+      {
+        test: /\.(ttf|eot)$/,
+        loader: 'file',
       },
     ],
   },
