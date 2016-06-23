@@ -11,7 +11,8 @@ export async function fetchJSON(url, options = {}) {
   });
 
   if (resp.status === 401) {
-    clearToken();
+    // XXX: is this the best action?
+    //clearToken();
   }
 
   if (resp.status !== 200) {
@@ -29,12 +30,7 @@ export async function fetchJSONAuth(url, options) {
     throw new Error('no auth token; unregistered?');
   }
 
-  const response = await fetchJSON(url, injectTokenHeader(options, token));
-  // XXX: doesn't actually work; this reads the json payload
-  if (response.status === 401) {
-    clearToken();
-  }
-  return response;
+  return fetchJSON(url, injectTokenHeader(options, token));
 }
 
 /**
@@ -42,7 +38,7 @@ export async function fetchJSONAuth(url, options) {
  */
 function addPostMethod(fn) {
   fn.post = function(url, json, options = {}) {
-    return fetchJSON(url, {
+    return fn(url, {
       ...options,
       method: 'post',
       body: JSON.stringify(json),
