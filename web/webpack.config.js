@@ -2,12 +2,17 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const moment = require('moment');
 
 const prod = process.env.NODE_ENV === 'production';
 
 const plugins = [
   new webpack.DefinePlugin({
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    '__BUILD': JSON.stringify({
+      'version': require('./package.json').version,
+      'timestamp': moment().format('ddd Do MMM YYYY HH:mm:ss ZZ'),
+    }),
   }),
   new webpack.ProvidePlugin({
     $: 'jquery',
@@ -20,7 +25,7 @@ if (prod) {
 }
 
 module.exports = {
-  entry: ['bootstrap-loader', './browser/app.jsx'],
+  entry: ['./styles/style.scss', './browser/app.jsx'],
   module: {
     loaders: [
       {

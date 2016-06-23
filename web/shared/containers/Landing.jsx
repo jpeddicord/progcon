@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import { fetchContests } from '../modules/contests';
 
 class Landing extends React.Component {
@@ -17,15 +17,37 @@ class Landing extends React.Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+
+  }
+
+  redirectSingle = () => {
+    const { contests } = this.props;
+    if (contests.length === 1) {
+      browserHistory.replace(`/contests/${contests[0].id}`);
+    }
+  };
+
   render() {
     const { contests } = this.props;
 
+    if (contests.length === 0) {
+      return (
+        <p>
+          There are currently no active contests. If you're waiting for one to start, sit tight! We're getting it ready.
+        </p>
+      );
+    }
+
     return (
-      <ul>
-        {contests.map((c, i) => (
-          <li key={i}><Link to={`/contests/${c.id}`}>{c.title}</Link></li>
-        ))}
-      </ul>
+      <div>
+        <p>Select a contest to participate in:</p>
+        <ul>
+          {contests.map((c, i) => (
+            <li key={i}><Link to={`/contests/${c.id}`}>{c.title}</Link></li>
+          ))}
+        </ul>
+      </div>
     );
   }
 

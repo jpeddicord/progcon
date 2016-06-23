@@ -1,0 +1,23 @@
+@import '~bootstrap/scss/bootstrap.scss';
+
+$footer-height: 60px;
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    // margin reserved for footer
+    margin-bottom: $footer-height * 2;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: $footer-height;
+    line-height: $footer-height;
+    overflow: hidden;
+    background-color: #eeeeee;
+}
