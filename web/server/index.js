@@ -1,13 +1,20 @@
 import 'babel-polyfill';
+import path from 'path';
 import Koa from 'koa';
-import bodyParser from 'koa-bodyparser';
+import koaBodyParser from 'koa-bodyparser';
+import koaCompress from 'koa-compress';
+import koaMount from 'koa-mount';
+import koaStatic from 'koa-static';
 import apiRoutes from './api';
 
 const app = new Koa();
 
-app.use(bodyParser());
+app.use(koaBodyParser());
+app.use(koaCompress());
 app.use(apiRoutes);
 
+// static stuff
+app.use(koaMount('/assets', koaStatic(path.join(__dirname, '../browser'))));
 app.use(async (ctx, next) => {
   ctx.body = `<!DOCTYPE html>
   <html>
@@ -25,4 +32,10 @@ app.use(async (ctx, next) => {
   </html>`;
 });
 
-app.listen(3000);
+export function start(port) {
+  app.listen(port);
+}
+
+if (require.main === module) {
+  start(3000);
+}

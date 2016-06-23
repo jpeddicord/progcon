@@ -1,4 +1,4 @@
-import 'isomorphic-fetch';
+import 'whatwg-fetch';
 import { clearToken, loadToken, injectTokenHeader } from './token';
 
 export async function fetchJSON(url, options = {}) {

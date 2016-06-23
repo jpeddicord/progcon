@@ -13,7 +13,7 @@ if (process.env.NODE_ENV == null) {
   process.env.NODE_ENV = 'development';
 }
 
-gulp.task('build-server', ['build-shared'], () => {
+gulp.task('build-server', () => {
   return gulp.src('server/**/*.js?(x)')
     .pipe(plumber())
     .pipe(babel())
@@ -26,13 +26,6 @@ gulp.task('build-browser', () => {
     .pipe(gulp.dest('build/browser'));
 });
 
-gulp.task('build-shared', () => {
-  return gulp.src('shared/**/*.js?(x)')
-    .pipe(plumber())
-    .pipe(babel())
-    .pipe(gulp.dest('build/shared'));
-});
-
 let node;
 gulp.task('dev-server', ['build-server'], () => {
   if (node) {
@@ -42,7 +35,7 @@ gulp.task('dev-server', ['build-server'], () => {
 });
 
 gulp.task('dev', ['dev-server'], () => {
-  gulp.watch(['server/**/*.js?(x)', 'shared/**/*.js?(x)'], {debounceDelay: 500}, ['dev-server']);
+  gulp.watch(['server/**/*.js?(x)'], {debounceDelay: 500}, ['dev-server']);
 
   const compiler = webpack(require('./webpack.config.js'));
   new WebpackDevServer(compiler, {

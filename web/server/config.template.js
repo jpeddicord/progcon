@@ -16,8 +16,8 @@ const config = {
   },
 };
 
-export async function load() {
-  return;
+export function load() {
+  return new Promise();
 }
 
 export default config;
