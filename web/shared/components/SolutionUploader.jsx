@@ -57,8 +57,7 @@ export default class SolutionUploader extends React.Component {
   };
 
   render() {
-    // TODO: this is a bit ugly
-    const colorClass = this.state.ready ? 'card-info card-inverse' : 'card-info';
+    const colorClass = this.state.ready ? 'card-info' : '';
     return (
       <div className={`card card-block ${colorClass}`}
         onDragEnter={e => { e.stopPropagation(); e.preventDefault(); }}
