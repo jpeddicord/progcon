@@ -65,7 +65,7 @@ export default class SolutionUploader extends React.Component {
         onDrop={this.handleDrop}>
 
           <p className="card-text">
-            {this.state.selected != null ? this.state.selected : 'Drag & drop a file here or pick one manually'}
+            {this.state.selected != null ? this.state.selected : 'Pick a file or drag and drop here'}
           </p>
           <input type="file" style={{display: 'none'}} name="picker" onChange={this.handlePicker} ref={ref => this.pickerRef = ref} />
           <button className="btn btn-link" type="button" onClick={e => this.pickerRef.click()}>Pick File</button>

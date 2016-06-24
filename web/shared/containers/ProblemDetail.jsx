@@ -1,3 +1,4 @@
+/* eslint-disable react/no-danger */
 import React from 'react';
 import { connect } from 'react-redux';
 import SolutionUploader from '../components/SolutionUploader';
@@ -18,6 +19,22 @@ class ProblemDetail extends React.Component {
     }
   }
 
+  downloadStub = e => {
+    const { problems, params: { problem_name } } = this.props;
+    const problem = problems[problem_name];
+    const encoded = encodeURIComponent(problem.stub);
+    const uri = `data:text/plain;charset=utf-8,${encoded}`;
+
+    // make a fake link and "click" it
+    const ele = document.createElement('a');
+    ele.setAttribute('download', problem.stubName);
+    ele.setAttribute('href', uri);
+    ele.style.display = 'none';
+    document.body.appendChild(ele);
+    ele.click();
+    document.body.removeChild(ele);
+  };
+
   submitAnswer = content => {
     const { dispatch, params: { contest_id, problem_name } } = this.props;
 
@@ -31,10 +48,34 @@ class ProblemDetail extends React.Component {
       return (<div>...</div>);
     }
 
+    // description is HTML loaded from file, it's safe
+    const description = {__html: problem.description};
+
     return (
       <div>
-        Status: {problem.status}<br/>
-        <SolutionUploader onSubmit={this.submitAnswer} />
+        <div className="row">
+          <div className="col-sm-7">
+            Status: {problem.status}
+          </div>
+          <div className="col-sm-5">
+            <SolutionUploader onSubmit={this.submitAnswer} />
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-sm-12">
+            <p>
+              Implement your solution starting with this template:{' '}
+              <button className="btn btn-primary" onClick={this.downloadStub}>
+                Download Stub
+              </button>
+            </p>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-sm-12" dangerouslySetInnerHTML={description} />
+        </div>
       </div>
     );
   }
