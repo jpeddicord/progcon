@@ -2,6 +2,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import SolutionUploader from '../components/SolutionUploader';
+import SubmissionStatus from '../components/SubmissionStatus';
 import { fetchProblem, submitAnswer } from '../modules/problems';
 
 class ProblemDetail extends React.Component {
@@ -9,6 +10,7 @@ class ProblemDetail extends React.Component {
     dispatch: React.PropTypes.func.isRequired,
     params: React.PropTypes.object.isRequired,
     problems: React.PropTypes.object.isRequired,
+    contest: React.PropTypes.object.isRequired,
   };
 
   componentDidMount() {
@@ -27,7 +29,7 @@ class ProblemDetail extends React.Component {
 
     // make a fake link and "click" it
     const ele = document.createElement('a');
-    ele.setAttribute('download', problem.stubName);
+    ele.setAttribute('download', problem.stub_name);
     ele.setAttribute('href', uri);
     ele.style.display = 'none';
     document.body.appendChild(ele);
@@ -42,7 +44,7 @@ class ProblemDetail extends React.Component {
   };
 
   render() {
-    const { problems, params: { problem_name } } = this.props;
+    const { problems, contest, params: { problem_name } } = this.props;
     const problem = problems[problem_name];
     if (problem == null) {
       return (<div>...</div>);
@@ -55,7 +57,11 @@ class ProblemDetail extends React.Component {
       <div>
         <div className="row">
           <div className="col-sm-7">
-            Status: {problem.status}
+            <SubmissionStatus
+              result={problem.result}
+              submissionTime={problem.submission_time}
+              timeScore={problem.time_score}
+            />
           </div>
           <div className="col-sm-5">
             <SolutionUploader onSubmit={this.submitAnswer} />
@@ -85,5 +91,6 @@ class ProblemDetail extends React.Component {
 export default connect(state => {
   return {
     problems: state.problems.map,
+    contest: state.contests.active,
   };
 })(ProblemDetail);

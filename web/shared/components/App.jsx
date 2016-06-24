@@ -31,8 +31,7 @@ export default class App extends React.Component {
 
         <div className="container">
           <div className="row">
-            <div className="col-md-1"></div>
-            <div className="col-md-10">
+            <div className="col-md-12">
               {this.props.children}
             </div>
           </div>
@@ -41,8 +40,7 @@ export default class App extends React.Component {
         <footer className="footer">
           <div className="container">
             <div className="row">
-              <div className="col-md-1"></div>
-              <div className="col-md-10">
+              <div className="col-md-12">
                 <small className="text-muted">
                   brought to you by <a href="https://github.com/jpeddicord/progcon">progcon v{__BUILD.version}</a> built on {__BUILD.timestamp}
                 </small>

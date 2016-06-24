@@ -34,7 +34,7 @@ async function loadProblem(name, dir) {
     name,
     description: null,
     stub: null,
-    stubName: null,
+    stub_name: null,
   };
 
   // load the problem description for the website
@@ -48,7 +48,7 @@ async function loadProblem(name, dir) {
     const stubPath = path.join(dir, info.stub);
     const buf = await fs.readFile(stubPath);
     meta.stub = buf.toString();
-    meta.stubName = info.stub;
+    meta.stub_name = info.stub;
   }
 
   winston.verbose(`Adding problem ${name}`);

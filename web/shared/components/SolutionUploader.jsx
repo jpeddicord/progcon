@@ -69,7 +69,7 @@ export default class SolutionUploader extends React.Component {
           </p>
           <input type="file" style={{display: 'none'}} name="picker" onChange={this.handlePicker} ref={ref => this.pickerRef = ref} />
           <button className="btn btn-link" type="button" onClick={e => this.pickerRef.click()}>Pick File</button>
-          <button className="btn btn-warning" type="button" onClick={this.handleSubmit} disabled={!this.state.ready}>Lock &amp; Submit</button>
+          <button className="btn btn-warning" type="button" onClick={this.handleSubmit} disabled={!this.state.ready}>Submit</button>
 
       </div>
     );

@@ -1,6 +1,7 @@
 import Router from 'koa-router';
 import { tryAuth, issueUserToken, generateUserPassword, jwtMiddleware, rateLimiter, adminOnly, contestAccess } from './auth';
 import * as dbContests from '../db/contests';
+import * as dbSubmissions from '../db/submissions';
 import * as dbUsers from '../db/users';
 import { submitAnswer } from '../bot/tester';
 import { getProblem } from '../problems';
@@ -89,14 +90,35 @@ routes.post('/contests/:contest_id', adminOnly, async (ctx, next) => {
 });
 
 
-routes.get('/contests/:contest_id/problems/:problem_name', contestAccess, (ctx, next) => {
+routes.get('/contests/:contest_id/problems/:problem_name', contestAccess, async (ctx, next) => {
   // TODO: get problem details & submission status (good/bad/pending/etc)
+  // TODO: ensure problem exists, is in contest, etc
   const problem = getProblem(ctx.params.problem_name);
-  ctx.body = {...problem, status: 'unsolved'};
+
+  const submission = await dbSubmissions.getLatestSubmission(9999 /*ctx.state.user.id*/, problem.name);
+  if (submission == null) {
+    ctx.body = problem;
+    return;
+  }
+
+  // do NOT directly respond with submission.meta, it has solution diffs!
+  ctx.body = {
+    ...problem,
+    submission_time: submission.submission_time,
+    time_score: submission.time_score,
+    result: submission.result,
+  };
+
+  if (submission.meta != null) {
+    submission.meta.diff = null; // paranoid
+    ctx.body.test_pass = submission.meta.pass;
+    ctx.body.test_fail = submission.meta.fail;
+  }
 });
 
 routes.post('/contests/:contest_id/problems/:problem', contestAccess, (ctx, next) => {
   // TODO: some data validation; ensure problem exists in contest, user validation, etc
+  // TODO: ensure the contest isn't over
   submitAnswer(9999, ctx.params.contest_id, ctx.params.problem, ctx.request.body.answer);
 
   ctx.body = {status: 'submitted'};
