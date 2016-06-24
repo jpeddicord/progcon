@@ -6,18 +6,23 @@ const config = {
     password: '',
   },
   jwt: {
+    // set this to a random string
     secret: '',
   },
   admin: {
     password: '',
   },
+  problems: {
+    paths: [
+      '../../sample-problems',
+    ],
   bot: {
     ipcCommands: 'tcp://localhost:12345',
   },
 };
 
 export function load() {
-  return new Promise();
+  return Promise.resolve();
 }
 
 export default config;

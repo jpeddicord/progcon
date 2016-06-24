@@ -3,6 +3,7 @@ import { tryAuth, issueUserToken, generateUserPassword, jwtMiddleware, rateLimit
 import * as dbContests from '../db/contests';
 import * as dbUsers from '../db/users';
 import { submitAnswer } from '../bot/tester';
+import { getProblem } from '../problems';
 import { AuthError } from '../util/errors';
 
 const routes = new Router({prefix: '/api'});
@@ -90,7 +91,8 @@ routes.post('/contests/:contest_id', adminOnly, async (ctx, next) => {
 
 routes.get('/contests/:contest_id/problems/:problem_name', contestAccess, (ctx, next) => {
   // TODO: get problem details & submission status (good/bad/pending/etc)
-  ctx.body = {name: ctx.params.problem_name, status: 'unsolved'};
+  const problem = getProblem(ctx.params.problem_name);
+  ctx.body = {...problem, status: 'unsolved'};
 });
 
 routes.post('/contests/:contest_id/problems/:problem', contestAccess, (ctx, next) => {

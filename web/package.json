@@ -24,7 +24,10 @@
     "koa-router": "^7.0.1",
     "koa-static": "^3.0.0",
     "moment": "^2.13.0",
-    "nanomsg": "^3.1.2"
+    "mz": "^2.4.0",
+    "nanomsg": "^3.1.2",
+    "toml": "^2.3.0",
+    "winston": "^2.2.0"
   },
   "devDependencies": {
     "babel-core": "^6.7.6",

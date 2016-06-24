@@ -5,7 +5,12 @@ import koaBodyParser from 'koa-bodyparser';
 import koaCompress from 'koa-compress';
 import koaMount from 'koa-mount';
 import koaStatic from 'koa-static';
+import winston from 'winston';
 import apiRoutes from './api';
+import { load } from './config';
+import { mapProblems } from './problems';
+
+winston.level = 'debug';
 
 const app = new Koa();
 
@@ -15,7 +20,7 @@ app.use(apiRoutes);
 
 // static stuff
 app.use(koaMount('/assets', koaStatic(path.join(__dirname, '../browser'))));
-app.use(async (ctx, next) => {
+app.use((ctx, next) => {
   ctx.body = `<!DOCTYPE html>
   <html>
     <head>
@@ -33,7 +38,18 @@ app.use(async (ctx, next) => {
 });
 
 export function start(port) {
-  app.listen(port);
+  winston.info('Loading configuration');
+  load()
+    .then(() => {
+      return mapProblems();
+    })
+    .then(() => {
+      winston.info('Server ready.');
+      app.listen(port);
+    })
+    .catch(err => {
+      console.error(err);
+    });
 }
 
 if (require.main === module) {
