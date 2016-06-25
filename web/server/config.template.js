@@ -16,9 +16,16 @@ const config = {
     paths: [
       '../../sample-problems',
     ],
-  bot: {
-    ipcCommands: 'tcp://localhost:12345',
   },
+  bots: [
+    // load-balanced between the list of configs here
+    {
+      ipc: 'tcp://localhost:12345',
+      logLevel: 'info',
+      logFile: '/tmp/progcon-bot.log',
+    },
+    // add more
+  ],
 };
 
 export function load() {

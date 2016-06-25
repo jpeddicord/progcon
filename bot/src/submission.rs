@@ -1,3 +1,4 @@
+use std::error::Error;
 use std::path::Path;
 use rustc_serialize::json;
 use testers::new_tester;
@@ -12,13 +13,16 @@ pub struct Submission {
 }
 
 impl Submission {
-    pub fn parse(encoded: String) -> Submission {
-        json::decode(&encoded).unwrap() // XXX unwrap
+    pub fn parse(encoded: &str) -> Result<Submission, Box<Error>> {
+        match json::decode(encoded) {
+            Ok(sub) => Ok(sub),
+            Err(e) => Err(Box::new(e)),
+        }
     }
 
     pub fn get_tester(&self, workdir: &Path) -> Option<Box<Tester>> {
-        // TODO: support multiple languages in the future
-        new_tester(self.problem.as_ref(), "java", &workdir)
+        // REVIEW: support multiple languages in the future
+        new_tester(self.problem.as_ref(), "java", workdir)
     }
 
     pub fn get_id(&self) -> u32 {

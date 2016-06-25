@@ -8,7 +8,6 @@ mod util;
 use std::env;
 use std::error::Error;
 use std::os::unix::fs::MetadataExt;
-use std::os::unix::process::CommandExt;
 use std::path::Path;
 use std::process::{Command, exit};
 use std::ptr::null;
@@ -95,7 +94,7 @@ fn pick_uid() -> Result<Lock, Box<Error>> {
     Lock::new(path, uid)
 }
 
-fn su_exec(workdir: &Path, uid: u32, timeout: u8, command: String, args: &Vec<String>) -> Result<Option<i32>, Box<Error>> {
+fn su_exec(workdir: &Path, uid: u32, timeout: u8, command: String, args: &[String]) -> Result<Option<i32>, Box<Error>> {
     // claim our working directory
     // Drop will delete the directory
     let _owned = OwnedDir::new(workdir, uid);
@@ -126,14 +125,14 @@ fn su_exec(workdir: &Path, uid: u32, timeout: u8, command: String, args: &Vec<St
     match run.wait_timeout(Duration::new(timeout as u64, 0)).unwrap() {
         // exited on-time; pass the result up
         Some(status) => {
-            return Ok(status.code());
+            Ok(status.code())
         },
         // did not exit on time, so kill the process group
         None => {
             unsafe {
-                kill(-1 * pid, 9);
+                kill(-pid, 9);
             }
-            return Ok(None);
+            Ok(None)
         },
     }
 }

@@ -12,6 +12,10 @@ export default class Broker {
     this.socket.on('data', this._recv);
   }
 
+  get size() {
+    return this._queue.length;
+  }
+
   /**
    * Queue up a message to send over the socket.
    *

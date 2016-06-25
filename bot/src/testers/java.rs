@@ -1,10 +1,9 @@
 use std::error::Error;
 use std::fs::File;
 use std::io::Write;
-use std::os::unix::process::ExitStatusExt;
 use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
-use problems::{Problem};
+use std::process::Command;
+use problems::Problem;
 use response::SubmissionResult;
 use testers::base::Tester;
 
@@ -23,9 +22,6 @@ impl JavaTester {
 }
 
 impl Tester for JavaTester {
-    // TODO: return logs
-    // TODO: compile errors should not be an Err here; return it as a successful
-    // result. perhaps a nested result, or a different enum entirely
     fn build(&mut self, input: String, problem: &Problem) -> Result<SubmissionResult, Box<Error>> {
         let filename = format!("{}.java", self.problem);
         let target = self.workdir.as_path().join(&filename);
@@ -52,35 +48,34 @@ impl Tester for JavaTester {
         Ok(SubmissionResult::Successful)
     }
 
-    // TODO: return test diffs
+    #[allow(unused_variables)] // REVIEW: testdata is unused due to structure of java grader
     fn test(&mut self, testdata: String) -> Result<SubmissionResult, Box<Error>> {
         debug!("Launching testing script");
         let out = try!(Command::new("contest-exec")
                                .arg(self.workdir.as_os_str())
                                .arg("5")
-                               // TODO: once https://github.com/rust-lang/rust/issues/31398
+                               // REVIEW: once https://github.com/rust-lang/rust/issues/31398
                                // is implemented, use that replacement inside contest-exec
                                .arg("/usr/bin/setsid")
                                .arg("/bin/sh").arg("test.sh")
                                .output());
+
         let stdout = String::from_utf8_lossy(&out.stdout);
         let stderr = String::from_utf8_lossy(&out.stderr);
         trace!("stderr:\n{}", stderr);
         trace!("stdout:\n{}", stdout);
+
         if !out.status.success() {
             warn!("Exited unsuccessfully");
-            match out.status.code() {
-                Some(222) => {
-                    warn!("Killed (timeout)");
-                    return Ok(SubmissionResult::Timeout);
-                },
-                _ => {},
+            if let Some(222) = out.status.code() {
+                warn!("Killed (timeout)");
+                return Ok(SubmissionResult::Timeout);
             }
             return Ok(SubmissionResult::Crashed);
         }
-        debug!("Execution finished; checking diff output");
 
         // scan stdout for pass/fail messages
+        debug!("Execution finished; checking diff output");
         let mut pass = 0;
         let mut fail = 0;
         for line in stdout.split('\n') {

@@ -33,25 +33,22 @@ impl ProblemLibrary {
     }
 
     pub fn load_problem(&mut self, path: &Path) -> Result<(), Box<Error>> {
-        let name = path.file_name().unwrap().to_str().unwrap(); // XXX oh god
+        let name = path.file_name().unwrap().to_str().unwrap();
+        info!("Loading problem {}", name);
 
         // load up the problem spec
         let mut f = try!(File::open(path.join("problem.toml")));
         let mut s = String::new();
         try!(f.read_to_string(&mut s));
-        let val = toml::Parser::new(&s).parse().unwrap(); // XXX unwrap
+        // REVIEW: this is still unused, but should be in the future
+        let _val = toml::Parser::new(&s).parse().expect("parsing error");
 
         // build a problem struct
-        info!("Loading problem {}", name);
-        let problem = Box::new(Problem::new(name.to_string(), &path));
+        let problem = Box::new(Problem::new(name.to_string(), path));
 
         // put it in the library
         self.problems.insert(name.to_string(), problem);
         Ok(())
-    }
-
-    pub fn get_problem(&self, name: String) -> Option<&Box<Problem>> {
-        self.problems.get(&name)
     }
 
     pub fn get_problem_from_submission(&self, sub: &Submission) -> Option<&Box<Problem>> {
@@ -60,7 +57,8 @@ impl ProblemLibrary {
 }
 
 pub struct Problem {
-    name: String,
+    #[allow(dead_code)]
+    name: String, // REVIEW: TBD; should be used by tester but isn't
     path: PathBuf,
     tests: Vec<String>,
 }
@@ -72,7 +70,7 @@ impl Problem {
             path: path.to_path_buf(),
             tests: vec![],
         };
-        p.scan_tests().unwrap();
+        p.scan_tests().expect("problem scanning tests");
         p
     }
 
@@ -88,7 +86,7 @@ impl Problem {
             // only look for .in files; we'll check for .out when loading
             if filename.ends_with(".in") {
                 let name = filename.trim_right_matches(".in");
-                self.load_test(&name);
+                self.load_test(name);
             }
         }
         Ok(())
@@ -104,7 +102,7 @@ impl Problem {
     }
 
     /// Copy files needed for a tester to run.
-    /// XXX: This is not currently language-agnostic.
+    /// REVIEW: This is not currently language-agnostic.
     pub fn copy_work_files(&self, workdir: &Path) -> Result<(), Box<Error>> {
         let src_runner = self.path.join("Runner.java");
         let dest_runner = workdir.join("Runner.java");
@@ -116,17 +114,19 @@ impl Problem {
         // get the environment ready
         let workdir = try!(set_up_workdir());
         try!(self.copy_work_files(&workdir));
-        let mut tester = sub.get_tester(&workdir).unwrap(); // XXX unwrap
+        let mut tester = match sub.get_tester(&workdir) {
+            Some(t) => t,
+            None => return Err(From::from("could not find tester for submission type")),
+        };
 
         // compile...
         let compile_result = try!(tester.build(sub.get_answer(), &self));
-        match compile_result {
-            SubmissionResult::BadCompile => return Ok(compile_result),
-            _ => (),
+        if let SubmissionResult::BadCompile = compile_result {
+            return Ok(compile_result);
         }
 
         // and test
-        let test_result = try!(tester.test(String::new())); // TODO: pass in tests here, not during build step
+        let test_result = try!(tester.test(String::new())); // REVIEW: pass in tests here, not during build step
 
         Ok(test_result)
     }

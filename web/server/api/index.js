@@ -97,7 +97,10 @@ routes.get('/contests/:contest_id/problems/:problem_name', contestAccess, async 
 
   const submission = await dbSubmissions.getLatestSubmission(9999 /*ctx.state.user.id*/, problem.name);
   if (submission == null) {
-    ctx.body = problem;
+    ctx.body = {
+      ...problem,
+      result: 'unsubmitted',
+    };
     return;
   }
 
@@ -106,7 +109,7 @@ routes.get('/contests/:contest_id/problems/:problem_name', contestAccess, async 
     ...problem,
     submission_time: submission.submission_time,
     time_score: submission.time_score,
-    result: submission.result,
+    result: submission.result ? submission.result : 'pending',
   };
 
   if (submission.meta != null) {

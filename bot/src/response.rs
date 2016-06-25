@@ -1,5 +1,5 @@
 use std::collections::BTreeMap;
-use rustc_serialize::Encodable;
+use std::error::Error;
 use rustc_serialize::json::{self, ToJson, Json};
 use submission::Submission;
 
@@ -18,7 +18,7 @@ impl ToJson for SubmissionResult {
         // this syntax doesn't feel right... but rustc complains without the prefixes
         let string = match *self {
             SubmissionResult::Successful => "successful",
-            SubmissionResult::FailedTests{pass: _, fail: _, diff: _} => "failed_tests",
+            SubmissionResult::FailedTests{..} => "failed_tests",
             SubmissionResult::BadCompile => "bad_compile",
             SubmissionResult::Crashed => "crashed",
             SubmissionResult::Timeout => "timeout",
@@ -59,7 +59,20 @@ impl Response {
         }
     }
 
-    pub fn encode(&self) -> String {
-        json::encode(&self).unwrap() // XXX unwrap
+    pub fn new_error(msg: String) -> Response {
+        Response {
+            id: 0,
+            user: 0,
+            problem: String::new(),
+            result: SubmissionResult::InternalError.to_json(),
+            meta: Json::String(msg),
+        }
+    }
+
+    pub fn encode(&self) -> Result<String, Box<Error>> {
+        match json::encode(&self) {
+            Ok(s) => Ok(s),
+            Err(e) => Err(Box::new(e)),
+        }
     }
 }

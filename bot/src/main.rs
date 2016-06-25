@@ -1,9 +1,3 @@
-#![allow(dead_code)]
-#![allow(unused_imports)]
-#![allow(unused_variables)]
-#![allow(unused_mut)]
-// TODO: drop the above dead code things and clean stuff up!
-
 extern crate env_logger;
 #[macro_use] extern crate log;
 extern crate nanomsg;
@@ -18,8 +12,8 @@ mod testers;
 
 use std::io::{Read, Write};
 use std::env::current_dir;
-use std::path::Path;
-use nanomsg::{Socket, Protocol, Error};
+use std::error::Error;
+use nanomsg::{Socket, Protocol};
 use problems::ProblemLibrary;
 use response::Response;
 use submission::Submission;
@@ -28,46 +22,58 @@ fn main() {
     env_logger::init().unwrap();
 
     let mut socket_commands = Socket::new(Protocol::Rep).unwrap();
-    let mut endpoint_commands = socket_commands.bind("ipc:///tmp/progcon-bot_commands.ipc").unwrap();
+    let mut _endpoint_commands = socket_commands.bind("ipc:///tmp/progcon-bot_commands.ipc").expect("couldn't bind to endpoint");
 
     let mut library = ProblemLibrary::new();
 
     // TODO: make this configurable
     let library_path = current_dir().unwrap().join("../sample-problems");
-    library.scan_dir(library_path.as_path()).unwrap();
+    library.scan_dir(library_path.as_path()).expect("error scanning directory");
 
     info!("Started up. Listening for commands.");
 
     loop {
         let mut msg = String::new();
-        socket_commands.read_to_string(&mut msg).unwrap(); // XXX unwrap
+        if let Err(e) = socket_commands.read_to_string(&mut msg) {
+            error!("Socket read error: {}", e);
+            continue;
+        }
 
-        // read in the submission
-        let sub = Submission::parse(msg);
-        trace!("{:?}", sub);
+        let resp = match handle_message(&msg, &library) {
+            Ok(s) => s,
+            Err(e) => Response::new_error(e.description().to_string()).encode().unwrap(),
+        };
 
-        // load the problem
-        let problem = library.get_problem_from_submission(&sub);
-        match problem {
-            Some(p) => {
-                // grade it
-                let result = p.test_submission(&sub);
-                if !result.is_ok() {
-                    let msg = format!("internal error: {}", result.unwrap_err());
-                    error!("bug: {}", msg);
-                    socket_commands.write_all(msg.as_bytes()).unwrap(); // XXX unwrap
-                    continue
-                }
-
-                let resp = Response::new(&sub, result.unwrap());
-                socket_commands.write_all(resp.encode().as_bytes()).unwrap(); // XXX unwrap
-                continue;
-            },
-            None => {
-                socket_commands.write_all(b"invalid problem").unwrap(); // XXX unwrap
-                continue;
-            },
+        if let Err(e) = socket_commands.write_all(resp.as_bytes()) {
+            error!("Socket write error: {}", e);
+            continue;
         }
     }
+}
 
+fn handle_message(msg: &str, library: &ProblemLibrary) -> Result<String, Box<Error>> {
+    // read in the submission
+    let sub = try!(Submission::parse(msg));
+    trace!("{:?}", sub);
+
+    // load the problem
+    let problem = library.get_problem_from_submission(&sub);
+    match problem {
+        Some(p) => {
+            // grade it
+            let result = p.test_submission(&sub);
+            if !result.is_ok() {
+                let msg = result.unwrap_err();
+                error!("bug: {}", msg);
+                return Err(msg);
+            }
+
+            let resp = Response::new(&sub, result.unwrap());
+            let encoded = try!(resp.encode());
+            Ok(encoded)
+        },
+        None => {
+            Err(From::from("invalid problem"))
+        },
+    }
 }
