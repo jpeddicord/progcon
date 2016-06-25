@@ -11,8 +11,9 @@ mod submission;
 mod testers;
 
 use std::io::{Read, Write};
-use std::env::current_dir;
+use std::env::{self, current_dir};
 use std::error::Error;
+use std::process::exit;
 use nanomsg::{Socket, Protocol};
 use problems::ProblemLibrary;
 use response::Response;
@@ -21,14 +22,25 @@ use submission::Submission;
 fn main() {
     env_logger::init().unwrap();
 
+    let mut args: Vec<String> = env::args().collect();
+    if args.len() < 3 {
+        println!("usage: progcon-bot socket_path problem_dir [problem_dir...]");
+        exit(1);
+    }
+    let socket_path = args[1].clone();
+    let problem_dirs = args.split_off(2);
+
     let mut socket_commands = Socket::new(Protocol::Rep).unwrap();
-    let mut _endpoint_commands = socket_commands.bind("ipc:///tmp/progcon-bot_commands.ipc").expect("couldn't bind to endpoint");
+    let mut _endpoint_commands = socket_commands.bind(&socket_path).expect("couldn't bind to endpoint");
 
     let mut library = ProblemLibrary::new();
 
-    // TODO: make this configurable
-    let library_path = current_dir().unwrap().join("../sample-problems");
-    library.scan_dir(library_path.as_path()).expect("error scanning directory");
+    // scan all given directories for problems
+    for dir in problem_dirs {
+        info!("Scanning {}", dir);
+        let library_path = current_dir().unwrap().join(dir);
+        library.scan_dir(library_path.as_path()).expect("error scanning directory");
+    }
 
     info!("Started up. Listening for commands.");
 

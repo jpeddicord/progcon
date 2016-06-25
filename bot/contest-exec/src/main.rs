@@ -30,7 +30,7 @@ fn real_main() -> i32 {
     let mut args: Vec<String> = env::args().collect();
     if args.len() < 4 {
         println!("usage: contest-exec {}workingdir timeout_secs command", PREFIX);
-        exit(1);
+        return 1;
     }
     let workdir = args[1].clone();
     let timeout = args[2].clone().parse::<u8>().unwrap();
