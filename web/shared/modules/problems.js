@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { fetchJSONAuth } from '../util/fetch';
 
 const RECEIVE_PROBLEM = 'app/contests/receive-problem';
@@ -8,15 +9,21 @@ const initial = {
 
 export default function reducer(state = initial, action) {
   switch (action.type) {
-  case RECEIVE_PROBLEM:
-    return Object.assign({}, state, {
-      map: {
-        ...state.map,
-        [action.problem.name]: action.problem,
-      },
-    });
-  default:
-    return state;
+    case RECEIVE_PROBLEM:
+      return Object.assign({}, state, {
+        map: {
+          ...state.map,
+          [action.problem.name]: {
+            ...action.problem,
+            submission: action.problem.submission == null ? null : {
+              ...action.problem.submission,
+              submission_time: moment(action.problem.submission.submission_time),
+            },
+          },
+        },
+      });
+    default:
+      return state;
   }
 }
 
@@ -36,7 +43,7 @@ export function fetchProblem(contestId, name) {
 
 export function submitAnswer(contestId, name, answer) {
   return async dispatch => {
-    const json = await fetchJSONAuth.post(`/api/contests/${contestId}/problems/${name}`, {answer});
-    //.then(json => dispatch(receiveProblem(json)));
+    await fetchJSONAuth.post(`/api/contests/${contestId}/problems/${name}`, {answer});
+    dispatch(fetchProblem(contestId, name));
   };
 }

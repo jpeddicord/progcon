@@ -11,6 +11,14 @@ export function getLatestSubmission(user, problem) {
   );
 }
 
+export async function getProblemPenalties(user, problem) {
+  const penalties = await db.any(
+    'select time_score from submissions where user_id = $1 and problem = $2 and result != $3 and result is not null',
+    [user, problem, 'successful'],
+  );
+  return penalties.map(p => p.time_score);
+}
+
 export async function createSubmission(user, contest, problem) {
   const sub = await db.one(
     'insert into submissions(user_id, contest_id, problem) values($1, $2, $3) returning id, submission_time',

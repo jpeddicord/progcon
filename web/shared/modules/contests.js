@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { browserHistory } from 'react-router';
 import { fetchJSON, fetchJSONAuth } from '../util/fetch';
 import { saveToken } from '../util/token';
@@ -12,19 +13,21 @@ const initial = {
 
 export default function reducer(state = initial, action) {
   switch (action.type) {
-  case RECEIVE_CONTESTS:
-    return Object.assign({}, state, {
-      list: action.contests,
-    });
-  case RECEIVE_CONTEST_DETAIL:
-    return Object.assign({}, state, {
-      active: {
-        ...state.active,
-        ...action.data,
-      },
-    });
-  default:
-    return state;
+    case RECEIVE_CONTESTS:
+      return Object.assign({}, state, {
+        list: action.contests,
+      });
+    case RECEIVE_CONTEST_DETAIL:
+      return Object.assign({}, state, {
+        active: {
+          ...state.active,
+          ...action.data,
+          start_time: moment(action.data.start_time),
+          end_time: moment(action.data.end_time),
+        },
+      });
+    default:
+      return state;
   }
 }
 

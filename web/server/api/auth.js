@@ -10,6 +10,7 @@ export async function tryAuth(user, pass) {
   if (user === 'admin' && pass === config.admin.password) {
     // auth as administrator
     return sign({
+      id: -1,
       admin: true,
     }, config.jwt.secret, {
       expiresIn: '1 day',

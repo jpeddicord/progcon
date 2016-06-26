@@ -91,36 +91,37 @@ routes.post('/contests/:contest_id', adminOnly, async (ctx, next) => {
 
 
 routes.get('/contests/:contest_id/problems/:problem_name', contestAccess, async (ctx, next) => {
-  // TODO: get problem details & submission status (good/bad/pending/etc)
   // TODO: ensure problem exists, is in contest, etc
   const problem = getProblem(ctx.params.problem_name);
 
-  const submission = await dbSubmissions.getLatestSubmission(9999 /*ctx.state.user.id*/, problem.name);
+  const submission = await dbSubmissions.getLatestSubmission(9999 /* XXX ctx.state.user.id*/, problem.name);
   if (submission == null) {
-    ctx.body = {
-      ...problem,
-      result: 'unsubmitted',
-    };
+    ctx.body = problem;
     return;
   }
 
+  const penalties = await dbSubmissions.getProblemPenalties(9999 /* XXX */, problem.name);
+
   // do NOT directly respond with submission.meta, it has solution diffs!
-  ctx.body = {
-    ...problem,
+  ctx.body = problem;
+  ctx.body.submission = {
+    result: submission.result,
     submission_time: submission.submission_time,
     time_score: submission.time_score,
-    result: submission.result ? submission.result : 'pending',
+    penalties: penalties,
+    total_time_score: submission.time_score + penalties.reduce((sum, x) => sum + x, 0),
   };
 
   if (submission.meta != null) {
     submission.meta.diff = null; // paranoid
-    ctx.body.test_pass = submission.meta.pass;
-    ctx.body.test_fail = submission.meta.fail;
+    ctx.body.submission.test_pass = submission.meta.pass;
+    ctx.body.submission.test_fail = submission.meta.fail;
   }
 });
 
 routes.post('/contests/:contest_id/problems/:problem', contestAccess, (ctx, next) => {
   // TODO: some data validation; ensure problem exists in contest, user validation, etc
+  // TODO: ensure a successful answer wasn't already submitted
   // TODO: ensure the contest isn't over
   submitAnswer(9999, ctx.params.contest_id, ctx.params.problem, ctx.request.body.answer);
 

@@ -1,5 +1,6 @@
 /* global __BUILD */
 import React from 'react';
+import StatusNav from '../containers/StatusNav';
 
 export default class App extends React.Component {
   static propTypes = {
@@ -9,23 +10,7 @@ export default class App extends React.Component {
   render() {
     return (
       <div>
-        <nav className="navbar navbar-full navbar-dark bg-inverse">
-          <a className="navbar-brand" href="/">the programming contest</a>
-          <ul className="nav navbar-nav">
-            <li className="nav-item active">
-              <a className="nav-link" href="#">Problems</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#">Leaderboard</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#">Rules</a>
-            </li>
-          </ul>
-          <div className="form-inline pull-xs-right">
-            00:00
-          </div>
-        </nav>
+        <StatusNav />
 
         <br/>
 

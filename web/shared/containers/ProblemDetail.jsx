@@ -56,23 +56,22 @@ class ProblemDetail extends React.Component {
     return (
       <div>
         <div className="row">
-          <div className="col-sm-7">
+          <div className="col-md-7">
             <SubmissionStatus
-              result={problem.result}
-              submissionTime={problem.submission_time}
-              timeScore={problem.time_score}
+              submission={problem.submission}
+              contestStartTime={contest.start_time}
             />
           </div>
-          <div className="col-sm-5">
+          <div className="col-md-5">
             <SolutionUploader onSubmit={this.submitAnswer} />
           </div>
         </div>
 
         <div className="row">
-          <div className="col-sm-12">
+          <div className="col-md-12">
             <p>
               Implement your solution starting with this template:{' '}
-              <button className="btn btn-primary" onClick={this.downloadStub}>
+              <button className="btn btn-link" onClick={this.downloadStub}>
                 Download Stub
               </button>
             </p>
@@ -80,7 +79,7 @@ class ProblemDetail extends React.Component {
         </div>
 
         <div className="row">
-          <div className="col-sm-12" dangerouslySetInnerHTML={description} />
+          <div className="col-md-12" dangerouslySetInnerHTML={description} />
         </div>
       </div>
     );
