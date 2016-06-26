@@ -7,7 +7,7 @@ import ProblemDetail from './containers/ProblemDetail';
 import RegistrationForm from './containers/RegistrationForm';
 import AuthForm from './components/AuthForm';
 import AdminView from './containers/AdminView';
-import ContestEditor from './containers/ContestEditor';
+import ContestDashboard from './containers/ContestDashboard';
 
 export default (
   <Route path="/" component={App}>
@@ -18,6 +18,6 @@ export default (
     <Route path="contests/:contest_id/register" component={RegistrationForm} />
     <Route path="auth" component={AuthForm} />
     <Route path="admin" component={AdminView} />
-    <Route path="admin/contests/:contest_id" component={ContestEditor} />
+    <Route path="admin/contests/:contest_id" component={ContestDashboard} />
   </Route>
 );

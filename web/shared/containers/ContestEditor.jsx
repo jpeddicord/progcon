@@ -1,20 +1,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { fetchContestDetail, updateContest } from '../modules/contests';
+import SafetyBox from '../components/SafetyBox';
+import { updateContest } from '../modules/contests';
 
 class ContestEditor extends React.Component {
   static propTypes = {
-    children: React.PropTypes.element,
     dispatch: React.PropTypes.func.isRequired,
-    params: React.PropTypes.object.isRequired,
     active: React.PropTypes.object,
   };
 
-  componentDidMount() {
-    const { dispatch, active, params: { contest_id } } = this.props;
-    if (active == null || active.id !== parseInt(contest_id)) {
-      dispatch(fetchContestDetail(contest_id));
+  static formatTimestamp(stamp) {
+    if (stamp == null || !stamp.isValid()) {
+      return '';
     }
+
+    return stamp.format('YYYY-MM-DD HH:mm:ss Z');
   }
 
   saveContest = e => {
@@ -40,24 +40,24 @@ class ContestEditor extends React.Component {
   };
 
   render() {
-    const { active, params: { contest_id } } = this.props;
-
-    if (active == null || active.id !== parseInt(contest_id)) {
-      return <div/>;
-    }
-
+    const { active } = this.props;
     console.log(active);
 
+    const startTime = ContestEditor.formatTimestamp(active.start_time);
+    const endTime = ContestEditor.formatTimestamp(active.end_time);
+
     return (
-      <form onSubmit={this.saveContest}>
-        title: <input name="title" type="text" defaultValue={active.title} /><br/>
-        start time: <input name="start_time" type="datetime-local" defaultValue={active.start_time} /><br/>
-        end time: <input name="end_time" type="datetime-local" defaultValue={active.end_time} /><br/>
-        reg mode: <select disabled name="mode" defaultValue={active.mode}><option value="code">registration code</option></select><br/>
-        reg code: <input name="code" type="text" defaultValue={active.code} /><br/>
-        problems: <textarea name="problems" defaultValue={active.problems.join('\n')} /><br/>
-        <button type="submit">save</button>
-      </form>
+      <SafetyBox>
+        <form onSubmit={this.saveContest}>
+          title: <input name="title" type="text" defaultValue={active.title} /><br/>
+          start time: <input name="start_time" type="text" defaultValue={startTime} /><br/>
+          end time: <input name="end_time" type="text" defaultValue={endTime} /><br/>
+          reg mode: <select disabled name="mode" defaultValue={active.mode}><option value="code">registration code</option></select><br/>
+          reg code: <input name="code" type="text" defaultValue={active.code} /><br/>
+          problems: <textarea name="problems" defaultValue={active.problems.join('\n')} /><br/>
+          <button type="submit">save</button>
+        </form>
+      </SafetyBox>
     );
   }
 

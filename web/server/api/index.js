@@ -128,4 +128,21 @@ routes.post('/contests/:contest_id/problems/:problem', contestAccess, (ctx, next
   ctx.body = {status: 'submitted'};
 });
 
+routes.post('/contests/:contest_id/control', adminOnly, async (ctx, next) => {
+  const body = ctx.request.body;
+  const id = ctx.params.contest_id;
+  if (body.action === 'start') {
+    await dbContests.updateContestTimer(id, 'start_time');
+    ctx.body = {id};
+  } else if (body.action === 'end') {
+    await dbContests.updateContestTimer(id, 'end_time');
+    ctx.body = {id};
+  } else if (body.action === 'regrade') {
+    // TODO
+    ctx.status = 501;
+  } else {
+    ctx.status = 400;
+  }
+});
+
 export default routes.routes();

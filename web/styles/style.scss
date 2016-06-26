@@ -22,3 +22,24 @@ body {
     overflow: hidden;
     background-color: #eeeeee;
 }
+
+.caution-stripes {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    background: repeating-linear-gradient(
+        45deg,
+        $brand-warning,
+        $brand-warning 10px,
+        $brand-danger 10px,
+        $brand-danger 20px
+    );
+    cursor: pointer;
+    opacity: 0.1;
+}
+
+.caution-stripes:hover {
+    opacity: 0.3;
+}

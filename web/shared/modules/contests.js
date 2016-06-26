@@ -69,14 +69,22 @@ export function registerForContest(id, code, name) {
 
 export function createContest(title) {
   return async dispatch => {
-    await fetchJSONAuth.post('/api/contests/', {title});
+    const json = await fetchJSONAuth.post('/api/contests/', {title});
     dispatch(fetchContests());
+    browserHistory.push(`/admin/contests/${json.id}`);
   };
 }
 
 export function updateContest(id, values) {
   return async dispatch => {
-    const json = await fetchJSONAuth.post(`/api/contests/${id}`, values);
-    dispatch(receiveContestDetail(json));
+    await fetchJSONAuth.post(`/api/contests/${id}`, values);
+    dispatch(fetchContestDetail(id));
+  };
+}
+
+export function contestCommand(id, command) {
+  return async dispatch => {
+    await fetchJSONAuth.post(`/api/contests/${id}/control`, {action: command});
+    dispatch(fetchContestDetail(id));
   };
 }

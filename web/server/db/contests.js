@@ -31,3 +31,14 @@ export function updateContest(id, title, start_time, end_time, mode, code, probl
     [id, title, start_time, end_time, mode, code, problems],
   );
 }
+
+export function updateContestTimer(id, field) {
+  if (field !== 'end_time' && field !== 'start_time') {
+    throw new Error(`invalid field ${field}`);
+  }
+
+  return db.none(
+    'update contests set $2~ = now() where id = $1',
+    [id, field],
+  );
+}
