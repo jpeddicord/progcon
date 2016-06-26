@@ -50,11 +50,13 @@ fn main() {
             error!("Socket read error: {}", e);
             continue;
         }
+        trace!(">>> {}", msg);
 
         let resp = match handle_message(&msg, &library) {
             Ok(s) => s,
             Err(e) => Response::new_error(e.description().to_string()).encode().unwrap(),
         };
+        trace!("<<< {}", resp);
 
         if let Err(e) = socket_commands.write_all(resp.as_bytes()) {
             error!("Socket write error: {}", e);
@@ -66,7 +68,8 @@ fn main() {
 fn handle_message(msg: &str, library: &ProblemLibrary) -> Result<String, Box<Error>> {
     // read in the submission
     let sub = try!(Submission::parse(msg));
-    trace!("{:?}", sub);
+    info!("Running submission {} (user {}, problem {})",
+          sub.get_id(), sub.get_user(), sub.get_problem_name());
 
     // load the problem
     let problem = library.get_problem_from_submission(&sub);
@@ -81,10 +84,13 @@ fn handle_message(msg: &str, library: &ProblemLibrary) -> Result<String, Box<Err
             }
 
             let resp = Response::new(&sub, result.unwrap());
+            info!("Result: {}", resp.get_result_string());
+
             let encoded = try!(resp.encode());
             Ok(encoded)
         },
         None => {
+            warn!("Invalid problem");
             Err(From::from("invalid problem"))
         },
     }

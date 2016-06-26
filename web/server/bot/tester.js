@@ -1,17 +1,14 @@
 import moment from 'moment';
-import nanomsg from 'nanomsg';
-import Broker from './broker';
-import config from '../config';
+import { pickBroker } from './balancer';
 import * as dbContests from '../db/contests';
 import * as dbSubmissions from '../db/submissions';
-
-const socket = nanomsg.socket('req');
-socket.connect(config.bot.ipcCommands);
-const broker = new Broker(socket);
 
 export async function submitAnswer(userId, contestId, problem, answer) {
   // record the submission
   const sub = await dbSubmissions.createSubmission(userId, contestId, problem);
+
+  // find the least-loaded broker
+  const broker = pickBroker();
 
   // send it out for grading
   // (long-running operation, especially if there's a queue)

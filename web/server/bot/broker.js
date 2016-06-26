@@ -13,7 +13,7 @@ export default class Broker {
   }
 
   get size() {
-    return this._queue.length;
+    return this._queue.length + (this._active != null ? 1 : 0);
   }
 
   /**

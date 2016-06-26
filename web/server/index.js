@@ -7,6 +7,8 @@ import koaMount from 'koa-mount';
 import koaStatic from 'koa-static';
 import winston from 'winston';
 import apiRoutes from './api';
+import { initBalancer } from './bot/balancer';
+import { launchBots } from './bot/process';
 import { load } from './config';
 import { mapProblems } from './problems';
 
@@ -41,6 +43,13 @@ export function start(port) {
   winston.info('Loading configuration');
   load()
     .then(() => {
+      winston.info('Starting grading robots');
+      launchBots();
+
+      winston.info('Creating IPC brokers');
+      initBalancer();
+
+      winston.info('Loading & mapping problems');
       return mapProblems();
     })
     .then(() => {

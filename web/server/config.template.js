@@ -20,7 +20,7 @@ const config = {
   bots: [
     // load-balanced between the list of configs here
     {
-      ipc: 'tcp://localhost:12345',
+      socket: 'tcp://localhost:12345',
       logLevel: 'info',
       logFile: '/tmp/progcon-bot.log',
     },

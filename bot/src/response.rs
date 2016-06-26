@@ -75,4 +75,12 @@ impl Response {
             Err(e) => Err(Box::new(e)),
         }
     }
+
+    pub fn get_result_string(&self) -> String {
+        if let Json::String(ref s) = self.result {
+            s.clone()
+        } else {
+            "unknown".to_string()
+        }
+    }
 }
