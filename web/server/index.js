@@ -61,6 +61,10 @@ export function start(port) {
     });
 }
 
+// make sure cleanup handlers get run
+process.on('SIGTERM', () => process.exit());
+process.on('SIGINT', () => process.exit());
+
 if (require.main === module) {
   start(3000);
 }

@@ -43,7 +43,8 @@ function recover(pid, fn, delay) {
 }
 
 process.on('exit', () => {
-  for (let bot of activeBots.values()) {
+  for (let [pid, bot] of activeBots) {
+    winston.debug(`Killing bot ${pid}`);
     bot.removeAllListeners('exit');
     bot.kill();
   }
