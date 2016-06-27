@@ -17,6 +17,7 @@ import apiRoutes from './api';
 import { initBalancer } from './bot/balancer';
 import { launchBots } from './bot/process';
 import { load } from './config';
+import { connect } from './db/connection';
 import { mapProblems } from './problems';
 
 winston.level = 'debug';
@@ -58,6 +59,10 @@ export function start(port) {
 
       winston.info('Loading & mapping problems');
       return mapProblems();
+    })
+    .then(() => {
+      winston.info('Connecting to database');
+      connect();
     })
     .then(() => {
       winston.info('Server ready.');

@@ -5,14 +5,14 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import db from './index';
+import db from './connection';
 
 export function getSubmission(id) {
-  return db.oneOrNone('select * from submissions where id = $1', [id]);
+  return db().oneOrNone('select * from submissions where id = $1', [id]);
 }
 
 export function getContestSubmissions(contestId) {
-  return db.any('select * from submissions where contest_id = $1', [contestId]);
+  return db().any('select * from submissions where contest_id = $1', [contestId]);
 }
 
 /**
@@ -21,7 +21,7 @@ export function getContestSubmissions(contestId) {
  * Cached in user.problems_completed.
  */
 export function getSuccessfulUserSubmissions(userId) {
-  const subs = db.any(
+  const subs = db().any(
     'select distinct on (problem) problem from submissions where user_id = $1 and result = $2',
     [userId, 'successful'],
   );
@@ -29,14 +29,14 @@ export function getSuccessfulUserSubmissions(userId) {
 }
 
 export function getLatestSubmission(user, problem) {
-  return db.oneOrNone(
+  return db().oneOrNone(
     'select * from submissions where user_id = $1 and problem = $2 order by submission_time desc limit 1',
     [user, problem],
   );
 }
 
 export async function getProblemPenalties(user, problem) {
-  const penalties = await db.any(
+  const penalties = await db().any(
     'select time_score from submissions where user_id = $1 and problem = $2 and result != $3 and result is not null',
     [user, problem, 'successful'],
   );
@@ -44,7 +44,7 @@ export async function getProblemPenalties(user, problem) {
 }
 
 export async function getProblemScore(user, problem) {
-  const scores = await db.any(
+  const scores = await db().any(
     'select time_score from submissions where user_id = $1 and problem = $2 and time_score is not null',
     [user, problem],
   );
@@ -52,7 +52,7 @@ export async function getProblemScore(user, problem) {
 }
 
 export async function createSubmission(user, contest, problem) {
-  const sub = await db.one(
+  const sub = await db().one(
     'insert into submissions(user_id, contest_id, problem) values($1, $2, $3) returning id, submission_time',
     [user, contest, problem],
   );
@@ -60,7 +60,7 @@ export async function createSubmission(user, contest, problem) {
 }
 
 export async function updateSubmission(id, timeScore, result, meta = null) {
-  await db.none(
+  await db().none(
     'update submissions set (time_score, result, meta) = ($2, $3, $4) where id = $1',
     [id, timeScore, result, meta],
   );

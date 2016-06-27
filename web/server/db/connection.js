@@ -15,6 +15,12 @@ if (process.env.NODE_ENV === 'development') {
   monitor.attach(opts);
 }
 
-const db = pgp(opts)(config.database);
+let db;
 
-export default db;
+export function connect() {
+  db = pgp(opts)(config.database);
+}
+
+export default function () {
+  return db;
+}
