@@ -1,7 +1,7 @@
-import moment from 'moment';
+import winston from 'winston';
 import { pickBroker } from './balancer';
-import * as dbContests from '../db/contests';
 import * as dbSubmissions from '../db/submissions';
+import { updateScore } from '../scoring';
 
 export async function submitAnswer(userId, contestId, problem, answer) {
   // record the submission
@@ -18,22 +18,13 @@ export async function submitAnswer(userId, contestId, problem, answer) {
     problem,
     answer,
   }));
-  const result = JSON.parse(buffer.toString());
-  console.log(result);
+  const response = JSON.parse(buffer.toString());
 
-  if (sub.id !== result.id) {
-    throw new Error(`submission result id mismatch (expected ${sub.id}, got ${result.id})`);
+  if (sub.id !== response.id) {
+    winston.error(`Bot sent unexpected response: ${JSON.stringify(response)}`);
+    await dbSubmissions.updateSubmission(sub.id, null, 'internal_error', null);
+    return;
   }
 
-  // TODO: move scoring logic+constants elsewhere
-  let timeScore = 60 * 10;
-  if (result.result === 'successful') {
-    const contest = await dbContests.getContest(contestId);
-    const start = moment(contest.start_time);
-    const subTime = moment(sub.submission_time);
-    timeScore = subTime.diff(start, 'seconds');
-  }
-
-  // record the result
-  await dbSubmissions.updateSubmission(sub.id, timeScore, result.result, result.meta);
+  await updateScore(contestId, userId, sub.id, sub.submission_time, problem, response.result, response.meta);
 }

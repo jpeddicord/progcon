@@ -7,32 +7,38 @@ const TIME_PENALTY = 10 * 60;
 
 // given a submission result, update the score for the user
 export async function updateScore(contestId, userId, submissionId, submissionTime, problem, result, meta) {
-  let timeScore;
+  let subTimeScore;
 
-  let successful;
-  if (result.result === 'successful') {
+  if (result === 'successful') {
     const contest = await dbContests.getContest(contestId);
     const start = moment(contest.start_time);
     const subTime = moment(submissionTime);
-    timeScore = subTime.diff(start, 'seconds');
-    successful = true;
+    subTimeScore = subTime.diff(start, 'seconds');
   } else {
-    timeScore = TIME_PENALTY;
-    successful = false;
+    subTimeScore = TIME_PENALTY;
   }
 
-  await dbSubmissions.updateSubmission(submissionId, timeScore, result, meta);
-  await dbUsers.updateScore(userId, timeScore, successful ? problem : null);
+  await dbSubmissions.updateSubmission(submissionId, subTimeScore, result, meta);
+
+  if (result === 'successful') {
+    const problemTimeScore = await dbSubmissions.getProblemScore(userId, problem);
+    await dbUsers.addScore(userId, problemTimeScore, problem);
+  }
 }
 
 // re-calculate the time score for a user based on their submission history
 // (should rarely need to be run, but can be used in case of problem/grading mishaps)
-export function recalculateScores() {
-  // TODO
+export async function recalculateScores(userId) {
+  let total = 0;
+  const problems = await dbSubmissions.getSuccessfulUserSubmissions(userId);
+  for (let problem of problems) {
+    const score = await dbSubmissions.getProblemScore(userId, problem);
+    total += score;
+  }
+  await dbUsers.updateScore(userId);
 }
 
-// regrade the latest submission for every user in a contest for a given problem.
-// only regrade if they got it wrong. also useful if a problem was broken.
-export function regradeProblem() {
+// re-run a submission for a user
+export function regradeSubmission() {
   // TODO
 }

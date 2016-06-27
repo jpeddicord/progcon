@@ -94,13 +94,13 @@ routes.get('/contests/:contest_id/problems/:problem_name', contestAccess, async 
   // TODO: ensure problem exists, is in contest, etc
   const problem = getProblem(ctx.params.problem_name);
 
-  const submission = await dbSubmissions.getLatestSubmission(9999 /* XXX ctx.state.user.id*/, problem.name);
+  const submission = await dbSubmissions.getLatestSubmission(ctx.state.user.id, problem.name);
   if (submission == null) {
     ctx.body = problem;
     return;
   }
 
-  const penalties = await dbSubmissions.getProblemPenalties(9999 /* XXX */, problem.name);
+  const penalties = await dbSubmissions.getProblemPenalties(ctx.state.user.id, problem.name);
 
   // do NOT directly respond with submission.meta, it has solution diffs!
   ctx.body = problem;
@@ -123,7 +123,7 @@ routes.post('/contests/:contest_id/problems/:problem', contestAccess, (ctx, next
   // TODO: some data validation; ensure problem exists in contest, user validation, etc
   // TODO: ensure a successful answer wasn't already submitted
   // TODO: ensure the contest isn't over
-  submitAnswer(9999, ctx.params.contest_id, ctx.params.problem, ctx.request.body.answer);
+  submitAnswer(ctx.state.user.id, ctx.params.contest_id, ctx.params.problem, ctx.request.body.answer);
 
   ctx.body = {status: 'submitted'};
 });

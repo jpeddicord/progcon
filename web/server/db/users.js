@@ -22,7 +22,7 @@ export function registerUser(name, password, contest) {
 }
 
 // update the user's score, optionally adding a problem to their completed list
-export function updateScore(id, timeScore, problem) {
+export function addScore(id, timeScore, problem) {
   if (problem != null) {
     return db.none(
       'update users set (time_score, problems_completed) = (time_score + $2, array_append(problems_completed, $3)) where id = $1',
@@ -34,4 +34,11 @@ export function updateScore(id, timeScore, problem) {
       [id, timeScore],
     );
   }
+}
+
+export function updateScore(id, totalTimeScore, problems) {
+  return db.none(
+    'update users set (time_score, problems_completed) = ($2, $3) where id = $1',
+    [id, totalTimeScore, problems],
+  );
 }

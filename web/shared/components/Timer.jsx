@@ -18,7 +18,7 @@ export default class Timer extends React.Component {
   timeout = null;
 
   componentDidMount() {
-    this.timeout = setInterval(this.updateTime, 1 * 1000); // XXX: 30s
+    this.timeout = setInterval(this.updateTime, 30 * 1000);
     this.updateTime();
   }
 
