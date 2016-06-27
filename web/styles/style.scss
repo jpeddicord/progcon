@@ -43,3 +43,8 @@ body {
 .caution-stripes:hover {
     opacity: 0.3;
 }
+
+#submission-log {
+    max-height: 600px;
+    overflow-y: auto;
+}

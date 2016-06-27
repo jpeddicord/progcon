@@ -26,13 +26,10 @@ class StatusNav extends React.Component {
         <div>
           <ul className="nav navbar-nav">
             <li className="nav-item active">
-              <a className="nav-link" href="#">Problems</a>
+              <Link className="nav-link" to={`/contests/${active.id}`}>Problems</Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#">Leaderboard</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#">Rules</a>
+              <Link className="nav-link" to={`/contests/${active.id}/leaderboard`}>Leaderboard</Link>
             </li>
           </ul>
           <div className="form-inline pull-xs-right">

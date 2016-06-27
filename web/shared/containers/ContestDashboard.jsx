@@ -9,6 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import SafetyBox from '../components/SafetyBox';
 import ContestEditor from '../containers/ContestEditor';
+import SubmissionLog from '../containers/SubmissionLog';
 import { fetchContestDetail, contestCommand } from '../modules/contests';
 
 class ContestDashboard extends React.Component {
@@ -41,19 +42,33 @@ class ContestDashboard extends React.Component {
 
     return (
       <div>
-        <SafetyBox>
-          <button className="btn btn-lg btn-success"
+        <div className="row">
+          <div className="col-md-8">
+            <SubmissionLog />
+          </div>
+
+          <div className="col-md-4">
+            <SafetyBox>
+              <div className="pull-md-right">
+                <button className="btn btn-lg btn-success"
                   onClick={this.bindCommand('start')}>
-            Start
-          </button>
-          <button className="btn btn-lg btn-warning"
+                  Start
+                </button>
+                <button className="btn btn-lg btn-warning"
                   onClick={this.bindCommand('end')}>
-            End
-          </button>
-        </SafetyBox>
+                  End
+                </button>
+              </div>
+              <br style={{clear: 'both'}}/>
+            </SafetyBox>
+          </div>
+        </div>
 
-
-        <ContestEditor />
+        <div className="row">
+          <div className="col-md-12">
+            <ContestEditor />
+          </div>
+        </div>
       </div>
     );
 

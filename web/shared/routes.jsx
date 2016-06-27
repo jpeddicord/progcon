@@ -11,6 +11,7 @@ import App from './components/App';
 import Landing from './containers/Landing';
 import ContestOverview from './containers/ContestOverview';
 import ProblemDetail from './containers/ProblemDetail';
+import Leaderboard from './containers/Leaderboard';
 import RegistrationForm from './containers/RegistrationForm';
 import AuthForm from './components/AuthForm';
 import AdminView from './containers/AdminView';
@@ -22,6 +23,7 @@ export default (
     <Route path="contests/:contest_id" component={ContestOverview}>
       <Route path="problems/:problem_name" component={ProblemDetail} />
     </Route>
+    <Route path="contests/:contest_id/leaderboard" component={Leaderboard} />
     <Route path="contests/:contest_id/register" component={RegistrationForm} />
     <Route path="auth" component={AuthForm} />
     <Route path="admin" component={AdminView} />

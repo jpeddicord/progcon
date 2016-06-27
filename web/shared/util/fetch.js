@@ -6,7 +6,7 @@
  */
 
 import 'whatwg-fetch';
-import { clearToken, loadToken, injectTokenHeader } from './token';
+import { loadToken, injectTokenHeader } from './token';
 
 export async function fetchJSON(url, options = {}) {
   const resp = await fetch(url, {

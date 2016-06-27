@@ -13,7 +13,7 @@ export function getUser(id) {
 }
 
 export function getContestUsers(contest) {
-  return db().any('select id, participant_numer, name from users where contest_id = $1', [contest]);
+  return db().any('select id, participant_number, name from users where contest_id = $1', [contest]);
 }
 
 export function registerUser(name, password, contest) {
@@ -47,5 +47,13 @@ export function updateScore(id, totalTimeScore, problems) {
   return db().none(
     'update users set (time_score, problems_completed) = ($2, $3) where id = $1',
     [id, totalTimeScore, problems],
+  );
+}
+
+// TODO: cache this result at routing/api level
+export function getLeaderboard(contest) {
+  return db().any(
+    'select id, participant_number, name, problems_completed, time_score from users where contest_id = $1 order by array_length(problems_completed, 1) desc, time_score asc',
+    [contest],
   );
 }

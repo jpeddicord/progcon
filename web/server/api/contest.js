@@ -12,6 +12,7 @@ import Router from 'koa-router';
 import { contestAccess } from './auth';
 import * as dbContests from '../db/contests';
 import * as dbSubmissions from '../db/submissions';
+import * as dbUsers from '../db/users';
 import { submitAnswer } from '../bot/tester';
 import { getProblem } from '../problems';
 
@@ -60,6 +61,11 @@ routes.post('/problems/:problem', (ctx, next) => {
   submitAnswer(ctx.state.user.id, ctx.params.contest_id, ctx.params.problem, ctx.request.body.answer);
 
   ctx.body = {status: 'submitted'};
+});
+
+routes.get('/leaderboard', async (ctx, next) => {
+  const leaderboard = await dbUsers.getLeaderboard(ctx.params.contest_id);
+  ctx.body = {leaderboard};
 });
 
 export default routes.routes();

@@ -11,8 +11,9 @@ export function getSubmission(id) {
   return db().oneOrNone('select * from submissions where id = $1', [id]);
 }
 
+// TODO: don't fetch all fields; join with users table
 export function getContestSubmissions(contestId) {
-  return db().any('select * from submissions where contest_id = $1', [contestId]);
+  return db().any('select * from submissions where contest_id = $1 order by submission_time desc', [contestId]);
 }
 
 /**

@@ -48,7 +48,6 @@ class ContestEditor extends React.Component {
 
   render() {
     const { active } = this.props;
-    console.log(active);
 
     const startTime = ContestEditor.formatTimestamp(active.start_time);
     const endTime = ContestEditor.formatTimestamp(active.end_time);

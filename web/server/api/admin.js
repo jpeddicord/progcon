@@ -11,6 +11,7 @@
 import Router from 'koa-router';
 import { adminOnly } from './auth';
 import * as dbContests from '../db/contests';
+import * as dbSubmissions from '../db/submissions';
 
 const routes = new Router();
 routes.use(adminOnly);
@@ -45,6 +46,15 @@ routes.post('/contests/:contest_id/control', async (ctx, next) => {
   } else {
     ctx.status = 400;
   }
+});
+
+routes.get('/contests/:contest_id/submissions', async (ctx, next) => {
+  const subs = await dbSubmissions.getContestSubmissions(ctx.params.contest_id);
+  ctx.body = {submissions: subs};
+});
+
+routes.get('/contests/:contest_id/submissions/:submission_id', async (ctx, next) => {
+  ctx.status = 501;
 });
 
 export default routes.routes();
