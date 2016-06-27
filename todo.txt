@@ -7,7 +7,7 @@ x (A) remove hardcoded problems directory
 x (A) display problem descriptions
 x (B) output test diffs +runner +web
 x (B) set time limits for runner +runner +exec
-(B) add java policy (null grant; java.security.manager) +runner
+x (B) add java policy (null grant; java.security.manager) +runner
 (B) leaderboard view +web
 (B) store original submission +web
 x (C) runner process management +web +runner

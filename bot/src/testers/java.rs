@@ -108,11 +108,12 @@ impl JavaTester {
         let test_path = test_dir.to_string_lossy();
         let mut sub: Vec<String> = vec![];
         for test in &problem.get_tests() {
-            sub.push(format!("java Runner < {path}/{test}.in > {test}.actual\n\
-                              status=$?\n\
-                              [ $status -eq 0 ] || exit $status\n\
-                              diff -Bbu --label {test}.expected {path}/{test}.out {test}.actual >&2\n\
-                              [ $? -eq 0 ] && echo '#PASS#' || echo '#FAIL#'",
+            sub.push(format!(
+                "java -Djava.security.manager -Djava.security.policy==none.policy Runner < {path}/{test}.in > {test}.actual\n\
+                 status=$?\n\
+                 [ $status -eq 0 ] || exit $status\n\
+                 diff -Bbu --label {test}.expected {path}/{test}.out {test}.actual >&2\n\
+                 [ $? -eq 0 ] && echo '#PASS#' || echo '#FAIL#'",
                 test=test, path=test_path));
         }
 
@@ -122,6 +123,14 @@ impl JavaTester {
         let mut f = try!(File::create(&self.workdir.as_path().join("test.sh")));
         try!(f.write_all(script.as_bytes()));
 
+        try!(self.write_policy_file());
+
+        Ok(())
+    }
+
+    fn write_policy_file(&self) -> Result<(), Box<Error>> {
+        let mut f = try!(File::create(&self.workdir.as_path().join("none.policy")));
+        try!(f.write_all(b"grant {};"));
         Ok(())
     }
 }
