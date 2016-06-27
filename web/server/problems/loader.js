@@ -26,6 +26,11 @@ async function loadProblemsFromPath(problemPath) {
   const files = await fs.readdir(problemPath);
   let problems = [];
   for (let name of files) {
+    const problemDir = path.join(problemPath, name);
+    const stat = await fs.stat(problemDir);
+    if (!stat.isDirectory()) {
+      continue;
+    }
     const problem = await loadProblem(name, path.join(problemPath, name));
     problems.push(problem);
   }
