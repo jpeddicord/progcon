@@ -24,7 +24,7 @@ const config = {
       logLevel: 'info',
       logFile: '/tmp/progcon-bot.log',
     },
-    // add more
+    // add more; use a unique socket and log file for each!
   ],
 };
 
