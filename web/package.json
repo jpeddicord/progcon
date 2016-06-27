@@ -4,7 +4,7 @@
   "description": "programming contest website",
   "author": "Jacob Peddicord <jacob@peddicord.net>",
   "repository": "jpeddicord/progcon",
-  "license": "MIT",
+  "license": "MPL-2.0",
   "main": "build/server/index.js",
   "scripts": {
     "release": "NODE_ENV=production gulp"
