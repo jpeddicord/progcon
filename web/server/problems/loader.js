@@ -7,6 +7,7 @@
 
 import fs from 'mz/fs';
 import path from 'path';
+import Immutable from 'immutable';
 import toml from 'toml';
 import winston from 'winston';
 import config from '../config';
@@ -65,5 +66,5 @@ async function loadProblem(name, dir) {
 
   winston.verbose(`Adding problem ${name}`);
 
-  return meta;
+  return Immutable.fromJS(meta);
 }
