@@ -5,7 +5,7 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import crypto from 'crypto';
+import crypto from 'mz/crypto';
 import koaConvert from 'koa-convert';
 import koaJWT, { sign } from 'koa-jwt';
 import koaLimit from 'koa-limit';
@@ -14,7 +14,14 @@ import * as dbUsers from '../db/users';
 import { AccessError } from '../util/errors';
 
 export async function tryAuth(user, pass) {
-  if (user === 'admin' && pass === config.admin.password) {
+  if (user === 'admin') {
+    const hash = await crypto.pbkdf2(pass, '', 1000000, 16, 'sha256');
+    console.log(hash.toString('hex'));
+    console.log(config.admin.passwordHash);
+    if (hash.toString('hex') !== config.admin.passwordHash) {
+      return null;
+    }
+
     // auth as administrator
     return sign({
       id: -1,
@@ -61,14 +68,8 @@ export function issueUserToken(id, contest, participant_number) {
  * are still scoped to a single contest session; they're never re-used for anything else.
  */
 export async function generateUserPassword() {
-  await new Promise((resolve, reject) => {
-    crypto.randomBytes(4, (err, buf) => {
-      if (err != null) {
-        return reject(err);
-      }
-      resolve(buf.toString('hex'));
-    });
-  });
+  const buf = await crypto.randomBytes(4);
+  return buf.toString('hex');
 }
 
 /**

@@ -10,7 +10,9 @@ const config = {
     secret: '',
   },
   admin: {
-    password: '',
+    // generate this with:
+    // crypto.pbkdf2Sync('password', '', 1000000, 16, 'sha256');
+    passwordHash: '',
   },
   problems: {
     paths: [
