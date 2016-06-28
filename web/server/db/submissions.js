@@ -52,10 +52,10 @@ export async function getProblemScore(user, problem) {
   return scores.reduce((sum, x) => sum + x.time_score, 0);
 }
 
-export async function createSubmission(user, contest, problem) {
+export async function createSubmission(user, contest, problem, answer) {
   const sub = await db().one(
-    'insert into submissions(user_id, contest_id, problem) values($1, $2, $3) returning id, submission_time',
-    [user, contest, problem],
+    'insert into submissions(user_id, contest_id, problem, answer) values($1, $2, $3, $4) returning id, submission_time',
+    [user, contest, problem, answer],
   );
   return sub;
 }

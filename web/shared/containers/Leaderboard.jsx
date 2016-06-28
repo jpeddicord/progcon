@@ -25,15 +25,22 @@ class Leaderboard extends React.Component {
     // fetch contest data if we don't have it
     if (active == null || active.id !== parseInt(contest_id)) {
       dispatch(fetchContestDetail(contest_id));
+      // this will then trigger checkLeaderboard when props are next received
+    } else {
+      this.checkLeaderboard();
     }
   }
 
-  // REVIEW: bleh
   componentWillReceiveProps(nextProps) {
-    const { dispatch, params: { contest_id } } = this.props;
-    console.log(nextProps);
-    if (nextProps.active.id != null && nextProps.active.leaderboard == null) {
-      dispatch(fetchLeaderboard(contest_id));
+    this.checkLeaderboard(nextProps);
+  }
+
+  checkLeaderboard(props) {
+    const { dispatch } = this.props;
+    props = props || this.props;
+    // have we loaded the contest but not the leaderboard?
+    if (props.active.id != null && props.active.leaderboard == null) {
+      dispatch(fetchLeaderboard(this.props.params.contest_id));
     }
   }
 
@@ -48,6 +55,32 @@ class Leaderboard extends React.Component {
       <div>
         <h3>{active.title} <small>Leaderboard</small></h3>
 
+        <table className="table table-hover table-sm">
+          <thead>
+            <tr>
+              <th>ID#</th>
+              <th>Name</th>
+              {active.problems.map((p, i) => {
+                return (<th key={i}>{p}</th>);
+              })}
+            </tr>
+          </thead>
+
+          <tbody>
+            {active.leaderboard.map((user, i) => {
+              return (
+                <tr key={i}>
+                  <td>{user.participant_number}</td>
+                  <td>{user.name}</td>
+                  {active.problems.map((p, i) => {
+
+                    return (<td key={i}>???</td>);
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
         {JSON.stringify(active.leaderboard)}
       </div>
     );

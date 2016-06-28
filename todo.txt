@@ -14,3 +14,4 @@ x (C) runner process management +web +runner
 x (C) show a timer +web
 (C) make it not look terrible +web
 x (C) multi-threaded/process testing +runner
+(C) write an installer script / makefile

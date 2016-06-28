@@ -12,7 +12,7 @@ import { updateScore } from '../scoring';
 
 export async function submitAnswer(userId, contestId, problem, answer) {
   // record the submission
-  const sub = await dbSubmissions.createSubmission(userId, contestId, problem);
+  const sub = await dbSubmissions.createSubmission(userId, contestId, problem, answer);
 
   // find the least-loaded broker
   const broker = pickBroker();

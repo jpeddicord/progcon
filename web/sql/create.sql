@@ -19,6 +19,7 @@ create table if not exists users (
     password text,
     problems_completed text[] not null default array[]::text[],
     time_score integer not null default 0,
+    problem_scores jsonb,
     meta jsonb,
 
     unique (contest_id, participant_number)
@@ -29,6 +30,7 @@ create table if not exists submissions (
     user_id integer not null,
     contest_id integer not null,
     problem text not null,
+    answer text not null,
     submission_time timestamp with time zone not null default now(),
     time_score integer,
     result submission_result,
