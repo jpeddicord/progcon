@@ -1,17 +1,19 @@
+(C) display score on navbar
+(C) make admin not look terrible too +web
+(C) write an installer script / makefile
+x (A) add registration form +web
+x (A) calculate scores, penalties +web
+x (A) display problem descriptions
+x (A) remove hardcoded problems directory
 x (A) run answer against tests +runner
 x (A) send results over events channel +runner
 x (A) store submission results in database +web
-x (A) calculate scores, penalties +web
-x (A) add registration form +web
-x (A) remove hardcoded problems directory
-x (A) display problem descriptions
+x (B) add java policy (null grant; java.security.manager) +runner
+x (B) leaderboard view +web
 x (B) output test diffs +runner +web
 x (B) set time limits for runner +runner +exec
-x (B) add java policy (null grant; java.security.manager) +runner
-(B) leaderboard view +web
-(B) store original submission +web
+x (B) store original submission +web
+x (C) make it not look terrible +web
+x (C) multi-threaded/process testing +runner
 x (C) runner process management +web +runner
 x (C) show a timer +web
-(C) make it not look terrible +web
-x (C) multi-threaded/process testing +runner
-(C) write an installer script / makefile
