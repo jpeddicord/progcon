@@ -35,7 +35,8 @@ routes.post('/contests/:contest_id/register', rateLimiter, async (ctx, next) => 
   }
 
   // set up a contest-specific user account
-  const user = await dbUsers.registerUser(name, generateUserPassword(), ctx.params.contest_id);
+  const password = await generateUserPassword();
+  const user = await dbUsers.registerUser(name, password, ctx.params.contest_id);
 
   // issue a token for the newly-created user
   const jwt = issueUserToken(user.id, contest.id, user.participant_number);
