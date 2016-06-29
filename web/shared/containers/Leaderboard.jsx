@@ -5,6 +5,8 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
+import moment from 'moment';
+import 'moment-duration-format';
 import React from 'react';
 import { connect } from 'react-redux';
 import { fetchContestDetail, fetchLeaderboard } from '../modules/contests';
@@ -47,7 +49,7 @@ class Leaderboard extends React.Component {
   render() {
     const { active } = this.props;
 
-    if (active == null || active.id == null) {
+    if (active == null || active.id == null || active.leaderboard == null) {
       return <div/>;
     }
 
@@ -58,8 +60,9 @@ class Leaderboard extends React.Component {
         <table className="table table-hover table-sm">
           <thead>
             <tr>
-              <th>ID#</th>
+              <th>Rank</th>
               <th>Name</th>
+              <th>Score</th>
               {active.problems.map((p, i) => {
                 return (<th key={i}>{p}</th>);
               })}
@@ -68,22 +71,60 @@ class Leaderboard extends React.Component {
 
           <tbody>
             {active.leaderboard.map((user, i) => {
-              return (
-                <tr key={i}>
-                  <td>{user.participant_number}</td>
-                  <td>{user.name}</td>
-                  {active.problems.map((p, i) => {
-
-                    return (<td key={i}>???</td>);
-                  })}
-                </tr>
-              );
+              return <ScoreRow key={i} place={i+1} user={user} problems={active.problems} />;
             })}
           </tbody>
         </table>
-        {JSON.stringify(active.leaderboard)}
       </div>
     );
+  }
+
+}
+
+ScoreRow.propTypes = {
+  place: React.PropTypes.number.isRequired,
+  user: React.PropTypes.object.isRequired,
+  problems: React.PropTypes.array.isRequired,
+};
+function ScoreRow(props) {
+  const formatted = moment.duration(props.user.time_score, 'seconds').format('d[d] HH[h]:mm[m]');
+  return (
+    <tr>
+      <td>{props.place}</td>
+      <td>{props.user.name}</td>
+      <td>{formatted}</td>
+      {props.problems.map((p, i) => {
+        return <ProblemStatus key={i} problem={p} user={props.user} />;
+      })}
+    </tr>
+  );
+}
+
+ProblemStatus.propTypes = {
+  problem: React.PropTypes.string.isRequired,
+  user: React.PropTypes.object.isRequired,
+};
+function ProblemStatus(props) {
+  let problemScores = props.user.problem_scores[props.problem];
+  const plural = problemScores != null && problemScores.length === 1 ? 'submission' : 'submissions';
+
+  if (props.user.problems_completed.includes(props.problem)) {
+    const problemScore = problemScores.reduce((sum, x) => sum + x, 0);
+    const formatted = moment.duration(problemScore, 'seconds').format('d[d] HH[h]:mm[m]');
+    return (
+      <td className="table-success">
+        {formatted} <small>({problemScores.length} {plural})</small>
+      </td>
+    );
+
+  } else if (problemScores != null) {
+    return (
+      <td className={'table-warning'}>
+        <small>{problemScores.length} {plural}</small>
+      </td>
+    );
+  } else {
+    return <td/>;
   }
 
 }
