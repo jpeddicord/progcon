@@ -25,15 +25,18 @@ class StatusNav extends React.Component {
       { active != null && active.id != null ?
         <div>
           <ul className="nav navbar-nav">
-            <li className="nav-item active">
+            <li className="nav-item">
               <Link className="nav-link" to={`/contests/${active.id}`}>Problems</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to={`/contests/${active.id}/leaderboard`}>Leaderboard</Link>
             </li>
           </ul>
-          <div className="form-inline pull-xs-right">
-            <Timer startTime={active.start_time} />
+          <div className="nav navbar-nav pull-xs-right">
+            {/* FIXME: css abuse in bootstrap v4 alpha*/}
+            <a className="nav-link">
+              <Timer startTime={active.start_time} />
+            </a>
           </div>
         </div>
       : ''}
