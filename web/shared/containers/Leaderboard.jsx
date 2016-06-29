@@ -87,12 +87,12 @@ ScoreRow.propTypes = {
   problems: React.PropTypes.array.isRequired,
 };
 function ScoreRow(props) {
-  const formatted = moment.duration(props.user.time_score, 'seconds').format('d[d] HH[h]:mm[m]');
+  const time = moment.duration(props.user.time_score, 'seconds').format('d[d] HH[h]:mm[m]');
   return (
     <tr>
       <td>{props.place}</td>
       <td>{props.user.name}</td>
-      <td>{formatted}</td>
+      <td><strong>{props.user.problems_completed.length}</strong> in {time}</td>
       {props.problems.map((p, i) => {
         return <ProblemStatus key={i} problem={p} user={props.user} />;
       })}

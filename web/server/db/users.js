@@ -65,7 +65,7 @@ export function mergeProblemScores(id, problem, problemScores) {
 // TODO: cache this result at routing/api level
 export function getLeaderboard(contest) {
   return db().any(
-    'select id, name, problems_completed, time_score, problem_scores from users where contest_id = $1 order by array_length(problems_completed, 1) desc, time_score asc',
+    'select id, name, problems_completed, time_score, problem_scores from users where contest_id = $1 order by coalesce(array_length(problems_completed, 1), 0) desc, time_score asc',
     [contest],
   );
 }
