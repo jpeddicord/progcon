@@ -38,18 +38,18 @@ export function getLatestSubmission(user, problem) {
 
 export async function getProblemPenalties(user, problem) {
   const penalties = await db().any(
-    'select time_score from submissions where user_id = $1 and problem = $2 and result != $3 and result is not null',
+    'select time_score from submissions where user_id = $1 and problem = $2 and result != $3 and result is not null order by submission_time desc',
     [user, problem, 'successful'],
   );
   return penalties.map(p => p.time_score);
 }
 
-export async function getProblemScore(user, problem) {
+export async function getProblemScores(user, problem) {
   const scores = await db().any(
-    'select time_score from submissions where user_id = $1 and problem = $2 and time_score is not null',
+    'select time_score from submissions where user_id = $1 and problem = $2 and time_score is not null order by submission_time desc',
     [user, problem],
   );
-  return scores.reduce((sum, x) => sum + x.time_score, 0);
+  return scores.map(s => s.time_score);
 }
 
 export async function createSubmission(user, contest, problem, answer) {

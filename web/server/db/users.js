@@ -29,11 +29,11 @@ export function registerUser(name, password, contest) {
 }
 
 // update the user's score, optionally adding a problem to their completed list
-export function addScore(id, timeScore, problem) {
+export function addScore(id, timeScore, problem, problemScores) {
   if (problem != null) {
     return db().none(
-      'update users set (time_score, problems_completed) = (time_score + $2, array_append(problems_completed, $3)) where id = $1',
-      [id, timeScore, problem],
+      'update users set (time_score, problems_completed, problem_scores) = (time_score + $2, array_append(problems_completed, $3), problem_scores || $4::jsonb) where id = $1',
+      [id, timeScore, problem, {[problem]: problemScores}],
     );
   } else {
     return db().none(
@@ -43,17 +43,29 @@ export function addScore(id, timeScore, problem) {
   }
 }
 
-export function updateScore(id, totalTimeScore, problems) {
+export function updateScore(id, totalTimeScore, problems, problemScores) {
   return db().none(
-    'update users set (time_score, problems_completed) = ($2, $3) where id = $1',
-    [id, totalTimeScore, problems],
+    'update users set (time_score, problems_completed, problemScores) = ($2, $3, $4) where id = $1',
+    [id, totalTimeScore, problems, problemScores],
+  );
+}
+
+/**
+ * Adds a problem score without completing the problem or updating the total score.
+ *
+ * Used to write bad submissions. For storing successful submissions, use addScore.
+ */
+export function mergeProblemScores(id, problem, problemScores) {
+  return db().none(
+    'update users set problem_scores = problem_scores || $2::jsonb where id = $1',
+    [id, {[problem]: problemScores}],
   );
 }
 
 // TODO: cache this result at routing/api level
 export function getLeaderboard(contest) {
   return db().any(
-    'select id, participant_number, name, problems_completed, time_score from users where contest_id = $1 order by array_length(problems_completed, 1) desc, time_score asc',
+    'select id, name, problems_completed, time_score, problem_scores from users where contest_id = $1 order by array_length(problems_completed, 1) desc, time_score asc',
     [contest],
   );
 }

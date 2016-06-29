@@ -16,6 +16,7 @@ const TIME_PENALTY = 10 * 60;
 export async function updateScore(contestId, userId, submissionId, submissionTime, problem, result, meta) {
   let subTimeScore;
 
+  // calculate the score
   if (result === 'successful') {
     const contest = await dbContests.getContest(contestId);
     const start = moment(contest.start_time);
@@ -25,11 +26,19 @@ export async function updateScore(contestId, userId, submissionId, submissionTim
     subTimeScore = TIME_PENALTY;
   }
 
+  // store the individual submission
   await dbSubmissions.updateSubmission(submissionId, subTimeScore, result, meta);
 
+  // update score totals for the user
+  const problemScores = await dbSubmissions.getProblemScores(userId, problem);
   if (result === 'successful') {
-    const problemTimeScore = await dbSubmissions.getProblemScore(userId, problem);
-    await dbUsers.addScore(userId, problemTimeScore, problem);
+    // if successful, add to their total score
+    const problemTimeScore = problemScores.reduce((sum, x) => sum + x, 0);
+    await dbUsers.addScore(userId, problemTimeScore, problem, problemScores);
+  } else {
+    // otherwise, just mark the penalty in their problem score map for the leaderboard.
+    // the penalty doesn't actually count until the problem is finished.
+    await dbUsers.mergeProblemScores(userId, problem, problemScores);
   }
 }
 
@@ -39,9 +48,10 @@ export async function recalculateScores(userId) {
   let total = 0;
   const problems = await dbSubmissions.getSuccessfulUserSubmissions(userId);
   for (let problem of problems) {
-    const score = await dbSubmissions.getProblemScore(userId, problem);
-    total += score;
+    const scores = await dbSubmissions.getProblemScores(userId, problem);
+    total += scores.reduce((sum, x) => sum + x, 0);
   }
+  // FIXME
   await dbUsers.updateScore(userId);
 }
 

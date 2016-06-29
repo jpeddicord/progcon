@@ -19,11 +19,16 @@ create table if not exists users (
     password text,
     problems_completed text[] not null default array[]::text[],
     time_score integer not null default 0,
-    problem_scores jsonb,
+    problem_scores jsonb not null default '{}'::jsonb,
     meta jsonb,
 
     unique (contest_id, participant_number)
 );
+
+-- problem_scores: {
+--   ProblemName: [12345, 600, 600, ...],
+--   ...
+-- }
 
 create table if not exists submissions (
     id serial primary key,
