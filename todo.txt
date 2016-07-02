@@ -1,4 +1,9 @@
-(C) display score on navbar
+(A) fix or annotate all TODOs
+(B) add ability to mark user ineligible for leaderboards
+(B) cache leaderboard
+(B) display score on navbar +web
+(C) do something about expired tokens +web
+(C) fix sign-up form style +web
 (C) make admin not look terrible too +web
 (C) write an installer script / makefile
 x (A) add registration form +web

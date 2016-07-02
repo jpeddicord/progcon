@@ -16,8 +16,6 @@ import { AccessError } from '../util/errors';
 export async function tryAuth(user, pass) {
   if (user === 'admin') {
     const hash = await crypto.pbkdf2(pass, '', 1000000, 16, 'sha256');
-    console.log(hash.toString('hex'));
-    console.log(config.admin.passwordHash);
     if (hash.toString('hex') !== config.admin.passwordHash) {
       return null;
     }

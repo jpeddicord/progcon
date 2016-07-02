@@ -109,7 +109,7 @@ impl JavaTester {
         let mut sub: Vec<String> = vec![];
         for test in &problem.get_tests() {
             sub.push(format!(
-                "java -Djava.security.manager -Djava.security.policy==none.policy Runner < {path}/{test}.in > {test}.actual\n\
+                "java -Xmx256m -Djava.security.manager -Djava.security.policy==none.policy Runner < {path}/{test}.in > {test}.actual\n\
                  status=$?\n\
                  [ $status -eq 0 ] || exit $status\n\
                  diff -Bbu --label {test}.expected {path}/{test}.out {test}.actual >&2\n\
