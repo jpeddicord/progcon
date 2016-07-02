@@ -15,6 +15,7 @@ import * as dbSubmissions from '../db/submissions';
 import * as dbUsers from '../db/users';
 import { submitAnswer } from '../bot/tester';
 import { getProblem } from '../problems';
+import { RequestError, NotFoundError } from '../util/errors';
 
 const routes = new Router({prefix: '/contests/:contest_id'});
 routes.use(contestAccess);
@@ -25,10 +26,15 @@ routes.get('/', async (ctx, next) => {
   ctx.body = contest;
 });
 
-routes.get('/problems/:problem_name', async (ctx, next) => {
-  // TODO: ensure problem exists, is in contest, etc
-  const problem = getProblem(ctx.params.problem_name);
+routes.get('/problems/:problem', contestHasProblem, async (ctx, next) => {
+  // sanity check
+  const problemName = ctx.params.problem;
+  const problem = getProblem(problemName);
+  if (problem == null) {
+    throw new Error(`problem ${problemName} is in contest, but not in library`);
+  }
 
+  // if they have submitted something, show it
   const submission = await dbSubmissions.getLatestSubmission(ctx.state.user.id, problem.name);
   if (submission == null) {
     ctx.body = problem;
@@ -47,6 +53,7 @@ routes.get('/problems/:problem_name', async (ctx, next) => {
     total_time_score: submission.time_score + penalties.reduce((sum, x) => sum + x, 0),
   };
 
+  // include basic test information if the submission had it
   if (submission.meta != null) {
     submission.meta.diff = null; // paranoid
     ctx.body.submission.test_pass = submission.meta.pass;
@@ -54,10 +61,19 @@ routes.get('/problems/:problem_name', async (ctx, next) => {
   }
 });
 
-routes.post('/problems/:problem', (ctx, next) => {
-  // TODO: some data validation; ensure problem exists in contest, user validation, etc
-  // TODO: ensure a successful answer wasn't already submitted
-  // TODO: ensure the contest isn't over
+routes.post('/problems/:problem', contestIsActive, contestHasProblem, async (ctx, next) => {
+  // see if they've submitted something already
+  const submission = await dbSubmissions.getLatestSubmission(ctx.state.user.id, ctx.params.problem);
+  if (submission != null) {
+    if (submission.result == null) {
+      throw new RequestError('You already have a pending submission for this problem.');
+    }
+    if (submission.result === 'successful') {
+      throw new RequestError('You have already completed this problem.');
+    }
+  }
+
+  // do *NOT* `await` on this; it's meant to run in the background
   submitAnswer(ctx.state.user.id, ctx.params.contest_id, ctx.params.problem, ctx.request.body.answer);
 
   ctx.body = {status: 'submitted'};
@@ -67,5 +83,22 @@ routes.get('/leaderboard', async (ctx, next) => {
   const leaderboard = await dbUsers.getLeaderboard(ctx.params.contest_id);
   ctx.body = {leaderboard};
 });
+
+async function contestHasProblem(ctx, next) {
+  const problemName = ctx.params.problem;
+  const contest = await dbContests.getContest(ctx.params.contest_id);
+  if (contest == null || !contest.problems.includes(problemName)) {
+    throw new NotFoundError('Problem not found in contest');
+  }
+  await next();
+}
+
+async function contestIsActive(ctx, next) {
+  const contest = await dbContests.getActiveContest(ctx.params.contest_id);
+  if (contest == null) {
+    throw new NotFoundError('Contest is not active');
+  }
+  await next();
+}
 
 export default routes.routes();

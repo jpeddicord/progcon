@@ -41,3 +41,6 @@ create table if not exists submissions (
     result submission_result,
     meta jsonb
 );
+
+-- block multiple active submissions and submissions after a successful result
+create unique index on submissions (user_id, problem) where result = 'successful' or result is null;

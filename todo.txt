@@ -1,7 +1,8 @@
 (A) fix or annotate all TODOs
-(B) add ability to mark user ineligible for leaderboards
-(B) cache leaderboard
+(B) add ability to mark user ineligible for leaderboards +web
+(B) cache leaderboard +web
 (B) display score on navbar +web
+(B) surface errors in the UI +web
 (C) do something about expired tokens +web
 (C) fix sign-up form style +web
 (C) make admin not look terrible too +web

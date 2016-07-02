@@ -17,7 +17,7 @@ export class RequestError {
 
 export class AuthError {
   constructor(message) {
-    this.name = 'AccessError';
+    this.name = 'AuthError';
     this.message = message;
     this.stack = new Error().stack;
     this.status = 401;
@@ -30,5 +30,14 @@ export class AccessError {
     this.message = message;
     this.stack = new Error().stack;
     this.status = 403;
+  }
+}
+
+export class NotFoundError {
+  constructor(message) {
+    this.name = 'NotFoundError';
+    this.message = message;
+    this.stack = new Error().stack;
+    this.status = 404;
   }
 }

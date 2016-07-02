@@ -19,6 +19,13 @@ export function getContest(id) {
   return db().oneOrNone('select * from contests where id = $1', [id]);
 }
 
+export function getActiveContest(id) {
+  return db().oneOrNone(
+    'select * from contests where id = $1 and start_time is not null and start_time < now() and (end_time > now() or end_time is null);',
+    [id],
+  );
+}
+
 export async function createContest(title) {
   const row = await db().one(
     'insert into contests(title) values($1) returning id',
