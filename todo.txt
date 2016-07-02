@@ -1,12 +1,14 @@
 (A) fix or annotate all TODOs
 (B) add ability to mark user ineligible for leaderboards +web
-(B) cache leaderboard +web
+x (B) cache leaderboard +web
 (B) display score on navbar +web
 (B) surface errors in the UI +web
 (C) do something about expired tokens +web
 (C) fix sign-up form style +web
 (C) make admin not look terrible too +web
 (C) write an installer script / makefile
+(C) autoreload on submission screen if active submission +web
+(C) autoreload on leaderboards
 x (A) add registration form +web
 x (A) calculate scores, penalties +web
 x (A) display problem descriptions

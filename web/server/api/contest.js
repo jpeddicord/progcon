@@ -15,7 +15,7 @@ import { contestAccess } from './auth';
 import * as dbContests from '../db/contests';
 import * as dbSubmissions from '../db/submissions';
 import * as dbUsers from '../db/users';
-import { submitAnswer } from '../bot/tester';
+import { testAnswer } from '../bot/tester';
 import { getProblem } from '../problems';
 import { RequestError, NotFoundError } from '../util/errors';
 
@@ -76,8 +76,13 @@ routes.get('/problems/:problem', contestHasProblem, async (ctx, next) => {
 });
 
 routes.post('/problems/:problem', contestIsActive, contestHasProblem, async (ctx, next) => {
+  const userId = ctx.state.user.id;
+  const contestId = ctx.params.contest_id;
+  const problem = ctx.params.problem;
+  const answer = ctx.request.body.answer;
+
   // see if they've submitted something already
-  const submission = await dbSubmissions.getLatestSubmission(ctx.state.user.id, ctx.params.problem);
+  const submission = await dbSubmissions.getLatestSubmission(userId, ctx.params.problem);
   if (submission != null) {
     if (submission.result == null) {
       throw new RequestError('You already have a pending submission for this problem.');
@@ -87,10 +92,13 @@ routes.post('/problems/:problem', contestIsActive, contestHasProblem, async (ctx
     }
   }
 
-  // do *NOT* `await` on this; it's meant to run in the background
-  submitAnswer(ctx.state.user.id, ctx.params.contest_id, ctx.params.problem, ctx.request.body.answer);
+  // otherwise, store the submission
+  const sub = await dbSubmissions.createSubmission(userId, contestId, problem, answer);
 
-  ctx.body = {status: 'submitted'};
+  // do *NOT* `await` on this in a request; it's meant to run in the background
+  testAnswer(sub.id, sub.submission_time, userId, contestId, problem, answer);
+
+  ctx.body = {id: sub.id};
 });
 
 routes.get('/leaderboard', async (ctx, next) => {
