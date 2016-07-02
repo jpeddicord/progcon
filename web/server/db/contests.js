@@ -21,7 +21,7 @@ export function getContest(id) {
 
 export function getActiveContest(id) {
   return db().oneOrNone(
-    'select * from contests where id = $1 and start_time is not null and start_time < now() and (end_time > now() or end_time is null);',
+    'select * from contests where id = $1 and start_time is not null and start_time < now() and (end_time > now() or end_time is null)',
     [id],
   );
 }

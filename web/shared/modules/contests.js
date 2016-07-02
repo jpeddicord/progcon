@@ -7,6 +7,7 @@
 
 import moment from 'moment';
 import { browserHistory } from 'react-router';
+import { alertServerError } from '../util/alert';
 import { fetchJSON, fetchJSONAuth } from '../util/fetch';
 import { saveToken } from '../util/token';
 
@@ -87,58 +88,90 @@ export function receiveSubmissionLog(submissions) {
 
 export function fetchContests() {
   return async dispatch => {
-    const json = await fetchJSON('/api/contests/');
-    dispatch(receiveContests(json.contests));
+    try {
+      const json = await fetchJSON('/api/contests/');
+      dispatch(receiveContests(json.contests));
+    } catch (err) {
+      alertServerError(err);
+    }
   };
 }
 
 export function fetchContestDetail(id) {
   return async dispatch => {
-    const json = await fetchJSONAuth(`/api/contests/${id}`);
-    dispatch(receiveContestDetail(json));
+    try {
+      const json = await fetchJSONAuth(`/api/contests/${id}`);
+      dispatch(receiveContestDetail(json));
+    } catch (err) {
+      alertServerError(err);
+    }
   };
 }
 
 export function registerForContest(id, code, name) {
   return async dispatch => {
-    const json = await fetchJSON.post(`/api/contests/${id}/register`, {code, name});
-    saveToken(json.token);
-    browserHistory.push(`/contests/${id}`);
+    try {
+      const json = await fetchJSON.post(`/api/contests/${id}/register`, {code, name});
+      saveToken(json.token);
+      browserHistory.push(`/contests/${id}`);
+    } catch (err) {
+      alertServerError(err);
+    }
   };
 }
 
 export function createContest(title) {
   return async dispatch => {
-    const json = await fetchJSONAuth.post('/api/contests/', {title});
-    dispatch(fetchContests());
-    browserHistory.push(`/admin/contests/${json.id}`);
+    try {
+      const json = await fetchJSONAuth.post('/api/contests/', {title});
+      dispatch(fetchContests());
+      browserHistory.push(`/admin/contests/${json.id}`);
+    } catch (err) {
+      alertServerError(err);
+    }
   };
 }
 
 export function updateContest(id, values) {
   return async dispatch => {
-    await fetchJSONAuth.post(`/api/contests/${id}`, values);
-    dispatch(fetchContestDetail(id));
+    try {
+      await fetchJSONAuth.post(`/api/contests/${id}`, values);
+      dispatch(fetchContestDetail(id));
+    } catch (err) {
+      alertServerError(err);
+    }
   };
 }
 
 export function contestCommand(id, command) {
   return async dispatch => {
-    await fetchJSONAuth.post(`/api/contests/${id}/control`, {action: command});
-    dispatch(fetchContestDetail(id));
+    try {
+      await fetchJSONAuth.post(`/api/contests/${id}/control`, {action: command});
+      dispatch(fetchContestDetail(id));
+    } catch (err) {
+      alertServerError(err);
+    }
   };
 }
 
 export function fetchLeaderboard(id) {
   return async dispatch => {
-    const json = await fetchJSONAuth(`/api/contests/${id}/leaderboard`);
-    dispatch(receiveLeaderboard(json.leaderboard));
+    try {
+      const json = await fetchJSONAuth(`/api/contests/${id}/leaderboard`);
+      dispatch(receiveLeaderboard(json.leaderboard));
+    } catch (err) {
+      alertServerError(err);
+    }
   };
 }
 
 export function fetchSubmissionLog(id) {
   return async dispatch => {
-    const json = await fetchJSONAuth(`/api/contests/${id}/submissions`);
-    dispatch(receiveSubmissionLog(json.submissions));
+    try {
+      const json = await fetchJSONAuth(`/api/contests/${id}/submissions`);
+      dispatch(receiveSubmissionLog(json.submissions));
+    } catch (err) {
+      alertServerError(err);
+    }
   };
 }

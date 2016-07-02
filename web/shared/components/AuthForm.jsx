@@ -7,13 +7,18 @@
 
 import React from 'react';
 import { browserHistory } from 'react-router';
+import { alertServerError } from '../util/alert';
 import { fetchJSON } from '../util/fetch';
 import { saveToken } from '../util/token';
 
 async function auth(user, pass) {
-  const json = await fetchJSON.post('/api/auth', {user, pass});
-  saveToken(json.token);
-  browserHistory.push('/');
+  try {
+    const json = await fetchJSON.post('/api/auth', {user, pass});
+    saveToken(json.token);
+    browserHistory.push('/');
+  } catch (err) {
+    alertServerError(err);
+  }
 }
 
 export default class AuthForm extends React.Component {

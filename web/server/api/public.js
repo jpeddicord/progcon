@@ -30,8 +30,8 @@ routes.post('/contests/:contest_id/register', rateLimiter, async (ctx, next) => 
 
   // validate the registration code
   const contest = await dbContests.getContest(ctx.params.contest_id);
-  if (code !== contest.code) {
-    throw new AuthError('invalid registration code');
+  if (code.toLowerCase() !== contest.code.toLowerCase()) {
+    throw new AuthError('Invalid registration code');
   }
 
   // set up a contest-specific user account

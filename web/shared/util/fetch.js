@@ -23,7 +23,10 @@ export async function fetchJSON(url, options = {}) {
   }
 
   if (resp.status !== 200) {
-    throw new Error(resp.error);
+    const msg = await resp.text();
+    const err = new Error(msg);
+    err.server = true;
+    throw err;
   }
 
   return resp.json();
@@ -32,10 +35,6 @@ export async function fetchJSON(url, options = {}) {
 export async function fetchJSONAuth(url, options) {
   // load or fetch our token
   let token = loadToken();
-  if (token == null) {
-    // TODO: oh no!
-    throw new Error('no auth token; unregistered?');
-  }
 
   return fetchJSON(url, injectTokenHeader(options, token));
 }

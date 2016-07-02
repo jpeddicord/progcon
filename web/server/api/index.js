@@ -23,9 +23,9 @@ routes.use(async (ctx, next) => {
     ctx.status = status;
     if (status === 500) {
       console.error(err);
-      ctx.body = {error: 'internal error'};
+      ctx.body = 'Internal error';
     } else {
-      ctx.body = {error: err.message.trim()};
+      ctx.body = err.message.trim();
     }
   }
 });
