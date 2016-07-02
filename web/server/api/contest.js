@@ -9,6 +9,8 @@
  * Routes requiring access to a specific contest
  */
 import Router from 'koa-router';
+import cache from 'memory-cache';
+import winston from 'winston';
 import { contestAccess } from './auth';
 import * as dbContests from '../db/contests';
 import * as dbSubmissions from '../db/submissions';
@@ -22,7 +24,19 @@ routes.use(contestAccess);
 
 // get a single contest's details
 routes.get('/', async (ctx, next) => {
-  const contest = await dbContests.getContest(ctx.params.contest_id);
+  const id = ctx.params.contest_id;
+
+  // check cache for contest data
+  const cacheKey = `contest/${id}`;
+  let contest = cache.get(cacheKey);
+
+  // fetch and cache if not present
+  if (contest == null) {
+    winston.silly(`Cache miss: ${cacheKey}`);
+    contest = await dbContests.getContest(id);
+    cache.put(cacheKey, contest, 10 * 1000);
+  }
+
   ctx.body = contest;
 });
 
@@ -80,7 +94,19 @@ routes.post('/problems/:problem', contestIsActive, contestHasProblem, async (ctx
 });
 
 routes.get('/leaderboard', async (ctx, next) => {
-  const leaderboard = await dbUsers.getLeaderboard(ctx.params.contest_id);
+  const id = ctx.params.contest_id;
+
+  // check cache for leaderboard
+  const cacheKey = `contest/${id}/leaderboard`;
+  let leaderboard = cache.get(cacheKey);
+
+  // fetch and cache if not present
+  if (leaderboard == null) {
+    winston.silly(`Cache miss: ${cacheKey}`);
+    leaderboard = await dbUsers.getLeaderboard(id);
+    cache.put(cacheKey, leaderboard, 10 * 1000);
+  }
+
   ctx.body = {leaderboard};
 });
 
