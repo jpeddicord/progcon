@@ -8,6 +8,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { fetchSubmissions, fetchSubmissionDetail } from '../modules/submissions';
+import hljs from '../util/highlight';
 
 class SubmissionLog extends React.Component {
   static propTypes = {
@@ -48,10 +49,12 @@ class SubmissionLog extends React.Component {
 
     return (
       <div>
+        <h3>Submissions</h3>
         <div style={{height: '400px', overflowY: 'scroll'}}>
           <table className="table table-sm table-hover">
             <thead>
               <tr>
+                <th>ID</th>
                 <th>User</th>
                 <th>Problem</th>
                 <th>Result</th>
@@ -80,6 +83,7 @@ function SubmissionRow(props) {
   const { id, problem, result, submission_time, time_score, user_id, user_name } = props.sub;
   return (
     <tr style={{cursor: 'pointer'}} onClick={() => props.loadDetails(id)}>
+      <td>{id}</td>
       <td>{user_name} ({user_id})</td>
       <td>{problem}</td>
       <td>{result}</td>
@@ -89,15 +93,64 @@ function SubmissionRow(props) {
   );
 }
 
-SubmissionDetails.propTypes = {
-  details: React.PropTypes.object,
-};
-function SubmissionDetails(props) {
-  return (
-    <div>
-      {JSON.stringify(props.details)}
-    </div>
-  );
+class SubmissionDetails extends React.Component {
+  static propTypes = {
+    details: React.PropTypes.object,
+  };
+
+  code = null;
+  diff = null;
+
+  componentDidMount() {
+    this.highlight();
+  }
+
+  componentDidUpdate() {
+    this.highlight();
+  }
+
+  highlight() {
+    if (this.props.details == null) {
+      return;
+    }
+
+    hljs.highlightBlock(this.code);
+
+    if (this.diff != null) {
+      hljs.highlightBlock(this.diff);
+    }
+  }
+
+  render() {
+    if (this.props.details == null) {
+      return <div/>;
+    }
+
+    const { id, answer, meta } = this.props.details;
+    this.diff = null;
+
+    return (
+      <div>
+        <br/>
+        <h3>Submission {id}</h3>
+        <h4>Submitted Answer</h4>
+        <pre className="pre-scrollable" ref={ref => this.code = ref}>
+          <code className="java">
+            {answer}
+          </code>
+        </pre>
+        {meta != null ?
+          <div>
+            <pre className="pre-scrollable">
+              <code className="diff" ref={ref => this.diff = ref}>
+                {meta.diff}
+              </code>
+            </pre>
+          </div>
+        : ''}
+      </div>
+    );
+  }
 }
 
 export default connect(state => {
