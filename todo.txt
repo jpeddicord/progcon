@@ -5,7 +5,6 @@
 (B) implement re-grade & re-scoring
 (C) autoreload on leaderboards
 (C) autoreload on submission screen if active submission +web
-(C) do something about expired tokens +web
 (C) fix sign-up form style +web
 (C) make admin not look terrible too +web
 (C) write an installer script / makefile
@@ -23,6 +22,7 @@ x (B) output test diffs +runner +web
 x (B) set time limits for runner +runner +exec
 x (B) store original submission +web
 x (B) surface errors in the UI +web
+x (C) do something about expired tokens +web
 x (C) make it not look terrible +web
 x (C) multi-threaded/process testing +runner
 x (C) runner process management +web +runner

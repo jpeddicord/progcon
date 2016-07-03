@@ -25,7 +25,7 @@ export async function tryAuth(user, pass) {
       id: -1,
       admin: true,
     }, config.jwt.secret, {
-      expiresIn: '1 day',
+      expiresIn: '2 days',
     });
 
   } else {
