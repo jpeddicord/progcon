@@ -14,15 +14,12 @@ create table if not exists contests (
 create table if not exists users (
     id serial primary key,
     contest_id integer not null,
-    participant_number integer not null,
     name text,
     password text,
     problems_completed text[] not null default array[]::text[],
     time_score integer not null default 0,
     problem_scores jsonb not null default '{}'::jsonb,
-    meta jsonb,
-
-    unique (contest_id, participant_number)
+    meta jsonb
 );
 
 -- problem_scores: {

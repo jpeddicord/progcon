@@ -44,15 +44,14 @@ export async function tryAuth(userId, pass) {
       return null;
     }
 
-    return issueUserToken(user.id, user.contest_id, user.participant_number);
+    return issueUserToken(user.id, user.contest_id);
   }
 }
 
-export function issueUserToken(id, contest, participant_number) {
+export function issueUserToken(id, contest) {
   const claims = {
     id,
     contest,
-    number: participant_number,
   };
   return sign(claims, config.jwt.secret, {
     expiresIn: '1 day',

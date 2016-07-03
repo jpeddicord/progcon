@@ -39,7 +39,7 @@ routes.post('/contests/:contest_id/register', rateLimiter, async (ctx, next) => 
   const user = await dbUsers.registerUser(name, password, ctx.params.contest_id);
 
   // issue a token for the newly-created user
-  const jwt = issueUserToken(user.id, contest.id, user.participant_number);
+  const jwt = issueUserToken(user.id, contest.id);
   ctx.body = {token: jwt, id: user.id, password: password};
 });
 

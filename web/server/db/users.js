@@ -6,14 +6,13 @@
  */
 
 import db from './connection';
-import { contestSequence } from './contests';
 
 export function getUser(id) {
   return db().oneOrNone('select * from users where id = $1', [id]);
 }
 
 export function getContestUsers(contest) {
-  return db().any('select id, participant_number, name from users where contest_id = $1', [contest]);
+  return db().any('select id, name from users where contest_id = $1', [contest]);
 }
 
 export function registerUser(name, password, contest) {
@@ -23,8 +22,8 @@ export function registerUser(name, password, contest) {
   // in case a participant gets locked out, and they're randomly-generated.
 
   return db().one(
-    'insert into users(name, password, contest_id, participant_number) values($1, $2, $3, nextval($4)) returning id, participant_number',
-    [name, password, contest, contestSequence(contest)],
+    'insert into users(name, password, contest_id) values($1, $2, $3) returning id',
+    [name, password, contest],
   );
 }
 
