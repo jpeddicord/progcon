@@ -40,7 +40,7 @@ routes.post('/contests/:contest_id/register', rateLimiter, async (ctx, next) => 
 
   // issue a token for the newly-created user
   const jwt = issueUserToken(user.id, contest.id, user.participant_number);
-  ctx.body = {token: jwt};
+  ctx.body = {token: jwt, id: user.id, password: password};
 });
 
 // alternative authentication. not expected to be used for most contest participants,

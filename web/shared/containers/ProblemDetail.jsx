@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import SolutionUploader from '../components/SolutionUploader';
 import SubmissionStatus from '../components/SubmissionStatus';
 import { fetchProblem, submitAnswer } from '../modules/problems';
+import { triggerTextDownload } from '../util/download';
 
 class ProblemDetail extends React.Component {
   static propTypes = {
@@ -31,17 +32,7 @@ class ProblemDetail extends React.Component {
   downloadStub = e => {
     const { problems, params: { problem_name } } = this.props;
     const problem = problems[problem_name];
-    const encoded = encodeURIComponent(problem.stub);
-    const uri = `data:text/plain;charset=utf-8,${encoded}`;
-
-    // make a fake link and "click" it
-    const ele = document.createElement('a');
-    ele.setAttribute('download', problem.stub_name);
-    ele.setAttribute('href', uri);
-    ele.style.display = 'none';
-    document.body.appendChild(ele);
-    ele.click();
-    document.body.removeChild(ele);
+    triggerTextDownload(problem.stub_name, problem.stub);
   };
 
   submitAnswer = content => {

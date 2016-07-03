@@ -9,6 +9,7 @@ import moment from 'moment';
 import { browserHistory } from 'react-router';
 import { alertServerError } from '../util/alert';
 import { fetchJSON, fetchJSONAuth } from '../util/fetch';
+import { saveRecoveryCode } from '../util/recovery';
 import { saveToken } from '../util/token';
 
 const RECEIVE_CONTESTS = 'app/contests/receive-contests';
@@ -113,6 +114,7 @@ export function registerForContest(id, code, name) {
     try {
       const json = await fetchJSON.post(`/api/contests/${id}/register`, {code, name});
       saveToken(json.token);
+      saveRecoveryCode(json.id, json.password);
       browserHistory.push(`/contests/${id}`);
     } catch (err) {
       alertServerError(err);

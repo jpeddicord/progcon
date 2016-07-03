@@ -13,8 +13,8 @@ import config from '../config';
 import * as dbUsers from '../db/users';
 import { AccessError } from '../util/errors';
 
-export async function tryAuth(user, pass) {
-  if (user === 'admin') {
+export async function tryAuth(userId, pass) {
+  if (userId === 'admin') {
     const hash = await crypto.pbkdf2(pass, '', 1000000, 16, 'sha256');
     if (hash.toString('hex') !== config.admin.passwordHash) {
       return null;
@@ -29,7 +29,7 @@ export async function tryAuth(user, pass) {
     });
 
   } else {
-    const id = parseInt(user);
+    const id = parseInt(userId);
     if (Number.isNaN(id)) {
       return null;
     }
