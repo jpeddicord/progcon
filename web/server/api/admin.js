@@ -53,8 +53,9 @@ routes.get('/contests/:contest_id/submissions', async (ctx, next) => {
   ctx.body = {submissions: subs};
 });
 
-routes.get('/contests/:contest_id/submissions/:submission_id', async (ctx, next) => {
-  ctx.status = 501;
+routes.get('/submissions/:submission_id', async (ctx, next) => {
+  const sub = await dbSubmissions.getSubmission(ctx.params.submission_id);
+  ctx.body = sub;
 });
 
 export default routes.routes();

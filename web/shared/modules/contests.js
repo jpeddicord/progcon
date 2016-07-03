@@ -15,14 +15,12 @@ import { saveToken } from '../util/token';
 const RECEIVE_CONTESTS = 'app/contests/receive-contests';
 const RECEIVE_CONTEST_DETAIL = 'app/contests/receive-contest-detail';
 const RECEIVE_LEADERBOARD = 'app/contests/receive-leaderboard';
-const RECEIVE_SUBMISSION_LOG = 'app/contests/receive-submission-log';
 
 const initial = {
   list: [],
   active: {
     id: null,
     leaderboard: null,
-    submissions: null,
   },
 };
 
@@ -45,13 +43,6 @@ export default function reducer(state = initial, action) {
         active: {
           ...state.active,
           leaderboard: action.leaderboard,
-        },
-      });
-    case RECEIVE_SUBMISSION_LOG:
-      return Object.assign({}, state, {
-        active: {
-          ...state.active,
-          submissions: action.submissions,
         },
       });
     default:
@@ -77,13 +68,6 @@ export function receiveLeaderboard(leaderboard) {
   return {
     type: RECEIVE_LEADERBOARD,
     leaderboard,
-  };
-}
-
-export function receiveSubmissionLog(submissions) {
-  return {
-    type: RECEIVE_SUBMISSION_LOG,
-    submissions,
   };
 }
 
@@ -161,17 +145,6 @@ export function fetchLeaderboard(id) {
     try {
       const json = await fetchJSONAuth(`/api/contests/${id}/leaderboard`);
       dispatch(receiveLeaderboard(json.leaderboard));
-    } catch (err) {
-      alertServerError(err);
-    }
-  };
-}
-
-export function fetchSubmissionLog(id) {
-  return async dispatch => {
-    try {
-      const json = await fetchJSONAuth(`/api/contests/${id}/submissions`);
-      dispatch(receiveSubmissionLog(json.submissions));
     } catch (err) {
       alertServerError(err);
     }

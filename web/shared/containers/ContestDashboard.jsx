@@ -41,35 +41,29 @@ class ContestDashboard extends React.Component {
     }
 
     return (
-      <div>
-        <div className="row">
-          <div className="col-md-8">
-            <SubmissionLog />
-          </div>
-
-          <div className="col-md-4">
-            <SafetyBox>
-              <div className="pull-md-right">
-                <button className="btn btn-lg btn-success"
-                  onClick={this.bindCommand('start')}>
-                  Start
-                </button>
-                <button className="btn btn-lg btn-warning"
-                  onClick={this.bindCommand('end')}>
-                  End
-                </button>
-              </div>
-              <br style={{clear: 'both'}}/>
-            </SafetyBox>
-          </div>
+      <div className="row">
+        <div className="col-md-8">
+          <SubmissionLog />
         </div>
 
-        <div className="row">
-          <div className="col-md-12">
-            <ContestEditor />
-          </div>
+        <div className="col-md-4">
+          <SafetyBox>
+            <div className="pull-md-right">
+              <button className="btn btn-lg btn-success"
+                onClick={this.bindCommand('start')}>
+                Start
+              </button>
+              <button className="btn btn-lg btn-warning"
+                onClick={this.bindCommand('end')}>
+                End
+              </button>
+            </div>
+            <br style={{clear: 'both'}}/>
+          </SafetyBox>
+          <ContestEditor />
         </div>
       </div>
+
     );
 
   }
