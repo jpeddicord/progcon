@@ -13,9 +13,16 @@ $brand-danger:              #e5732e;
 $body-bg:                   #f7f7f7;
 $body-color:                $gray-dark;
 
+$table-bg:                  transparent;
+$table-bg-accent:           #f9f9f9;
+$table-bg-hover:            #e4e4e4;
+$table-bg-active:           $table-bg-hover;
+
 $state-success-text:        #3c763d;
 $state-success-bg:          #93bd82;
 $state-warning-text:        #a85d26;
 $state-warning-bg:          #ffb365;
+$state-danger-text:         #d62b13;
+$state-danger-bg:           #f5766e;
 
 $enable-rounded:            false;

@@ -86,12 +86,22 @@ SubmissionRow.propTypes = {
 };
 function SubmissionRow(props) {
   const { id, problem, result, submission_time, time_score, user_id, user_name } = props.sub;
+
+  let resultClass = '';
+  if (result === 'successful') {
+    resultClass = 'table-success';
+  } else if (result === 'failed_tests') {
+    resultClass = 'table-warning';
+  } else if (result != null) {
+    resultClass = 'table-danger';
+  }
+
   return (
     <tr style={{cursor: 'pointer'}} onClick={() => props.loadDetails(id)}>
       <td>{id}</td>
       <td>{user_name} ({user_id})</td>
       <td>{problem}</td>
-      <td>{result}</td>
+      <td className={resultClass}>{result}</td>
       <td>{time_score}</td>
       <td>{submission_time}</td>
     </tr>
@@ -145,13 +155,13 @@ class SubmissionDetails extends React.Component {
         </div>
         <h3>Submission {id}</h3>
         <h4>Submitted Answer</h4>
-        <pre key={id} className="pre-scrollable" ref={ref => this.code = ref}>
+        <pre key={`ans-${id}`} className="pre-scrollable" ref={ref => this.code = ref}>
           <code className="java">
             {answer}
           </code>
         </pre>
         {meta != null ?
-          <pre key={id} className="pre-scrollable">
+          <pre key={`diff-${id}`} className="pre-scrollable">
             <code className="diff" ref={ref => this.diff = ref}>
               {meta.diff}
             </code>
