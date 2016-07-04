@@ -8,7 +8,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import config from '../../browser/config';
-import { fetchContestDetail, registerForContest } from '../modules/contests';
+import { registerForContest } from '../modules/contests';
 
 class RegistrationForm extends React.Component {
   static propTypes = {
@@ -44,7 +44,7 @@ class RegistrationForm extends React.Component {
 
         {config.registration.fields.map(field => {
           return (
-            <fieldset className="form-group">
+            <fieldset key={field.name} className="form-group">
               <label htmlFor={`registration-${field.name}`}>{field.label}</label>
               <input type="text" name={field.name} id={`registration-${field.name}`} className="form-control" required />
             </fieldset>
