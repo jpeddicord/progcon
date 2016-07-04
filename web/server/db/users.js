@@ -15,15 +15,15 @@ export function getContestUsers(contest) {
   return db().any('select id, name, meta from users where contest_id = $1', [contest]);
 }
 
-export function registerUser(name, password, contest) {
+export function registerUser(name, password, contest, meta) {
   // before you freak out about the password:
   // remember that these are session-based accounts. they're tied to a single,
   // time-limited contest. they're store as plaintext to proritize fast assistance
   // in case a participant gets locked out, and they're randomly-generated.
 
   return db().one(
-    'insert into users(name, password, contest_id) values($1, $2, $3) returning id',
-    [name, password, contest],
+    'insert into users(name, password, contest_id, meta) values($1, $2, $3, $4) returning id',
+    [name, password, contest, meta],
   );
 }
 

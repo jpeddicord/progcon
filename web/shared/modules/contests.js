@@ -93,10 +93,10 @@ export function fetchContestDetail(id) {
   };
 }
 
-export function registerForContest(id, code, name) {
+export function registerForContest(id, code, name, meta) {
   return async dispatch => {
     try {
-      const json = await fetchJSON.post(`/api/contests/${id}/register`, {code, name});
+      const json = await fetchJSON.post(`/api/contests/${id}/register`, {code, name, meta});
       saveToken(json.token);
       saveRecoveryCode(json.id, json.password);
       browserHistory.push(`/contests/${id}`);

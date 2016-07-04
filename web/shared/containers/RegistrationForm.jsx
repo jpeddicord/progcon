@@ -7,7 +7,8 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { registerForContest } from '../modules/contests';
+import config from '../../browser/config';
+import { fetchContestDetail, registerForContest } from '../modules/contests';
 
 class RegistrationForm extends React.Component {
   static propTypes = {
@@ -16,29 +17,41 @@ class RegistrationForm extends React.Component {
     active: React.PropTypes.object,
   };
 
-  componentDidMount() {
-    /* TODO: show contest details on reg form
-    const { dispatch, active, params: { contest_id } } = this.props;
-    if (active == null || active.id !== parseInt(contest_id)) {
-      dispatch(fetchContestDetail(contest_id));
-    }
-    */
-  }
-
   submitRegistration = e => {
     const { dispatch, params: { contest_id } } = this.props;
     const fields = e.target.elements;
     e.preventDefault();
 
-    dispatch(registerForContest(contest_id, fields.code.value, fields.name.value));
+    const meta = {};
+    for (let customField of config.registration.fields) {
+      meta[customField.name] = fields[customField.name].value;
+    }
+
+    dispatch(registerForContest(contest_id, fields.code.value, fields.name.value, meta));
   };
 
   render() {
     return (
       <form onSubmit={this.submitRegistration}>
-        registration code: <input type="text" name="code" /><br/>
-        your name: <input type="text" name="name" /><br/>
-        <button type="submit">register</button>
+        <fieldset className="form-group">
+          <label htmlFor="registrationCode">Registration Code</label>
+          <input type="text" name="code" id="registrationCode" className="form-control" required />
+        </fieldset>
+        <fieldset className="form-group">
+          <label htmlFor="registrationName">Your Name</label>
+          <input type="text" name="name" id="registrationName" className="form-control" required />
+        </fieldset>
+
+        {config.registration.fields.map(field => {
+          return (
+            <fieldset className="form-group">
+              <label htmlFor={`registration-${field.name}`}>{field.label}</label>
+              <input type="text" name={field.name} id={`registration-${field.name}`} className="form-control" required />
+            </fieldset>
+          );
+        })}
+
+        <button type="submit" className="btn btn-lg btn-primary">Register</button>
       </form>
     );
   }

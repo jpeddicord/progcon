@@ -12,13 +12,12 @@ import Router from 'koa-router';
 import { tryAuth, issueUserToken, generateUserPassword, rateLimiter } from './auth';
 import * as dbContests from '../db/contests';
 import * as dbUsers from '../db/users';
-import { AuthError } from '../util/errors';
+import { AuthError, RequestError } from '../util/errors';
 
 const routes = new Router();
 
 // list contests
 routes.get('/contests/', async (ctx, next) => {
-  // TODO: permission restrictions (admin -> all; non-admin -> active)
   const contests = await dbContests.listContests();
   ctx.body = {contests};
 });
@@ -26,7 +25,11 @@ routes.get('/contests/', async (ctx, next) => {
 // register for a contest
 // XXX: for some reason rate limiting doesn't work here...?
 routes.post('/contests/:contest_id/register', rateLimiter, async (ctx, next) => {
-  const { code, name } = ctx.request.body;
+  const { code, name, meta } = ctx.request.body;
+
+  if (name.trim().length === 0) {
+    throw new RequestError('Please enter your name');
+  }
 
   // validate the registration code
   const contest = await dbContests.getContest(ctx.params.contest_id);
@@ -35,8 +38,9 @@ routes.post('/contests/:contest_id/register', rateLimiter, async (ctx, next) => 
   }
 
   // set up a contest-specific user account
+  // note: meta information is not validated, so don't trust its value unless audited!
   const password = await generateUserPassword();
-  const user = await dbUsers.registerUser(name, password, ctx.params.contest_id);
+  const user = await dbUsers.registerUser(name, password, ctx.params.contest_id, meta);
 
   // issue a token for the newly-created user
   const jwt = issueUserToken(user.id, contest.id);

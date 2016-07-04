@@ -98,7 +98,7 @@ function ScoreRow(props) {
   return (
     <tr>
       <td>{props.place != null ? props.place :
-          <i className="fa fa-circle-o" title="Ineligible for leaderboard"/>
+          <small><i className="fa fa-circle-o" title="Ineligible for leaderboard"/></small>
       }</td>
       <td>{props.user.name}</td>
       <td><strong>{props.user.problems_completed.length}</strong> in {time}</td>
