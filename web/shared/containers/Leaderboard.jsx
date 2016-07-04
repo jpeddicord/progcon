@@ -53,6 +53,8 @@ class Leaderboard extends React.Component {
       return <div/>;
     }
 
+    let currentPlace = 1;
+
     return (
       <div>
         <h3>{active.title} <small>Leaderboard</small></h3>
@@ -71,7 +73,12 @@ class Leaderboard extends React.Component {
 
           <tbody>
             {active.leaderboard.map((user, i) => {
-              return <ScoreRow key={i} place={i+1} user={user} problems={active.problems} />;
+              let place = null;
+              if (!user.ineligible) {
+                place = currentPlace;
+                currentPlace++;
+              }
+              return <ScoreRow key={user.id} place={place} user={user} problems={active.problems} />;
             })}
           </tbody>
         </table>
@@ -90,7 +97,9 @@ function ScoreRow(props) {
   const time = moment.duration(props.user.time_score, 'seconds').format('d[d] HH[h]:mm[m]');
   return (
     <tr>
-      <td>{props.place}</td>
+      <td>{props.place != null ? props.place :
+          <i className="fa fa-circle-o" title="Ineligible for leaderboard"/>
+      }</td>
       <td>{props.user.name}</td>
       <td><strong>{props.user.problems_completed.length}</strong> in {time}</td>
       {props.problems.map((p, i) => {

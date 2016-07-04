@@ -32,7 +32,8 @@ if (prod) {
 }
 
 module.exports = {
-  entry: ['./styles/style.scss', './browser/app.jsx'],
+  // TODO: move font-awesome elsewhere (vendor css or something)
+  entry: ['font-awesome/css/font-awesome.css', './styles/style.scss', './browser/app.jsx'],
   module: {
     loaders: [
       {
@@ -49,11 +50,11 @@ module.exports = {
         loaders: ['style', 'css', 'sass'],
       },
       {
-        test: /\.(woff2?|svg)$/,
+        test: /\.(woff2?|svg)(\?v=[\d\.]+)?$/,
         loader: 'url?limit=10000',
       },
       {
-        test: /\.(ttf|eot)$/,
+        test: /\.(ttf|eot)(\?v=[\d\.]+)?$/,
         loader: 'file',
       },
     ],
