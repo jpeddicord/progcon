@@ -17,39 +17,20 @@ class Leaderboard extends React.Component {
     dispatch: React.PropTypes.func.isRequired,
     params: React.PropTypes.object.isRequired,
     active: React.PropTypes.object,
+    leaderboard: React.PropTypes.array,
   };
 
-  // REVIEW: move this contest-loading logic to someplace common; it shows up everywhere
-  // perhaps a Contest wrapper that lives higher up on the router
   componentDidMount() {
-    const { dispatch, active, params: { contest_id } } = this.props;
+    const { dispatch, params: { contest_id } } = this.props;
 
-    // fetch contest data if we don't have it
-    if (active == null || active.id !== parseInt(contest_id)) {
-      dispatch(fetchContestDetail(contest_id));
-      // this will then trigger checkLeaderboard when props are next received
-    } else {
-      this.checkLeaderboard();
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.checkLeaderboard(nextProps);
-  }
-
-  checkLeaderboard(props) {
-    const { dispatch } = this.props;
-    props = props || this.props;
-    // have we loaded the contest but not the leaderboard?
-    if (props.active.id != null && props.active.leaderboard == null) {
-      dispatch(fetchLeaderboard(this.props.params.contest_id));
-    }
+    dispatch(fetchContestDetail(contest_id));
+    dispatch(fetchLeaderboard(contest_id));
   }
 
   render() {
-    const { active } = this.props;
+    const { active, leaderboard } = this.props;
 
-    if (active == null || active.id == null || active.leaderboard == null) {
+    if (active == null || active.id == null || leaderboard == null) {
       return <div/>;
     }
 
@@ -72,7 +53,7 @@ class Leaderboard extends React.Component {
           </thead>
 
           <tbody>
-            {active.leaderboard.map((user, i) => {
+            {leaderboard.map((user, i) => {
               let place = null;
               if (!user.ineligible) {
                 place = currentPlace;
@@ -89,7 +70,7 @@ class Leaderboard extends React.Component {
 }
 
 ScoreRow.propTypes = {
-  place: React.PropTypes.number.isRequired,
+  place: React.PropTypes.number,
   user: React.PropTypes.object.isRequired,
   problems: React.PropTypes.array.isRequired,
 };
@@ -141,5 +122,6 @@ function ProblemStatus(props) {
 export default connect(state => {
   return {
     active: state.contests.active,
+    leaderboard: state.contests.leaderboard,
   };
 })(Leaderboard);

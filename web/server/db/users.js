@@ -35,6 +35,7 @@ export function updateUser(id, name, meta) {
 }
 
 // update the user's score, optionally adding a problem to their completed list
+// TODO remove this; no real need for two scoring code paths and this logic is overly complicated
 export function addScore(id, timeScore, problem, problemScores) {
   if (problem != null) {
     return db().none(

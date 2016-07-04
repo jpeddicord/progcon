@@ -15,13 +15,15 @@ import { saveToken } from '../util/token';
 const RECEIVE_CONTESTS = 'app/contests/receive-contests';
 const RECEIVE_CONTEST_DETAIL = 'app/contests/receive-contest-detail';
 const RECEIVE_LEADERBOARD = 'app/contests/receive-leaderboard';
+const RECEIVE_SCORE = 'app/contests/receive-score';
 
 const initial = {
   list: [],
   active: {
     id: null,
-    leaderboard: null,
   },
+  leaderboard: null,
+  score: null,
 };
 
 export default function reducer(state = initial, action) {
@@ -40,10 +42,11 @@ export default function reducer(state = initial, action) {
       });
     case RECEIVE_LEADERBOARD:
       return Object.assign({}, state, {
-        active: {
-          ...state.active,
-          leaderboard: action.leaderboard,
-        },
+        leaderboard: action.leaderboard,
+      });
+    case RECEIVE_SCORE:
+      return Object.assign({}, state, {
+        score: action.score,
       });
     default:
       return state;
@@ -71,6 +74,13 @@ export function receiveLeaderboard(leaderboard) {
   };
 }
 
+export function receiveScore(score) {
+  return {
+    type: RECEIVE_SCORE,
+    score,
+  };
+}
+
 export function fetchContests() {
   return async dispatch => {
     try {
@@ -87,6 +97,7 @@ export function fetchContestDetail(id) {
     try {
       const json = await fetchJSONAuth(`/api/contests/${id}`);
       dispatch(receiveContestDetail(json));
+      dispatch(fetchScore(id));
     } catch (err) {
       alertServerError(err);
     }
@@ -145,6 +156,18 @@ export function fetchLeaderboard(id) {
     try {
       const json = await fetchJSONAuth(`/api/contests/${id}/leaderboard`);
       dispatch(receiveLeaderboard(json.leaderboard));
+      dispatch(fetchScore(id));
+    } catch (err) {
+      alertServerError(err);
+    }
+  };
+}
+
+export function fetchScore(id) {
+  return async dispatch => {
+    try {
+      const json = await fetchJSONAuth(`/api/contests/${id}/score`);
+      dispatch(receiveScore(json));
     } catch (err) {
       alertServerError(err);
     }

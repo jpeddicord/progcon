@@ -90,6 +90,22 @@ routes.post('/problems/:problem', contestIsActive, contestHasProblem, async (ctx
   ctx.body = {id: sub.id};
 });
 
+routes.get('/score', async (ctx, next) => {
+  const userId = ctx.state.user.id;
+  const user = await dbUsers.getUser(userId);
+
+  // user can be null if admin; just silence this
+  if (user == null) {
+    ctx.body = {score: 0, problems_completed: []};
+    return;
+  }
+
+  ctx.body = {
+    time_score: user.time_score,
+    problems_completed: user.problems_completed,
+  };
+});
+
 routes.get('/leaderboard', async (ctx, next) => {
   const id = ctx.params.contest_id;
 

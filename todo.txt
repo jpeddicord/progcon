@@ -1,14 +1,15 @@
-(A) don't allow users to see contest details until the contest is active
 (A) fix or annotate all TODOs
-(B) display score on navbar +web
+x (B) display score on navbar +web
 (B) implement re-grade & re-scoring
 (C) add "active" and "archived" contests
 (C) autoreload on leaderboards
 (C) autoreload on submission screen if active submission +web
+(C) add doc comments to... everything
 (C) write an installer script / makefile
 x (A) add registration form +web
 x (A) calculate scores, penalties +web
 x (A) display problem descriptions
+x (A) don't allow users to see contest details until the contest is active
 x (A) remove hardcoded problems directory
 x (A) run answer against tests +runner
 x (A) send results over events channel +runner
