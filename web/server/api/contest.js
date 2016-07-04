@@ -107,11 +107,15 @@ routes.get('/score', async (ctx, next) => {
 });
 
 routes.get('/leaderboard', async (ctx, next) => {
-  const id = ctx.params.contest_id;
-
   // check cache for leaderboard
+  const id = ctx.params.contest_id;
   const cacheKey = `contest/${id}/leaderboard`;
-  let leaderboard = cache.get(cacheKey);
+
+  // admin skips cache
+  let leaderboard;
+  if (!ctx.state.user.admin) {
+    leaderboard = cache.get(cacheKey);
+  }
 
   // fetch and cache if not present
   if (leaderboard == null) {
@@ -150,7 +154,7 @@ async function getContestCached(id, ctx) {
   }
 
   // fetch and cache if not present
-  if (contest == null || ctx.state.user.admin) {
+  if (contest == null) {
     winston.silly(`Cache miss: ${cacheKey}`);
 
     // try to find active contest first

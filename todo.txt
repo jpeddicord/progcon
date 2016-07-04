@@ -1,10 +1,8 @@
 (A) fix or annotate all TODOs
-x (B) display score on navbar +web
-(B) implement re-grade & re-scoring
 (C) add "active" and "archived" contests
+(C) add doc comments to... everything
 (C) autoreload on leaderboards
 (C) autoreload on submission screen if active submission +web
-(C) add doc comments to... everything
 (C) write an installer script / makefile
 x (A) add registration form +web
 x (A) calculate scores, penalties +web
@@ -17,7 +15,9 @@ x (A) store submission results in database +web
 x (B) add ability to mark user ineligible for leaderboards +web
 x (B) add java policy (null grant; java.security.manager) +runner
 x (B) cache leaderboard +web
+x (B) display score on navbar +web
 x (B) force-download recovery tokens
+x (B) implement re-grade & re-scoring
 x (B) leaderboard view +web
 x (B) output test diffs +runner +web
 x (B) set time limits for runner +runner +exec

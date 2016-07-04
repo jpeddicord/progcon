@@ -21,11 +21,10 @@ export function getContestSubmissions(contestId) {
  * Cached in user.problems_completed.
  */
 export function getSuccessfulUserSubmissions(userId) {
-  const subs = db().any(
-    'select distinct on (problem) problem from submissions where user_id = $1 and result = $2',
+  return db().any(
+    'select distinct on (problem) problem, submission_time, time_score from submissions where user_id = $1 and result = $2 order by problem, submission_time asc',
     [userId, 'successful'],
   );
-  return subs.map(s => s.problem);
 }
 
 export function getLatestSubmission(user, problem) {
@@ -41,14 +40,6 @@ export async function getProblemPenalties(user, problem) {
     [user, problem, 'successful'],
   );
   return penalties.map(p => p.time_score);
-}
-
-export async function getProblemScores(user, problem) {
-  const scores = await db().any(
-    'select time_score from submissions where user_id = $1 and problem = $2 and time_score is not null order by submission_time desc',
-    [user, problem],
-  );
-  return scores.map(s => s.time_score);
 }
 
 export async function createSubmission(user, contest, problem, answer) {

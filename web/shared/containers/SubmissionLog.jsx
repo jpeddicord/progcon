@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { fetchSubmissions, fetchSubmissionDetail } from '../modules/submissions';
+import { fetchSubmissions, fetchSubmissionDetail, rerunSubmission } from '../modules/submissions';
 import hljs from '../util/highlight';
 
 class SubmissionLog extends React.Component {
@@ -34,6 +34,11 @@ class SubmissionLog extends React.Component {
     const { dispatch } = this.props;
     dispatch(fetchSubmissionDetail(id));
     this.setState({selectedSubmission: id});
+  }
+
+  rerun = id => {
+    const { dispatch } = this.props;
+    dispatch(rerunSubmission(id));
   }
 
   render() {
@@ -69,7 +74,7 @@ class SubmissionLog extends React.Component {
           </table>
         </div>
 
-        <SubmissionDetails details={details} />
+        <SubmissionDetails details={details} rerun={this.rerun} />
       </div>
     );
   }
@@ -96,6 +101,7 @@ function SubmissionRow(props) {
 class SubmissionDetails extends React.Component {
   static propTypes = {
     details: React.PropTypes.object,
+    rerun: React.PropTypes.func.isRequired,
   };
 
   code = null;
@@ -134,6 +140,9 @@ class SubmissionDetails extends React.Component {
     return (
       <div>
         <br/>
+        <div className="pull-xs-right">
+          <button className="btn btn-sm btn-info" onClick={e => this.props.rerun(id)}>Re-test this submission</button>
+        </div>
         <h3>Submission {id}</h3>
         <h4>Submitted Answer</h4>
         <pre key={id} className="pre-scrollable" ref={ref => this.code = ref}>

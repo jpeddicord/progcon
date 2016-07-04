@@ -6,17 +6,19 @@
  */
 
 import moment from 'moment';
+import winston from 'winston';
 import * as dbContests from '../db/contests';
 import * as dbSubmissions from '../db/submissions';
 import * as dbUsers from '../db/users';
 
 const TIME_PENALTY = 10 * 60;
 
-// given a submission result, update the score for the user
+/**
+ * Update single submission and re-calculate total scores.
+ */
 export async function updateScore(contestId, userId, submissionId, submissionTime, problem, result, meta) {
-  let subTimeScore;
-
   // calculate the score
+  let subTimeScore;
   if (result === 'successful') {
     const contest = await dbContests.getContest(contestId);
     const start = moment(contest.start_time);
@@ -26,36 +28,50 @@ export async function updateScore(contestId, userId, submissionId, submissionTim
     subTimeScore = TIME_PENALTY;
   }
 
-  // store the individual submission
+  // update the individual submission
   await dbSubmissions.updateSubmission(submissionId, subTimeScore, result, meta);
 
   // update score totals for the user
-  const problemScores = await dbSubmissions.getProblemScores(userId, problem);
   if (result === 'successful') {
-    // if successful, add to their total score
-    const problemTimeScore = problemScores.reduce((sum, x) => sum + x, 0);
-    await dbUsers.addScore(userId, problemTimeScore, problem, problemScores);
+    // if successful, re-calculate user's complete score
+    await recalculateTotalScore(userId);
   } else {
     // otherwise, just mark the penalty in their problem score map for the leaderboard.
     // the penalty doesn't actually count until the problem is finished.
-    await dbUsers.mergeProblemScores(userId, problem, problemScores);
+    const penalties = await dbSubmissions.getProblemPenalties(userId, problem);
+    await dbUsers.mergeProblemScores(userId, problem, penalties);
   }
 }
 
-// re-calculate the time score for a user based on their submission history
-// (should rarely need to be run, but can be used in case of problem/grading mishaps)
-export async function recalculateScores(userId) {
+/**
+ * Calculate and save the score for a user.
+ */
+export async function recalculateTotalScore(userId) {
+  winston.debug(`Re-calculating score for ${userId}`);
+
+  // find all of the completed problems (incompletes don't count towards time)
+  // this function returns unique successful submissions; i.e. one per completed problem
+  const subs = await dbSubmissions.getSuccessfulUserSubmissions(userId);
+
+  // add up the total time score
   let total = 0;
-  const problems = await dbSubmissions.getSuccessfulUserSubmissions(userId);
-  for (let problem of problems) {
-    const scores = await dbSubmissions.getProblemScores(userId, problem);
-    total += scores.reduce((sum, x) => sum + x, 0);
-  }
-  // FIXME
-  await dbUsers.updateScore(userId);
-}
+  let problemsCompleted = [];
+  let partialProblemScores = {};
+  for (let sub of subs) {
+    // add the first successful score
+    let scores = [sub.time_score];
 
-// re-run a submission for a user
-export function regradeSubmission() {
-  // TODO
+    // and then add the penalties
+    const penalties = await dbSubmissions.getProblemPenalties(userId, sub.problem);
+    scores = scores.concat(penalties);
+
+    total += scores.reduce((sum, x) => sum + x, 0);
+    problemsCompleted.push(sub.problem);
+    partialProblemScores[sub.problem] = scores;
+  }
+
+  // set total score and completed problems, and merge successful problem
+  // scores (partialProblemScores) with the existing set
+  winston.debug(`New total score for ${userId}: ${problemsCompleted.length} in ${total}s`);
+  await dbUsers.updateScore(userId, total, problemsCompleted, partialProblemScores);
 }

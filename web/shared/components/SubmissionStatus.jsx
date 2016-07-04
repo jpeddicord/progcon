@@ -27,7 +27,7 @@ export default class SubmissionStatus extends React.Component {
     contestStartTime: React.PropTypes.object.isRequired,
   };
 
-  static timeScoreFormat(seconds, str = 'd[d] hh:mm:ss') {
+  static timeScoreFormat(seconds, str = 'd[d] hh[h]:mm[m]:ss[s]') {
     return moment.duration(seconds, 'seconds').format(str);
   }
 
@@ -53,7 +53,7 @@ export default class SubmissionStatus extends React.Component {
     }
 
     const resubmit = (
-      <span><br/>
+      <span>
         A correct submission now will add approximately{' '}
         <strong><Timer startTime={contestStartTime} /></strong>{' '}
         { penaltyCount > 0 ?
@@ -78,7 +78,7 @@ export default class SubmissionStatus extends React.Component {
       case 'successful': {
         const formattedTimeScore = SubmissionStatus.timeScoreFormat(submission.total_time_score);
         heading = 'Correct!';
-        text = `Congratulations, your answer was correct! It added ${formattedTimeScore} to your time.`; // XXX: this is wrong? try again with recent contest
+        text = `Congratulations, your answer was correct! It added ${formattedTimeScore} to your time.`;
         break;
       }
       case 'failed_tests':
@@ -86,7 +86,7 @@ export default class SubmissionStatus extends React.Component {
         text = (
           <span>
             Your submission <strong>failed {submission.test_fail} tests</strong> and passed {submission.test_pass}.
-            {resubmit}
+            <br/>{resubmit}
           </span>
         );
         break;
@@ -95,7 +95,7 @@ export default class SubmissionStatus extends React.Component {
         text = (
           <span>
             Your program didn't compile! Be sure to compile locally before uploading.
-            {resubmit}
+            <br/>{resubmit}
           </span>
         );
         break;
@@ -104,7 +104,7 @@ export default class SubmissionStatus extends React.Component {
         text = (
           <span>
             Yikes! Your program crashed on one of our tests.
-            {resubmit}
+            <br/>{resubmit}
           </span>
         );
         break;
@@ -113,7 +113,7 @@ export default class SubmissionStatus extends React.Component {
         text = (
           <span>
             Yikes! Your program took too long to run on one of our tests. Make sure you don't have any infinite loops, and try to make it faster.
-            {resubmit}
+            <br/>{resubmit}
           </span>
         );
         break;

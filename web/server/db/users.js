@@ -34,25 +34,14 @@ export function updateUser(id, name, meta) {
   );
 }
 
-// update the user's score, optionally adding a problem to their completed list
-// TODO remove this; no real need for two scoring code paths and this logic is overly complicated
-export function addScore(id, timeScore, problem, problemScores) {
-  if (problem != null) {
-    return db().none(
-      'update users set (time_score, problems_completed, problem_scores) = (time_score + $2, array_append(problems_completed, $3), problem_scores || $4::jsonb) where id = $1',
-      [id, timeScore, problem, {[problem]: problemScores}],
-    );
-  } else {
-    return db().none(
-      'update users set (time_score) = (time_score + $2) where id = $1',
-      [id, timeScore],
-    );
-  }
-}
-
+/**
+ * Update a user's score and completed problems.
+ *
+ * Merge in problemScores with the existing set of scores.
+ */
 export function updateScore(id, totalTimeScore, problems, problemScores) {
   return db().none(
-    'update users set (time_score, problems_completed, problemScores) = ($2, $3, $4) where id = $1',
+    'update users set (time_score, problems_completed, problem_scores) = ($2, $3, problem_scores || $4::jsonb) where id = $1',
     [id, totalTimeScore, problems, problemScores],
   );
 }

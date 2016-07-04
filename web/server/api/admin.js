@@ -10,6 +10,7 @@
  */
 import Router from 'koa-router';
 import { adminOnly } from './auth';
+import { regradeSubmission } from '../bot/tester';
 import * as dbContests from '../db/contests';
 import * as dbSubmissions from '../db/submissions';
 import * as dbUsers from '../db/users';
@@ -41,9 +42,6 @@ routes.post('/contests/:contest_id/control', async (ctx, next) => {
   } else if (body.action === 'end') {
     await dbContests.updateContestTimer(id, 'end_time');
     ctx.body = {id};
-  } else if (body.action === 'regrade') {
-    // TODO
-    ctx.status = 501;
   } else {
     ctx.status = 400;
   }
@@ -56,6 +54,11 @@ routes.get('/contests/:contest_id/submissions', async (ctx, next) => {
 
 routes.get('/submissions/:submission_id', async (ctx, next) => {
   const sub = await dbSubmissions.getSubmission(ctx.params.submission_id);
+  ctx.body = sub;
+});
+
+routes.post('/submissions/:submission_id/rerun', async (ctx, next) => {
+  const sub = regradeSubmission(ctx.params.submission_id);
   ctx.body = sub;
 });
 

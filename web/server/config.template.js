@@ -1,4 +1,5 @@
 const config = {
+  logLevel: 'info',
   database: {
     host: '',
     database: '',
@@ -31,7 +32,7 @@ const config = {
 };
 
 export function load() {
-  return Promise.resolve();
+  return Promise.resolve(config);
 }
 
 export default config;

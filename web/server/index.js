@@ -20,8 +20,6 @@ import { load } from './config';
 import { connect } from './db/connection';
 import { mapProblems } from './problems';
 
-winston.level = 'debug';
-
 const app = new Koa();
 
 app.use(koaBodyParser());
@@ -50,7 +48,9 @@ app.use((ctx, next) => {
 export function start(port) {
   winston.info('Loading configuration');
   load()
-    .then(() => {
+    .then(config => {
+      winston.level = config.logLevel;
+
       winston.info('Starting grading robots');
       launchBots();
 

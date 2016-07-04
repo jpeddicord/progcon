@@ -79,3 +79,13 @@ export function fetchSubmissionDetail(submissionId) {
     }
   };
 }
+
+export function rerunSubmission(submissionId) {
+  return async dispatch => {
+    try {
+      await fetchJSONAuth.post(`/api/submissions/${submissionId}/rerun`);
+    } catch (err) {
+      alertServerError(err);
+    }
+  };
+}

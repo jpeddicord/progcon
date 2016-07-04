@@ -30,5 +30,25 @@ export async function testAnswer(submissionId, submissionTime, userId, contestId
     return;
   }
 
-  await updateScore(contestId, userId, submissionId, submissionTime, problem, response.result, response.meta);
+  try {
+    await updateScore(contestId, userId, submissionId, submissionTime, problem, response.result, response.meta);
+  } catch (err) {
+    winston.error(err);
+  }
+}
+
+// re-run a submission for a user
+export async function regradeSubmission(submissionId) {
+  const sub = await dbSubmissions.getSubmission(submissionId);
+  if (sub == null) {
+    throw new Error('submission does not exist');
+  }
+
+  // clear out the submission score
+  await dbSubmissions.updateSubmission(sub.id, null, null, null);
+
+  // async test, but don't wait on it here
+  testAnswer(sub.id, sub.submission_time, sub.user_id, sub.contest_id, sub.problem, sub.answer);
+
+  return dbSubmissions.getSubmission(sub.id);
 }
