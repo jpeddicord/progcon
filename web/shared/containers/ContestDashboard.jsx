@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import SafetyBox from '../components/SafetyBox';
 import ContestEditor from '../containers/ContestEditor';
 import SubmissionLog from '../containers/SubmissionLog';
+import UserManager from '../containers/UserManager';
 import { fetchContestDetail, contestCommand } from '../modules/contests';
 
 class ContestDashboard extends React.Component {
@@ -47,20 +48,27 @@ class ContestDashboard extends React.Component {
         </div>
 
         <div className="col-md-4">
+          <h3>Controls</h3>
           <SafetyBox>
-            <div className="pull-md-right">
-              <button className="btn btn-lg btn-success"
-                onClick={this.bindCommand('start')}>
-                Start
-              </button>
-              <button className="btn btn-lg btn-warning"
-                onClick={this.bindCommand('end')}>
-                End
-              </button>
+            <div className="row">
+              <div className="col-xs-6">
+                <button className="btn btn-block btn-success"
+                  onClick={this.bindCommand('start')}>
+                  Start
+                </button>
+              </div>
+              <div className="col-xs-6">
+                <button className="btn btn-block btn-warning"
+                  onClick={this.bindCommand('end')}>
+                  End
+                </button>
+              </div>
             </div>
-            <br style={{clear: 'both'}}/>
           </SafetyBox>
+          <br/><h3>Contest Details</h3>
           <ContestEditor />
+          <br/><h3>Users</h3>
+          <UserManager />
         </div>
       </div>
 

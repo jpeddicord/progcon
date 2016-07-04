@@ -38,6 +38,7 @@ body {
     );
     cursor: pointer;
     opacity: 0.1;
+    z-index: 99;
 }
 
 .caution-stripes:hover {

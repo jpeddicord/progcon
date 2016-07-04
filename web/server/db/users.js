@@ -12,7 +12,7 @@ export function getUser(id) {
 }
 
 export function getContestUsers(contest) {
-  return db().any('select id, name from users where contest_id = $1', [contest]);
+  return db().any('select id, name, meta from users where contest_id = $1', [contest]);
 }
 
 export function registerUser(name, password, contest) {
@@ -24,6 +24,13 @@ export function registerUser(name, password, contest) {
   return db().one(
     'insert into users(name, password, contest_id) values($1, $2, $3) returning id',
     [name, password, contest],
+  );
+}
+
+export function updateUser(id, name, meta) {
+  return db().none(
+    'update users set (name, meta) = ($2, $3) where id = $1',
+    [id, name, meta],
   );
 }
 
@@ -52,7 +59,7 @@ export function updateScore(id, totalTimeScore, problems, problemScores) {
 /**
  * Adds a problem score without completing the problem or updating the total score.
  *
- * Used to write bad submissions. For storing successful submissions, use addScore.
+ * Used to save bad submissions. For storing successful submissions, use addScore.
  */
 export function mergeProblemScores(id, problem, problemScores) {
   return db().none(
@@ -61,7 +68,6 @@ export function mergeProblemScores(id, problem, problemScores) {
   );
 }
 
-// TODO: cache this result at routing/api level
 export function getLeaderboard(contest) {
   return db().any(
     'select id, name, problems_completed, time_score, problem_scores from users where contest_id = $1 order by coalesce(array_length(problems_completed, 1), 0) desc, time_score asc',

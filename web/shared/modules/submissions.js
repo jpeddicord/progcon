@@ -11,6 +11,7 @@ import { fetchJSONAuth } from '../util/fetch';
 const RECEIVE_SUBMISSIONS = 'app/submissions/receive-submissions';
 const RECEIVE_SUBMISSION_DETAIL = 'app/submissions/receive-submission-detail';
 
+// REVIEW: state is overly complex; remove contest mapping
 const initial = {
   contests: {
     // <id>: [submisisons]

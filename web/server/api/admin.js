@@ -12,6 +12,7 @@ import Router from 'koa-router';
 import { adminOnly } from './auth';
 import * as dbContests from '../db/contests';
 import * as dbSubmissions from '../db/submissions';
+import * as dbUsers from '../db/users';
 
 const routes = new Router();
 routes.use(adminOnly);
@@ -56,6 +57,17 @@ routes.get('/contests/:contest_id/submissions', async (ctx, next) => {
 routes.get('/submissions/:submission_id', async (ctx, next) => {
   const sub = await dbSubmissions.getSubmission(ctx.params.submission_id);
   ctx.body = sub;
+});
+
+routes.get('/contests/:contest_id/users', async (ctx, next) => {
+  const users = await dbUsers.getContestUsers(ctx.params.contest_id);
+  ctx.body = {users};
+});
+
+routes.post('/users/:user_id', async (ctx, next) => {
+  const body = ctx.request.body;
+  await dbUsers.updateUser(ctx.params.user_id, body.name, body.meta);
+  ctx.body = {id: ctx.params.user_id, ...body};
 });
 
 export default routes.routes();

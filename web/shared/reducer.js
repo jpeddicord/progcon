@@ -9,9 +9,11 @@ import { combineReducers } from 'redux';
 import contests from './modules/contests';
 import problems from './modules/problems';
 import submissions from './modules/submissions';
+import users from './modules/users';
 
 export default combineReducers({
   contests,
   problems,
   submissions,
+  users,
 });
