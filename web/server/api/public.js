@@ -23,7 +23,6 @@ routes.get('/contests/', async (ctx, next) => {
 });
 
 // register for a contest
-// XXX: for some reason rate limiting doesn't work here...?
 routes.post('/contests/:contest_id/register', rateLimiter, async (ctx, next) => {
   const { code, name, meta } = ctx.request.body;
 

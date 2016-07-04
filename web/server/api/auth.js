@@ -8,7 +8,7 @@
 import crypto from 'mz/crypto';
 import koaConvert from 'koa-convert';
 import koaJWT, { sign } from 'koa-jwt';
-import koaLimit from 'koa-limit';
+import koaLimit from 'koa-better-ratelimit';
 import config from '../config';
 import * as dbUsers from '../db/users';
 import { AccessError } from '../util/errors';
@@ -78,8 +78,8 @@ export const jwtMiddleware = koaConvert(koaJWT({secret: config.jwt.secret}));
  * Pre-initialized rate limiting middleware to protect login spam.
  */
 export const rateLimiter = koaConvert(koaLimit({
-  limit: 5,
-  interval: 1000 * 30,
+  max: 10,
+  duration: 1000 * 20,
 }));
 
 /**

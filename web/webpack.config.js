@@ -32,7 +32,7 @@ if (prod) {
 }
 
 module.exports = {
-  // TODO: move font-awesome elsewhere (vendor css or something)
+  // future TODO: move font-awesome elsewhere (vendor css or something)
   entry: ['font-awesome/css/font-awesome.css', './styles/style.scss', './browser/app.jsx'],
   module: {
     loaders: [

@@ -1,13 +1,11 @@
-(A) fix or annotate all TODOs
 (C) add "active" and "archived" contests
 (C) add doc comments to... everything
-(C) autoreload on leaderboards
-(C) autoreload on submission screen if active submission +web
 (C) write an installer script / makefile
 x (A) add registration form +web
 x (A) calculate scores, penalties +web
 x (A) display problem descriptions
 x (A) don't allow users to see contest details until the contest is active
+x (A) fix or annotate all TODOs
 x (A) remove hardcoded problems directory
 x (A) run answer against tests +runner
 x (A) send results over events channel +runner
@@ -23,6 +21,8 @@ x (B) output test diffs +runner +web
 x (B) set time limits for runner +runner +exec
 x (B) store original submission +web
 x (B) surface errors in the UI +web
+x (C) autoreload on leaderboards
+x (C) autoreload on submission screen if active submission +web
 x (C) do something about expired tokens +web
 x (C) fix sign-up form style +web
 x (C) make admin not look terrible too +web
