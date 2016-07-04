@@ -23,7 +23,7 @@ class StatusNav extends React.Component {
     const { active, score } = this.props;
 
     let display;
-    if (score != null) {
+    if (score != null && score.time_score > 0) {
       const timeScore = moment.duration(score.time_score, 'seconds').format('d[d] HH[h]:mm[m]');
       display = `${score.problems_completed.length} in ${timeScore}`;
     }
@@ -43,12 +43,12 @@ class StatusNav extends React.Component {
             </li>
           </ul>
           <ul className="nav navbar-nav pull-xs-right">
-            <li className="nav-item">
+            {display != null ? <li className="nav-item">
               {/* FIXME: css abuse in bootstrap v4 alpha*/}
               <a className="nav-link">
                 <i className="fa fa-flag-checkered" /> {display}
               </a>
-            </li>
+            </li> : ''}
             <li className="nav-item">
               <a className="nav-link">
                 <i className="fa fa-clock-o" /> <Timer startTime={active.start_time} />

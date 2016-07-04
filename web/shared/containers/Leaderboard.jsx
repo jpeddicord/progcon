@@ -9,6 +9,7 @@ import moment from 'moment';
 import 'moment-duration-format';
 import React from 'react';
 import { connect } from 'react-redux';
+import AutoRefresh from '../components/AutoRefresh';
 import { fetchContestDetail, fetchLeaderboard } from '../modules/contests';
 
 class Leaderboard extends React.Component {
@@ -24,8 +25,13 @@ class Leaderboard extends React.Component {
     const { dispatch, params: { contest_id } } = this.props;
 
     dispatch(fetchContestDetail(contest_id));
-    dispatch(fetchLeaderboard(contest_id));
+    this.fetchLeaderboard();
   }
+
+  fetchLeaderboard = () => {
+    const { dispatch, params: { contest_id } } = this.props;
+    dispatch(fetchLeaderboard(contest_id));
+  };
 
   render() {
     const { active, leaderboard } = this.props;
@@ -38,6 +44,10 @@ class Leaderboard extends React.Component {
 
     return (
       <div>
+        <div className="pull-xs-right">
+          <AutoRefresh func={this.fetchLeaderboard} interval={10 * 1000} />
+        </div>
+
         <h3>{active.title} <small>Leaderboard</small></h3>
 
         <table className="table table-hover table-sm">

@@ -22,12 +22,13 @@ class ProblemDetail extends React.Component {
   };
 
   componentDidMount() {
-    const { dispatch, problems, params: { contest_id, problem_name } } = this.props;
-    const problem = problems[problem_name];
-    if (problem == null) {
-      dispatch(fetchProblem(contest_id, problem_name));
-    }
+    this.fetchProblem();
   }
+
+  fetchProblem = () => {
+    const { dispatch, params: { contest_id, problem_name } } = this.props;
+    dispatch(fetchProblem(contest_id, problem_name));
+  };
 
   downloadStub = e => {
     const { problems, params: { problem_name } } = this.props;
@@ -58,6 +59,7 @@ class ProblemDetail extends React.Component {
             <SubmissionStatus
               submission={problem.submission}
               contestStartTime={contest.start_time}
+              refresh={this.fetchProblem}
             />
           </div>
           <div className="col-md-5">

@@ -8,6 +8,7 @@
 import moment from 'moment';
 import 'moment-duration-format';
 import React from 'react';
+import AutoRefresh from './AutoRefresh';
 import Timer from './Timer';
 
 const statusClasses = {
@@ -25,6 +26,7 @@ export default class SubmissionStatus extends React.Component {
   static propTypes = {
     submission: React.PropTypes.object,
     contestStartTime: React.PropTypes.object.isRequired,
+    refresh: React.PropTypes.func.isRequired,
   };
 
   static timeScoreFormat(seconds, str = 'd[d] hh[h]:mm[m]:ss[s]') {
@@ -32,7 +34,7 @@ export default class SubmissionStatus extends React.Component {
   }
 
   render() {
-    const { submission, contestStartTime } = this.props;
+    const { submission, contestStartTime, refresh } = this.props;
 
     let result;
     if (submission == null) {
@@ -72,7 +74,12 @@ export default class SubmissionStatus extends React.Component {
         const pendingTotalTimeScore = SubmissionStatus.timeScoreFormat(
           submission.submission_time.diff(contestStartTime, 'seconds') + penaltySeconds
         );
-        text = `Your submission is in queue for grading. If successful, ${pendingTotalTimeScore} will be added to your total time.`;
+        text = (
+          <span>
+            <AutoRefresh func={refresh} interval={3000} icon="fa-spinner" spinClass="fa-pulse" />{' '}
+            Your submission is in queue for grading. If successful, {pendingTotalTimeScore} will be added to your total time.
+          </span>
+        );
         break;
       }
       case 'successful': {

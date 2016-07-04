@@ -7,6 +7,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import AutoRefresh from '../components/AutoRefresh';
 import { fetchSubmissions, fetchSubmissionDetail, rerunSubmission } from '../modules/submissions';
 import hljs from '../util/highlight';
 
@@ -24,22 +25,24 @@ class SubmissionLog extends React.Component {
 
   // REVIEW: submissionSet is kinda dumb. maybe don't keep a contest->submissions map.
   componentDidMount() {
-    const { dispatch, contestId, submissionSet } = this.props;
-    if (submissionSet == null || submissionSet[contestId] == null) {
-      dispatch(fetchSubmissions(contestId));
-    }
+    this.fetchSubmissions();
   }
+
+  fetchSubmissions = () => {
+    const { dispatch, contestId } = this.props;
+    dispatch(fetchSubmissions(contestId));
+  };
 
   loadDetails = id => {
     const { dispatch } = this.props;
     dispatch(fetchSubmissionDetail(id));
     this.setState({selectedSubmission: id});
-  }
+  };
 
   rerun = id => {
     const { dispatch } = this.props;
     dispatch(rerunSubmission(id));
-  }
+  };
 
   render() {
     const { contestId, submissionSet, submissionDetails } = this.props;
@@ -54,6 +57,10 @@ class SubmissionLog extends React.Component {
 
     return (
       <div>
+        <div className="pull-xs-right">
+          <AutoRefresh func={this.fetchSubmissions} interval={10 * 1000} />
+        </div>
+
         <h3>Submissions</h3>
         <div style={{height: '400px', overflowY: 'scroll'}}>
           <table className="table table-sm table-hover">
