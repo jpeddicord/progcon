@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import alertify from 'alertify.js';
 
 export default class SolutionUploader extends React.Component {
   static propTypes = {
@@ -32,7 +33,7 @@ export default class SolutionUploader extends React.Component {
 
   handleFiles = files => {
     if (files.length !== 1) {
-      // TODO: show a real error
+      alertify.error('This form only accepts one file.');
       return;
     }
 
@@ -46,8 +47,7 @@ export default class SolutionUploader extends React.Component {
     });
 
     reader.addEventListener('error', err => {
-      // TODO: show a real error
-      console.error(err);
+      alertify.error(err);
       this.fileContent = null;
       this.setState({ready: false, error: err});
     });

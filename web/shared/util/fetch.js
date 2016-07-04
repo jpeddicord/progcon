@@ -17,11 +17,6 @@ export async function fetchJSON(url, options = {}) {
     },
   });
 
-  if (resp.status === 401) {
-    // XXX: is this the best action?
-    //clearToken();
-  }
-
   if (resp.status !== 200) {
     const msg = await resp.text();
     const err = new Error(msg);

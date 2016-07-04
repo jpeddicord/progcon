@@ -35,7 +35,6 @@ class ContestOverview extends React.Component {
     }
   }
 
-  // XXX: problem is just a string
   mapProblem = (problem, index) => {
     const { children, params: { contest_id, problem_name } } = this.props;
     if (problem_name != null && problem_name === problem) {
