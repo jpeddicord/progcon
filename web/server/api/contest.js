@@ -23,24 +23,13 @@ const routes = new Router({prefix: '/contests/:contest_id'});
 routes.use(contestAccess);
 
 // get a single contest's details
-routes.get('/', async (ctx, next) => {
+routes.get('/', contestIsActive, async (ctx, next) => {
   const id = ctx.params.contest_id;
-
-  // check cache for contest data
-  const cacheKey = `contest/${id}`;
-  let contest = cache.get(cacheKey);
-
-  // fetch and cache if not present
-  if (contest == null) {
-    winston.silly(`Cache miss: ${cacheKey}`);
-    contest = await dbContests.getContest(id);
-    cache.put(cacheKey, contest, 10 * 1000);
-  }
-
+  const contest = await getContestCached(id, ctx);
   ctx.body = contest;
 });
 
-routes.get('/problems/:problem', contestHasProblem, async (ctx, next) => {
+routes.get('/problems/:problem', contestIsActive, contestHasProblem, async (ctx, next) => {
   // sanity check
   const problemName = ctx.params.problem;
   const problem = getProblem(problemName);
@@ -120,7 +109,7 @@ routes.get('/leaderboard', async (ctx, next) => {
 
 async function contestHasProblem(ctx, next) {
   const problemName = ctx.params.problem;
-  const contest = await dbContests.getContest(ctx.params.contest_id);
+  const contest = await getContestCached(ctx.params.contest_id, ctx);
   if (contest == null || !contest.problems.includes(problemName)) {
     throw new NotFoundError('Problem not found in contest');
   }
@@ -128,11 +117,45 @@ async function contestHasProblem(ctx, next) {
 }
 
 async function contestIsActive(ctx, next) {
-  const contest = await dbContests.getActiveContest(ctx.params.contest_id);
+  const contest = await getContestCached(ctx.params.contest_id, ctx);
   if (contest == null) {
     throw new NotFoundError('Contest is not active');
   }
   await next();
+}
+
+async function getContestCached(id, ctx) {
+  const cacheKey = `contest/${id}`;
+  let contest;
+
+  // admin will always bypass cache
+  if (!ctx.state.user.admin) {
+    contest = cache.get(cacheKey);
+  }
+
+  // fetch and cache if not present
+  if (contest == null || ctx.state.user.admin) {
+    winston.silly(`Cache miss: ${cacheKey}`);
+
+    // try to find active contest first
+    contest = await dbContests.getActiveContest(id);
+    if (contest == null) {
+      // failing that, look up without "active" criteria
+      contest = await dbContests.getContest(id);
+      contest._active = false;
+    } else {
+      contest._active = true;
+    }
+
+    cache.put(cacheKey, contest, 5 * 1000);
+  }
+
+  // only admin can see contests that are inactive
+  if (ctx.state.user.admin || contest._active === true) {
+    return contest;
+  }
+
+  return null;
 }
 
 export default routes.routes();

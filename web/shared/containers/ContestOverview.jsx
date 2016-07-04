@@ -51,7 +51,7 @@ class ContestOverview extends React.Component {
     const { active } = this.props;
 
     if (active == null || active.id == null) {
-      return <div/>;
+      return <p>This contest is not currently active. If you just registered, sit tight -- it will be active soon.</p>;
     }
 
     return (
