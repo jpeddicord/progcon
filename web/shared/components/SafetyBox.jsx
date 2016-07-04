@@ -10,10 +10,6 @@ import React from 'react';
 export default class SafetyBox extends React.Component {
   static propTypes = {
     children: React.PropTypes.node,
-    mode: React.PropTypes.oneOf(['hide', 'mask']),
-  };
-  static defaultProps = {
-    mode: 'mask',
   };
 
   state = {
@@ -34,12 +30,12 @@ export default class SafetyBox extends React.Component {
   };
 
   render() {
-    const { children, mode } = this.props;
+    const { children } = this.props;
 
     return (
       <div style={{position: 'relative'}}>
         { this.state.armed ? '' :
-          <div className="caution-stripes" onClick={this.arm} />
+          <div className="caution-stripes" onDoubleClick={this.arm} title="Control is locked. Double-click to arm."/>
         }
         {children}
       </div>

@@ -129,24 +129,24 @@ class SubmissionDetails extends React.Component {
     const { id, answer, meta } = this.props.details;
     this.diff = null;
 
+    // keys are used below to force react to re-mount each code block.
+    // otherwise, hljs will not update its highlighted view.
     return (
       <div>
         <br/>
         <h3>Submission {id}</h3>
         <h4>Submitted Answer</h4>
-        <pre className="pre-scrollable" ref={ref => this.code = ref}>
+        <pre key={id} className="pre-scrollable" ref={ref => this.code = ref}>
           <code className="java">
             {answer}
           </code>
         </pre>
         {meta != null ?
-          <div>
-            <pre className="pre-scrollable">
-              <code className="diff" ref={ref => this.diff = ref}>
-                {meta.diff}
-              </code>
-            </pre>
-          </div>
+          <pre key={id} className="pre-scrollable">
+            <code className="diff" ref={ref => this.diff = ref}>
+              {meta.diff}
+            </code>
+          </pre>
         : ''}
       </div>
     );

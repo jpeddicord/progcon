@@ -37,12 +37,12 @@ body {
         $brand-danger 20px
     );
     cursor: pointer;
-    opacity: 0.1;
+    opacity: 0.3;
     z-index: 99;
 }
 
 .caution-stripes:hover {
-    opacity: 0.3;
+    opacity: 0.5;
 }
 
 #submission-log {
