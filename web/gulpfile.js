@@ -33,6 +33,11 @@ gulp.task('build-browser', () => {
     .pipe(gulp.dest('build/browser'));
 });
 
+gulp.task('copy-meta', () => {
+  return gulp.src('package.json')
+    .pipe(gulp.dest('build/'));
+});
+
 let node;
 gulp.task('dev-server', ['build-server'], () => {
   if (node) {
@@ -58,7 +63,7 @@ gulp.task('dev', ['dev-server'], () => {
     });
 });
 
-gulp.task('default', ['build-server', 'build-browser']);
+gulp.task('default', ['build-server', 'build-browser', 'copy-meta']);
 
 process.on('exit', () => {
   if (node) {

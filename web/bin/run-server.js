@@ -2,5 +2,10 @@
 'use strict';
 
 process.env.NODE_ENV = 'production';
-const server = require('progcon');
+let server;
+try {
+  server = require('progcon');
+} catch (ex) {
+  server = require('../web/server/index.js');
+}
 server.start(8080);
