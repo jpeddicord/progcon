@@ -51,7 +51,7 @@ export default class App extends React.Component {
                   </small>
                 </div>
                 <small className="text-muted">
-                  brought to you by <a href="https://github.com/jpeddicord/progcon">progcon v{__BUILD.version}</a> built on {__BUILD.timestamp}
+                  brought to you by <a href="https://github.com/jpeddicord/progcon" title={`${__BUILD.version} built on ${__BUILD.timestamp}`}>progcon</a>
                 </small>
               </div>
             </div>
