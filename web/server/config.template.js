@@ -31,8 +31,8 @@ const config = {
   ],
 };
 
-export function load() {
+// load any remote configuration here (passwords, for example)
+exports.load = function () {
   return Promise.resolve(config);
-}
-
-export default config;
+};
+exports.default = config;
