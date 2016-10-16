@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Jacob Peddicord <jacob@peddicord.net>"]
 
 [dependencies]
-libc = "0.2.11"
+libc = "0.2.17"
 rand = "0.3.14"
 wait-timeout = "0.1.3"
-walkdir = "0.1.5"
+walkdir = "0.1.8"
