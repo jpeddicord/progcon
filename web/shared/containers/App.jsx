@@ -8,13 +8,22 @@
 /* global __BUILD */
 import alertify from 'alertify.js';
 import React from 'react';
+import { connect } from 'react-redux';
 import StatusNav from '../containers/StatusNav';
+import { fetchConfig } from '../modules/common';
 import { clearToken } from '../util/token';
 
-export default class App extends React.Component {
+class App extends React.Component {
   static propTypes = {
+    dispatch: React.PropTypes.func.isRequired,
+    config: React.PropTypes.object,
     children: React.PropTypes.element,
   };
+
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(fetchConfig());
+  }
 
   logout = async e => {
     const result = await alertify.okBtn('Log out').cancelBtn('Cancel')
@@ -62,3 +71,9 @@ export default class App extends React.Component {
   }
 
 }
+
+export default connect(state => {
+  return {
+    active: state.contests.active,
+  };
+})(App);

@@ -6,12 +6,14 @@
  */
 
 import { combineReducers } from 'redux';
+import common from './modules/common';
 import contests from './modules/contests';
 import problems from './modules/problems';
 import submissions from './modules/submissions';
 import users from './modules/users';
 
 export default combineReducers({
+  common,
   contests,
   problems,
   submissions,

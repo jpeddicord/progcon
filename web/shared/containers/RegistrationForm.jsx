@@ -7,7 +7,6 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import config from '../../browser/config';
 import { registerForContest } from '../modules/contests';
 
 class RegistrationForm extends React.Component {
@@ -15,15 +14,16 @@ class RegistrationForm extends React.Component {
     dispatch: React.PropTypes.func.isRequired,
     params: React.PropTypes.object.isRequired,
     active: React.PropTypes.object,
+    extraFields: React.PropTypes.array,
   };
 
   submitRegistration = e => {
-    const { dispatch, params: { contest_id } } = this.props;
+    const { dispatch, params: { contest_id }, extraFields } = this.props;
     const fields = e.target.elements;
     e.preventDefault();
 
     const meta = {};
-    for (let customField of config.registration.fields) {
+    for (let customField of extraFields) {
       meta[customField.name] = fields[customField.name].value;
     }
 
@@ -31,6 +31,7 @@ class RegistrationForm extends React.Component {
   };
 
   render() {
+    const { extraFields } = this.props;
     return (
       <form onSubmit={this.submitRegistration}>
         <fieldset className="form-group">
@@ -42,7 +43,7 @@ class RegistrationForm extends React.Component {
           <input type="text" name="name" id="registrationName" className="form-control" required />
         </fieldset>
 
-        {config.registration.fields.map(field => {
+        {extraFields.map(field => {
           return (
             <fieldset key={field.name} className="form-group">
               <label htmlFor={`registration-${field.name}`}>{field.label}</label>
@@ -61,5 +62,6 @@ class RegistrationForm extends React.Component {
 export default connect(state => {
   return {
     active: state.contests.active,
+    extraFields: state.common.config.registration.fields,
   };
 })(RegistrationForm);

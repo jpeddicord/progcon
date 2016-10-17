@@ -29,6 +29,12 @@ const config = {
     },
     // add more; use a unique socket and log file for each!
   ],
+  registration: {
+    // extra registration fields
+    fields: [
+      { name: 'email', label: 'Email Address' },
+    ],
+  },
 };
 
 // load any remote configuration here (passwords, for example)

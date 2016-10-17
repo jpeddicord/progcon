@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
-import App from './components/App';
+import App from './containers/App';
 import Landing from './containers/Landing';
 import ContestOverview from './containers/ContestOverview';
 import ProblemDetail from './containers/ProblemDetail';

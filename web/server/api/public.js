@@ -10,11 +10,19 @@
  */
 import Router from 'koa-router';
 import { tryAuth, issueUserToken, generateUserPassword, rateLimiter } from './auth';
+import config from '../config';
 import * as dbContests from '../db/contests';
 import * as dbUsers from '../db/users';
 import { AuthError, RequestError } from '../util/errors';
 
 const routes = new Router();
+
+// basic configuration
+routes.get('/config', async (ctx, next) => {
+  ctx.body = {
+    registration: config.registration,
+  };
+});
 
 // list contests
 routes.get('/contests/', async (ctx, next) => {
