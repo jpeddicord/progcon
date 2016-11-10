@@ -9,7 +9,7 @@ import crypto from 'mz/crypto';
 import koaConvert from 'koa-convert';
 import koaJWT, { sign } from 'koa-jwt';
 import koaLimit from 'koa-better-ratelimit';
-import config from '../config';
+import { config } from '../config';
 import * as dbUsers from '../db/users';
 import { AccessError } from '../util/errors';
 

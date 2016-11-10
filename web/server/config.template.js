@@ -1,3 +1,5 @@
+'use strict';
+
 const config = {
   logLevel: 'info',
   database: {
@@ -41,4 +43,4 @@ const config = {
 exports.load = function () {
   return Promise.resolve(config);
 };
-exports.default = config;
+exports.config = config;

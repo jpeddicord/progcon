@@ -10,7 +10,7 @@ import path from 'path';
 import Immutable from 'immutable';
 import toml from 'toml';
 import winston from 'winston';
-import config from '../config';
+import { config } from '../config';
 
 export async function loadProblems() {
   winston.info(`Reading problems from ${config.problems.paths.length} paths`);

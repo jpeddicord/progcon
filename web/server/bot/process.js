@@ -8,7 +8,7 @@
 import fs from 'fs';
 import { spawn } from 'child_process';
 import winston from 'winston';
-import config from '../config';
+import { config } from '../config';
 
 const activeBots = new Map();
 

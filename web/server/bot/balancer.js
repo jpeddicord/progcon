@@ -7,7 +7,7 @@
 
 import nanomsg from 'nanomsg';
 import Broker from './broker';
-import config from '../config';
+import { config } from '../config';
 
 const brokers = new Set();
 

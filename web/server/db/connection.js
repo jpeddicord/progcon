@@ -6,7 +6,7 @@
  */
 
 import pgp from 'pg-promise';
-import config from '../config';
+import { config } from '../config';
 
 let opts = {};
 

@@ -10,7 +10,7 @@
  */
 import Router from 'koa-router';
 import { tryAuth, issueUserToken, generateUserPassword, rateLimiter } from './auth';
-import config from '../config';
+import { config } from '../config';
 import * as dbContests from '../db/contests';
 import * as dbUsers from '../db/users';
 import { AuthError, RequestError } from '../util/errors';
