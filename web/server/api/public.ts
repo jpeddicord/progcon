@@ -8,7 +8,7 @@
 /**
  * Public routes that require no authentication.
  */
-import Router from 'koa-router';
+import * as Router from 'koa-router';
 import { tryAuth, issueUserToken, generateUserPassword, rateLimiter } from './auth';
 import { config } from '../config';
 import * as dbContests from '../db/contests';
@@ -50,8 +50,8 @@ routes.post('/contests/:contest_id/register', rateLimiter, async (ctx, next) => 
   const user = await dbUsers.registerUser(name, password, ctx.params.contest_id, meta);
 
   // issue a token for the newly-created user
-  const jwt = issueUserToken(user.id, contest.id);
-  ctx.body = {token: jwt, id: user.id, password: password};
+  const jwt = issueUserToken(user, contest.id);
+  ctx.body = {token: jwt, id: user, password: password};
 });
 
 // alternative authentication. not expected to be used for most contest participants,

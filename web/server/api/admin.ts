@@ -8,7 +8,7 @@
 /**
  * Admin-only routes.
  */
-import Router from 'koa-router';
+import * as Router from 'koa-router';
 import { adminOnly } from './auth';
 import { regradeSubmission } from '../bot/tester';
 import * as dbContests from '../db/contests';

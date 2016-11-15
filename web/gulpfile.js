@@ -10,8 +10,8 @@
 const spawn = require('child_process').spawn;
 const gulp = require('gulp');
 const gutil = require('gulp-util');
-const babel = require('gulp-babel');
 const plumber = require('gulp-plumber');
+const ts = require('gulp-typescript');
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 const WebpackDevServer = require('webpack-dev-server');
@@ -20,10 +20,11 @@ if (process.env.NODE_ENV == null) {
   process.env.NODE_ENV = 'development';
 }
 
+const tsServerProject = ts.createProject('tsconfig.json', {typescript: require('typescript')});
 gulp.task('build-server', () => {
-  return gulp.src('server/**/*.js?(x)')
+  return tsServerProject.src()
     .pipe(plumber())
-    .pipe(babel())
+    .pipe(tsServerProject())
     .pipe(gulp.dest('build/server'));
 });
 
@@ -47,7 +48,7 @@ gulp.task('dev-server', ['build-server'], () => {
 });
 
 gulp.task('dev', ['dev-server'], () => {
-  gulp.watch(['server/**/*.js?(x)'], {debounceDelay: 500}, ['dev-server']);
+  gulp.watch(['server/**/*.(js|ts)'], {debounceDelay: 500}, ['dev-server']);
 
   const compiler = webpack(require('./webpack.config.js'));
   new WebpackDevServer(compiler, {

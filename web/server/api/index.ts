@@ -5,7 +5,7 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import Router from 'koa-router';
+import * as Router from 'koa-router';
 import { jwtMiddleware } from './auth';
 import adminRoutes from './admin';
 import contestRoutes from './contest';

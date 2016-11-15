@@ -6,12 +6,12 @@
  */
 
 import 'babel-polyfill';
-import path from 'path';
-import Koa from 'koa';
-import koaBodyParser from 'koa-bodyparser';
-import koaCompress from 'koa-compress';
-import koaMount from 'koa-mount';
-import koaStatic from 'koa-static';
+import * as path from 'path';
+import * as Koa from 'koa';
+import * as koaBodyParser from 'koa-bodyparser';
+import * as koaCompress from 'koa-compress';
+import * as koaMount from 'koa-mount';
+import * as koaStatic from 'koa-static';
 import winston from 'winston';
 import apiRoutes from './api';
 import { initBalancer } from './bot/balancer';

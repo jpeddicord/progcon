@@ -5,7 +5,7 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import pgp from 'pg-promise';
+import * as pgp from 'pg-promise';
 import { config } from '../config';
 
 let opts = {};

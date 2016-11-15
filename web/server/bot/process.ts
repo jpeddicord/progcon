@@ -5,7 +5,7 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import fs from 'fs';
+import * as fs from 'fs';
 import { spawn } from 'child_process';
 import winston from 'winston';
 import { config } from '../config';

@@ -5,10 +5,10 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import crypto from 'mz/crypto';
-import koaConvert from 'koa-convert';
-import koaJWT, { sign } from 'koa-jwt';
-import koaLimit from 'koa-better-ratelimit';
+import * as crypto from 'mz/crypto';
+import * as koaConvert from 'koa-convert';
+import * as koaJWT from 'koa-jwt';
+import * as koaLimit from 'koa-better-ratelimit';
 import { config } from '../config';
 import * as dbUsers from '../db/users';
 import { AccessError } from '../util/errors';
@@ -21,7 +21,7 @@ export async function tryAuth(userId, pass) {
     }
 
     // auth as administrator
-    return sign({
+    return koaJWT.sign({
       id: -1,
       admin: true,
     }, config.jwt.secret, {
@@ -53,7 +53,7 @@ export function issueUserToken(id, contest) {
     id,
     contest,
   };
-  return sign(claims, config.jwt.secret, {
+  return koaJWT.sign(claims, config.jwt.secret, {
     expiresIn: '1 day',
   });
 }

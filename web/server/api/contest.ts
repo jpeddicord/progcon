@@ -8,8 +8,8 @@
 /**
  * Routes requiring access to a specific contest
  */
-import Router from 'koa-router';
-import cache from 'memory-cache';
+import * as Router from 'koa-router';
+import * as cache from 'memory-cache';
 import winston from 'winston';
 import { contestAccess } from './auth';
 import * as dbContests from '../db/contests';
@@ -127,7 +127,7 @@ routes.get('/leaderboard', async (ctx, next) => {
   ctx.body = {leaderboard};
 });
 
-async function contestHasProblem(ctx, next) {
+async function contestHasProblem(ctx, next): Promise<void> {
   const problemName = ctx.params.problem;
   const contest = await getContestCached(ctx.params.contest_id, ctx);
   if (contest == null || !contest.problems.includes(problemName)) {
@@ -136,7 +136,7 @@ async function contestHasProblem(ctx, next) {
   await next();
 }
 
-async function contestIsActive(ctx, next) {
+async function contestIsActive(ctx, next): Promise<void> {
   const contest = await getContestCached(ctx.params.contest_id, ctx);
   if (contest == null) {
     throw new NotFoundError('Contest is not active');
@@ -144,9 +144,9 @@ async function contestIsActive(ctx, next) {
   await next();
 }
 
-async function getContestCached(id, ctx) {
+async function getContestCached(id, ctx): Promise<dbContests.Contest> {
   const cacheKey = `contest/${id}`;
-  let contest;
+  let contest: dbContests.Contest & {_active?: boolean};
 
   // admin will always bypass cache
   if (!ctx.state.user.admin) {

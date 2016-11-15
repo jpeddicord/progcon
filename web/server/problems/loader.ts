@@ -5,9 +5,9 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import fs from 'mz/fs';
-import path from 'path';
-import Immutable from 'immutable';
+import * as fs from 'mz/fs';
+import * as path from 'path';
+import * as Immutable from 'immutable';
 import toml from 'toml';
 import winston from 'winston';
 import { config } from '../config';

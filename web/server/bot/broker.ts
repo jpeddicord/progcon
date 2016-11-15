@@ -9,6 +9,7 @@
  * Nanomsg socket wrapper to queue REQ/REP calls while waiting for responses.
  */
 export default class Broker {
+  socket: any;
 
   _waiting = false;
   _queue = [];

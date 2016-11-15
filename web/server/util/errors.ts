@@ -6,8 +6,10 @@
  */
 
 
-export class RequestError {
+export class RequestError extends Error {
+  status: number;
   constructor(message) {
+    super(message);
     this.name = 'RequestError';
     this.message = message;
     this.stack = new Error().stack;
@@ -15,29 +17,26 @@ export class RequestError {
   }
 }
 
-export class AuthError {
+export class AuthError extends RequestError {
   constructor(message) {
+    super(message);
     this.name = 'AuthError';
-    this.message = message;
-    this.stack = new Error().stack;
     this.status = 401;
   }
 }
 
-export class AccessError {
+export class AccessError extends RequestError {
   constructor(message) {
+    super(message);
     this.name = 'AccessError';
-    this.message = message;
-    this.stack = new Error().stack;
     this.status = 403;
   }
 }
 
-export class NotFoundError {
+export class NotFoundError extends RequestError {
   constructor(message) {
+    super(message);
     this.name = 'NotFoundError';
-    this.message = message;
-    this.stack = new Error().stack;
     this.status = 404;
   }
 }
