@@ -10,8 +10,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
-import routes from '../shared/routes';
-import create from '../shared/store';
+import routes from './routes';
+import create from './store';
 
 const store = create();
 
