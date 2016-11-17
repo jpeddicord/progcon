@@ -8,7 +8,12 @@
 import 'whatwg-fetch';
 import { loadToken, injectTokenHeader } from './token';
 
-export async function fetchJSON(url, options = {}) {
+interface FetchFunction {
+  (): any;
+
+}
+
+export async function fetchJSON(url: string, options: any = {}) {
   const resp = await fetch(url, {
     ...options,
     headers: {
@@ -20,18 +25,24 @@ export async function fetchJSON(url, options = {}) {
   if (resp.status !== 200) {
     const msg = await resp.text();
     const err = new Error(msg);
-    err.server = true;
+    (err as any).server = true;
     throw err;
   }
 
   return resp.json();
 }
+export namespace fetchJSON {
+  export let post: Function;
+}
 
-export async function fetchJSONAuth(url, options) {
+export async function fetchJSONAuth(url: string, options: any = {}) {
   // load or fetch our token
   let token = loadToken();
 
   return fetchJSON(url, injectTokenHeader(options, token));
+}
+export namespace fetchJSONAuth {
+  export let post: Function;
 }
 
 /**

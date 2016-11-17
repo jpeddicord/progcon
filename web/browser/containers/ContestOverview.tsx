@@ -5,21 +5,20 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import ProblemCard from '../components/ProblemCard';
 import { fetchContestDetail } from '../modules/contests';
 import { loadToken } from '../util/token';
 
-class ContestOverview extends React.Component {
-  static propTypes = {
-    children: React.PropTypes.element,
-    dispatch: React.PropTypes.func.isRequired,
-    params: React.PropTypes.object.isRequired,
-    active: React.PropTypes.object,
-  };
+interface Props {
+  dispatch: Function;
+  params: any;
+  active?: any;
+}
 
+class ContestOverview extends React.Component<Props, {}> {
   componentDidMount() {
     const { dispatch, active, params: { contest_id } } = this.props;
 

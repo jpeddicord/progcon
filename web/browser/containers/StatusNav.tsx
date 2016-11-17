@@ -5,26 +5,26 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import moment from 'moment';
+import * as moment from 'moment';
 import 'moment-duration-format';
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import Timer from '../components/Timer';
 
-class StatusNav extends React.Component {
-  static propTypes = {
-    dispatch: React.PropTypes.func.isRequired,
-    active: React.PropTypes.object,
-    score: React.PropTypes.object,
-  };
+interface Props {
+  dispatch: Function;
+  active?: any;
+  score?: any;
+}
 
+class StatusNav extends React.Component<Props, {}> {
   render() {
     const { active, score } = this.props;
 
     let display;
     if (score != null && score.time_score > 0) {
-      const timeScore = moment.duration(score.time_score, 'seconds').format('d[d] HH[h]:mm[m]');
+      const timeScore = (moment.duration(score.time_score, 'seconds') as any).format('d[d] HH[h]:mm[m]');
       display = `${score.problems_completed.length} in ${timeScore}`;
     }
 

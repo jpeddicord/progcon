@@ -6,20 +6,20 @@
  */
 
 /* global __BUILD */
-import alertify from 'alertify.js';
-import React from 'react';
+import * as alertify from 'alertify.js';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import StatusNav from '../containers/StatusNav';
 import { fetchConfig } from '../modules/common';
 import { clearToken } from '../util/token';
 
-class App extends React.Component {
-  static propTypes = {
-    dispatch: React.PropTypes.func.isRequired,
-    config: React.PropTypes.object,
-    children: React.PropTypes.element,
-  };
+interface Props {
+  // XXX: children?
+  dispatch: Function;
+  config?: any;
+}
 
+class App extends React.Component<Props, {}> {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch(fetchConfig());

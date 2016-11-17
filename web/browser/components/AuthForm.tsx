@@ -5,7 +5,7 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import React from 'react';
+import * as React from 'react';
 import { browserHistory } from 'react-router';
 import { alertServerError } from '../util/alert';
 import { fetchJSON } from '../util/fetch';
@@ -21,7 +21,7 @@ async function auth(user, pass) {
   }
 }
 
-export default class AuthForm extends React.Component {
+export default class AuthForm extends React.Component<{}, {}> {
   submit = e => {
     const fields = e.target.elements;
     e.preventDefault();

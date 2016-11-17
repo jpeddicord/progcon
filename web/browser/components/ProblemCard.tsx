@@ -5,16 +5,16 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import React from 'react';
+import * as React from 'react';
 import { Link } from 'react-router';
 
-export default class ProblemCard extends React.Component {
-  static propTypes = {
-    children: React.PropTypes.element,
-    contestId: React.PropTypes.string.isRequired,
-    name: React.PropTypes.string.isRequired,
-  };
+interface Props {
+  // XXX: children?
+  contestId: string;
+  name: string;
+}
 
+export default class ProblemCard extends React.Component<Props, {}> {
   render() {
     const { children, contestId, name } = this.props;
 

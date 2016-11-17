@@ -6,21 +6,21 @@
  */
 
 /* eslint-disable react/no-danger */
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import SolutionUploader from '../components/SolutionUploader';
 import SubmissionStatus from '../components/SubmissionStatus';
 import { fetchProblem, submitAnswer } from '../modules/problems';
 import { triggerTextDownload } from '../util/download';
 
-class ProblemDetail extends React.Component {
-  static propTypes = {
-    dispatch: React.PropTypes.func.isRequired,
-    params: React.PropTypes.object.isRequired,
-    problems: React.PropTypes.object.isRequired,
-    contest: React.PropTypes.object.isRequired,
-  };
+interface Props {
+  dispatch: Function;
+  params: any;
+  problems: any;
+  contest: any;
+}
 
+class ProblemDetail extends React.Component<Props, {}> {
   componentDidMount() {
     this.fetchProblem();
   }

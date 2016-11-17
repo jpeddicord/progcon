@@ -33,13 +33,13 @@ if (prod) {
 
 module.exports = {
   // future TODO: move font-awesome elsewhere (vendor css or something)
-  entry: ['font-awesome/css/font-awesome.css', './styles/style.scss', './browser/app.jsx'],
+  entry: ['font-awesome/css/font-awesome.css', './styles/style.scss', './browser/app.tsx'],
   module: {
     loaders: [
       {
-        test: /\.jsx?$/,
+        test: /\.tsx?$/,
         exclude: /node_modules/,
-        loader: 'babel',
+        loader: 'ts-loader',
       },
       {
         test: /\.css$/,
@@ -59,8 +59,13 @@ module.exports = {
       },
     ],
   },
+  ts: {
+    compilerOptions: {
+      target: 'es5',
+    },
+  },
   resolve: {
-    extensions: ['', '.js', '.jsx'],
+    extensions: ['', '.ts', '.tsx'],
   },
   output: {
     path: path.join(__dirname, 'build/browser'),

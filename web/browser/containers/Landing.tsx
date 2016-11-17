@@ -5,27 +5,23 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link, browserHistory } from 'react-router';
 import { fetchContests } from '../modules/contests';
 
-class Landing extends React.Component {
-  static propTypes = {
-    dispatch: React.PropTypes.func.isRequired,
-    contests: React.PropTypes.array.isRequired,
-    active: React.PropTypes.object,
-  };
+interface Props {
+  dispatch: Function;
+  contests: any[];
+  active?: any;
+}
 
+class Landing extends React.Component<Props, {}> {
   componentDidMount() {
     const { dispatch, contests } = this.props;
     if (contests == null || contests.length === 0) {
       dispatch(fetchContests());
     }
-  }
-
-  componentWillReceiveProps(nextProps) {
-
   }
 
   redirectSingle = () => {

@@ -3,16 +3,20 @@
     "module": "commonjs",
     "target": "es6",
     "lib": [
+      "dom",
       "es2016"
     ],
-    "outDir": "build/server",
+    "outDir": "build/",
     "sourceMap": false,
-    "noImplicitAny": false,
-    "allowJs": true
+    "allowJs": true,
+    "jsx": "react",
+    "noImplicitAny": false
   },
   "include": [
     "server/**/*.ts",
-    "server/config.js"
+    "server/config.js",
+    "browser/**/*.ts",
+    "browser/**/*.tsx"
   ],
   "exclude": [
     "node_modules"

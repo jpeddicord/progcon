@@ -5,20 +5,23 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import AutoRefresh from '../components/AutoRefresh';
 import { fetchSubmissions, fetchSubmissionDetail, rerunSubmission } from '../modules/submissions';
 import hljs from '../util/highlight';
 
-class SubmissionLog extends React.Component {
-  static propTypes = {
-    dispatch: React.PropTypes.func.isRequired,
-    contestId: React.PropTypes.number.isRequired,
-    submissionSet: React.PropTypes.object,
-    submissionDetails: React.PropTypes.object,
-  };
+interface Props {
+  dispatch: Function;
+  contestId: number;
+  submissionSet?: any;
+  submissionDetails?: any;
+}
+interface State {
+  selectedSubmission: any | null;
+}
 
+class SubmissionLog extends React.Component<Props, State> {
   state = {
     selectedSubmission: null,
   };
@@ -87,11 +90,11 @@ class SubmissionLog extends React.Component {
   }
 }
 
-SubmissionRow.propTypes = {
-  sub: React.PropTypes.object.isRequired,
-  loadDetails: React.PropTypes.func.isRequired,
-};
-function SubmissionRow(props) {
+interface SubmissionRowProps {
+  sub: any;
+  loadDetails: Function;
+}
+function SubmissionRow(props: SubmissionRowProps) {
   const { id, problem, result, submission_time, time_score, user_id, user_name } = props.sub;
 
   let resultClass = '';
@@ -115,12 +118,11 @@ function SubmissionRow(props) {
   );
 }
 
-class SubmissionDetails extends React.Component {
-  static propTypes = {
-    details: React.PropTypes.object,
-    rerun: React.PropTypes.func.isRequired,
-  };
-
+interface SubmissionDetailsProps {
+  details?: any;
+  rerun: Function;
+}
+class SubmissionDetails extends React.Component<SubmissionDetailsProps, {}> {
   code = null;
   diff = null;
 

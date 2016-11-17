@@ -5,13 +5,14 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import React from 'react';
+import * as React from 'react';
 
-export default class SafetyBox extends React.Component {
-  static propTypes = {
-    children: React.PropTypes.node,
-  };
+interface State {
+  // XXX: children?
+  armed: boolean;
+}
 
+export default class SafetyBox extends React.Component<{}, State> {
   state = {
     armed: false,
   };

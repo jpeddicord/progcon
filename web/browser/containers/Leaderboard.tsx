@@ -5,22 +5,21 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import moment from 'moment';
+import * as moment from 'moment';
 import 'moment-duration-format';
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import AutoRefresh from '../components/AutoRefresh';
 import { fetchContestDetail, fetchLeaderboard } from '../modules/contests';
 
-class Leaderboard extends React.Component {
-  static propTypes = {
-    children: React.PropTypes.element,
-    dispatch: React.PropTypes.func.isRequired,
-    params: React.PropTypes.object.isRequired,
-    active: React.PropTypes.object,
-    leaderboard: React.PropTypes.array,
-  };
+interface Props {
+  dispatch: Function;
+  params: any;
+  active?: any;
+  leaderboard?: any[];
+}
 
+class Leaderboard extends React.Component<Props, {}> {
   componentDidMount() {
     const { dispatch, params: { contest_id } } = this.props;
 
@@ -79,13 +78,13 @@ class Leaderboard extends React.Component {
 
 }
 
-ScoreRow.propTypes = {
-  place: React.PropTypes.number,
-  user: React.PropTypes.object.isRequired,
-  problems: React.PropTypes.array.isRequired,
-};
-function ScoreRow(props) {
-  const time = moment.duration(props.user.time_score, 'seconds').format('d[d] HH[h]:mm[m]');
+interface ScoreRowProps {
+  place?: number;
+  user: any;
+  problems: any[];
+}
+function ScoreRow(props: ScoreRowProps) {
+  const time = (moment.duration(props.user.time_score, 'seconds') as any).format('d[d] HH[h]:mm[m]');
   return (
     <tr>
       <td>{props.place != null ? props.place :
@@ -100,17 +99,17 @@ function ScoreRow(props) {
   );
 }
 
-ProblemStatus.propTypes = {
-  problem: React.PropTypes.string.isRequired,
-  user: React.PropTypes.object.isRequired,
-};
-function ProblemStatus(props) {
+interface ProblemStatusProps {
+  problem: string;
+  user: any;
+}
+function ProblemStatus(props: ProblemStatusProps) {
   let problemScores = props.user.problem_scores[props.problem];
   const plural = problemScores != null && problemScores.length === 1 ? 'submission' : 'submissions';
 
   if (props.user.problems_completed.includes(props.problem)) {
     const problemScore = problemScores.reduce((sum, x) => sum + x, 0);
-    const formatted = moment.duration(problemScore, 'seconds').format('d[d] HH[h]:mm[m]');
+    const formatted = (moment.duration(problemScore, 'seconds') as any).format('d[d] HH[h]:mm[m]');
     return (
       <td className="table-success">
         {formatted} <small>({problemScores.length} {plural})</small>

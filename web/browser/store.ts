@@ -13,6 +13,6 @@ import reducer from './reducer';
 export default function create(initial) {
   return createStore(reducer, initial, compose(
     applyMiddleware(thunk),
-    typeof window === 'object' && typeof window.devToolsExtension !== 'undefined' ? window.devToolsExtension() : f => f,
+    typeof window === 'object' && typeof (window as any).devToolsExtension !== 'undefined' ? (window as any).devToolsExtension() : f => f,
   ));
 }

@@ -5,15 +5,19 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import moment from 'moment';
+import * as moment from 'moment';
 import 'moment-duration-format';
-import React from 'react';
+import * as React from 'react';
 
-export default class Timer extends React.Component {
-  static propTypes = {
-    startTime: React.PropTypes.object,
-    format: React.PropTypes.string,
-  };
+interface Props {
+  startTime: any;
+  format?: string;
+}
+interface State {
+  elapsed: number;
+}
+
+export default class Timer extends React.Component<Props, State> {
   static defaultProps = {
     format: 'd[d] hh[h]:mm[m]',
   }
@@ -45,7 +49,7 @@ export default class Timer extends React.Component {
   };
 
   render() {
-    const display = moment.duration(this.state.elapsed, 'seconds').format(this.props.format);
+    const display = (moment.duration(this.state.elapsed, 'seconds') as any).format(this.props.format);
     return (
       <span>
         {display}

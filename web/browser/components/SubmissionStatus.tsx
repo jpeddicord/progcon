@@ -5,9 +5,9 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import moment from 'moment';
+import * as moment from 'moment';
 import 'moment-duration-format';
-import React from 'react';
+import * as React from 'react';
 import AutoRefresh from './AutoRefresh';
 import Timer from './Timer';
 
@@ -22,15 +22,15 @@ const statusClasses = {
   internal_error: 'card-warning',
 };
 
-export default class SubmissionStatus extends React.Component {
-  static propTypes = {
-    submission: React.PropTypes.object,
-    contestStartTime: React.PropTypes.object.isRequired,
-    refresh: React.PropTypes.func.isRequired,
-  };
+interface Props {
+  submission?: any;
+  contestStartTime: any;
+  refresh: Function;
+}
 
+export default class SubmissionStatus extends React.Component<Props, {}> {
   static timeScoreFormat(seconds, str = 'd[d] hh[h]:mm[m]:ss[s]') {
-    return moment.duration(seconds, 'seconds').format(str);
+    return (moment.duration(seconds, 'seconds') as any).format(str);
   }
 
   render() {

@@ -19,7 +19,7 @@ export function clearToken() {
   window.localStorage.removeItem(TOKEN_KEY);
 }
 
-export function injectTokenHeader(options = {}, token) {
+export function injectTokenHeader(options: any = {}, token) {
   return {
     ...options,
     headers: {

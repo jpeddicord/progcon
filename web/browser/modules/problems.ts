@@ -5,7 +5,7 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import moment from 'moment';
+import * as moment from 'moment';
 import { alertServerError } from '../util/alert';
 import { fetchJSONAuth } from '../util/fetch';
 

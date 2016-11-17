@@ -5,19 +5,22 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import alertify from 'alertify.js';
-import React from 'react';
+import * as alertify from 'alertify.js';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { fetchUsers, updateUser } from '../modules/users';
 
-class UserManager extends React.Component {
-  static propTypes = {
-    dispatch: React.PropTypes.func.isRequired,
-    contestId: React.PropTypes.number.isRequired,
-    userList: React.PropTypes.array,
-    users: React.PropTypes.object,
-  };
+interface Props {
+  dispatch: Function;
+  contestId: number;
+  userList?: any[];
+  users: any;
+}
+interface State {
+  editing: string | null;
+}
 
+class UserManager extends React.Component<Props, State> {
   state = {
     editing: null,
   };
@@ -76,12 +79,12 @@ class UserManager extends React.Component {
   }
 }
 
-UserEditor.propTypes = {
-  user: React.PropTypes.object.isRequired,
-  exitForm: React.PropTypes.func.isRequired,
-  onSubmit: React.PropTypes.func.isRequired,
-};
-function UserEditor(props) {
+interface UserEditorProps {
+  user: any;
+  exitForm: (e) => void;
+  onSubmit: (e) => void;
+}
+function UserEditor(props: UserEditorProps) {
   return (
     <div>
       <button className="btn btn-sm" onClick={props.exitForm}>back</button>

@@ -5,18 +5,18 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { registerForContest } from '../modules/contests';
 
-class RegistrationForm extends React.Component {
-  static propTypes = {
-    dispatch: React.PropTypes.func.isRequired,
-    params: React.PropTypes.object.isRequired,
-    active: React.PropTypes.object,
-    extraFields: React.PropTypes.array,
-  };
+interface Props {
+  dispatch: Function;
+  params: any;
+  active?: any;
+  extraFields?: any[];
+}
 
+class RegistrationForm extends React.Component<Props, {}> {
   submitRegistration = e => {
     const { dispatch, params: { contest_id }, extraFields } = this.props;
     const fields = e.target.elements;

@@ -5,25 +5,31 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import React from 'react';
-import alertify from 'alertify.js';
+import * as React from 'react';
+import * as alertify from 'alertify.js';
 
-export default class SolutionUploader extends React.Component {
-  static propTypes = {
-    onSubmit: React.PropTypes.func.isRequired,
-  };
+interface Props {
+  onSubmit: Function;
+}
+interface State {
+  ready: boolean;
+  selected: string;
+}
+// Some items below should have type casts removed once React bindings have mapped types:
+// https://github.com/Microsoft/TypeScript/pull/12114
+
+export default class SolutionUploader extends React.Component<Props, State> {
+  pickerRef: HTMLElement;
 
   fileContent = null;
   state = {
     ready: false,
     selected: null,
-    error: null,
   };
 
   handleDrop = e => {
     e.stopPropagation();
     e.preventDefault();
-    this.setState({dragging: false});
     this.handleFiles(e.dataTransfer.files);
   };
 
@@ -41,15 +47,16 @@ export default class SolutionUploader extends React.Component {
     const reader = new FileReader();
 
     reader.addEventListener('load', e => {
-      const content = e.target.result;
+      const content = (e.target as FileReader).result;
       this.fileContent = content;
-      this.setState({ready: true, selected: name});
+      this.setState({ready: true, selected: name} as State);
     });
 
-    reader.addEventListener('error', err => {
-      alertify.error(err);
+    reader.addEventListener('error', e => {
+      const err = (e.target as FileReader).error.name;
+      alertify.error(`Couldn't read file: ${err}`);
       this.fileContent = null;
-      this.setState({ready: false, error: err});
+      this.setState({ready: false} as State);
     });
 
     reader.readAsText(files[0]);
@@ -60,7 +67,7 @@ export default class SolutionUploader extends React.Component {
     if (this.state.ready) {
       onSubmit(this.fileContent);
     }
-    this.setState({ready: false, error: null, selected: null});
+    this.setState({ready: false, selected: null});
   };
 
   render() {

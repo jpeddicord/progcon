@@ -5,7 +5,7 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import moment from 'moment';
+import * as moment from 'moment';
 import { browserHistory } from 'react-router';
 import { alertServerError } from '../util/alert';
 import { fetchJSON, fetchJSONAuth } from '../util/fetch';

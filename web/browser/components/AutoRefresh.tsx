@@ -5,15 +5,19 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import React from 'react';
+import * as React from 'react';
 
-export default class AutoRefresh extends React.Component {
-  static propTypes = {
-    func: React.PropTypes.func.isRequired,
-    interval: React.PropTypes.number.isRequired,
-    icon: React.PropTypes.string,
-    spinClass: React.PropTypes.string,
-  };
+interface Props {
+  func: Function;
+  interval: number;
+  icon?: string;
+  spinClass?: string;
+};
+interface State {
+  enabled: boolean;
+};
+
+export default class AutoRefresh extends React.Component<Props, State> {
   static defaultProps = {
     icon: 'fa-refresh',
     spinClass: 'fa-spin',

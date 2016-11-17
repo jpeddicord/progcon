@@ -5,7 +5,7 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import SafetyBox from '../components/SafetyBox';
 import ContestEditor from '../containers/ContestEditor';
@@ -13,13 +13,13 @@ import SubmissionLog from '../containers/SubmissionLog';
 import UserManager from '../containers/UserManager';
 import { fetchContestDetail, contestCommand } from '../modules/contests';
 
-class ContestDashboard extends React.Component {
-  static propTypes = {
-    dispatch: React.PropTypes.func.isRequired,
-    params: React.PropTypes.object.isRequired,
-    active: React.PropTypes.object,
-  };
+interface Props {
+  dispatch: Function;
+  params: any;
+  active: any;
+}
 
+class ContestDashboard extends React.Component<Props, {}> {
   componentDidMount() {
     const { dispatch, active, params: { contest_id } } = this.props;
     if (active == null || active.id !== parseInt(contest_id)) {

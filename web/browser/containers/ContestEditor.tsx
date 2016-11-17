@@ -5,17 +5,17 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import SafetyBox from '../components/SafetyBox';
 import { updateContest } from '../modules/contests';
 
-class ContestEditor extends React.Component {
-  static propTypes = {
-    dispatch: React.PropTypes.func.isRequired,
-    active: React.PropTypes.object,
-  };
+interface Props {
+  dispatch: Function;
+  active?: any;
+}
 
+class ContestEditor extends React.Component<Props, {}> {
   static formatTimestamp(stamp) {
     if (stamp == null || !stamp.isValid()) {
       return '';
