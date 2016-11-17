@@ -13,7 +13,6 @@ import { fetchContests } from '../modules/contests';
 interface Props {
   dispatch: Function;
   contests: any[];
-  active?: any;
 }
 
 class Landing extends React.Component<Props, {}> {

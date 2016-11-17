@@ -15,8 +15,8 @@ import { fetchContestDetail, fetchLeaderboard } from '../modules/contests';
 interface Props {
   dispatch: Function;
   params: any;
-  active?: any;
-  leaderboard?: any[];
+  active: any;
+  leaderboard: any[];
 }
 
 class Leaderboard extends React.Component<Props, {}> {

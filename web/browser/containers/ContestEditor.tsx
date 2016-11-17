@@ -12,7 +12,7 @@ import { updateContest } from '../modules/contests';
 
 interface Props {
   dispatch: Function;
-  active?: any;
+  active: any;
 }
 
 class ContestEditor extends React.Component<Props, {}> {

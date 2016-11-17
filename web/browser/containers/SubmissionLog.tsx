@@ -14,8 +14,8 @@ import hljs from '../util/highlight';
 interface Props {
   dispatch: Function;
   contestId: number;
-  submissionSet?: any;
-  submissionDetails?: any;
+  submissionSet: any;
+  submissionDetails: any;
 }
 interface State {
   selectedSubmission: any | null;

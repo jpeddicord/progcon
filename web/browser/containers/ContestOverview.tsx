@@ -15,7 +15,7 @@ import { loadToken } from '../util/token';
 interface Props {
   dispatch: Function;
   params: any;
-  active?: any;
+  active: any;
 }
 
 class ContestOverview extends React.Component<Props, {}> {

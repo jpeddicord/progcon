@@ -14,7 +14,6 @@ import { fetchConfig } from '../modules/common';
 import { clearToken } from '../util/token';
 
 interface Props {
-  // XXX: children?
   dispatch: Function;
   config?: any;
 }
@@ -73,7 +72,5 @@ class App extends React.Component<Props, {}> {
 }
 
 export default connect(state => {
-  return {
-    active: state.contests.active,
-  };
+  return {};
 })(App);

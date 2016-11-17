@@ -13,7 +13,7 @@ import { fetchUsers, updateUser } from '../modules/users';
 interface Props {
   dispatch: Function;
   contestId: number;
-  userList?: any[];
+  userList: any[];
   users: any;
 }
 interface State {

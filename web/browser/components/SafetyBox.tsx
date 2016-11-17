@@ -8,7 +8,6 @@
 import * as React from 'react';
 
 interface State {
-  // XXX: children?
   armed: boolean;
 }
 

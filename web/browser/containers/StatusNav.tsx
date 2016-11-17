@@ -14,8 +14,8 @@ import Timer from '../components/Timer';
 
 interface Props {
   dispatch: Function;
-  active?: any;
-  score?: any;
+  active: any;
+  score: any;
 }
 
 class StatusNav extends React.Component<Props, {}> {

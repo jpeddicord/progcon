@@ -12,8 +12,8 @@ import { registerForContest } from '../modules/contests';
 interface Props {
   dispatch: Function;
   params: any;
-  active?: any;
-  extraFields?: any[];
+  active: any;
+  extraFields: any[];
 }
 
 class RegistrationForm extends React.Component<Props, {}> {

@@ -44,6 +44,7 @@
     "@types/mz": "0.0.30",
     "@types/node": "^6.0.46",
     "@types/react": "^0.14.48",
+    "@types/react-redux": "^4.4.32",
     "@types/react-router": "^2.0.39",
     "@types/whatwg-fetch": "0.0.32",
     "@types/winston": "0.0.30",
