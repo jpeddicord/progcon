@@ -12,7 +12,7 @@ import * as koaBodyParser from 'koa-bodyparser';
 import * as koaCompress from 'koa-compress';
 import * as koaMount from 'koa-mount';
 import * as koaStatic from 'koa-static';
-import winston from 'winston';
+import * as winston from 'winston';
 import apiRoutes from './api';
 import { initBalancer } from './bot/balancer';
 import { launchBots } from './bot/process';

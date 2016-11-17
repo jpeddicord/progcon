@@ -5,7 +5,7 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import nanomsg from 'nanomsg';
+import * as nanomsg from 'nanomsg';
 import Broker from './broker';
 import { config } from '../config';
 

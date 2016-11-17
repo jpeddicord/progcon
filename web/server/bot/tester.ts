@@ -5,7 +5,7 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import winston from 'winston';
+import * as winston from 'winston';
 import { pickBroker } from './balancer';
 import * as dbSubmissions from '../db/submissions';
 import { updateScore } from '../scoring';

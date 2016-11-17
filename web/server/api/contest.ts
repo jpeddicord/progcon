@@ -10,7 +10,7 @@
  */
 import * as Router from 'koa-router';
 import * as cache from 'memory-cache';
-import winston from 'winston';
+import * as winston from 'winston';
 import { contestAccess } from './auth';
 import * as dbContests from '../db/contests';
 import * as dbSubmissions from '../db/submissions';

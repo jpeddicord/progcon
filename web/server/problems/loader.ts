@@ -8,8 +8,8 @@
 import * as fs from 'mz/fs';
 import * as path from 'path';
 import * as Immutable from 'immutable';
-import toml from 'toml';
-import winston from 'winston';
+import * as toml from 'toml';
+import * as winston from 'winston';
 import { config } from '../config';
 
 export async function loadProblems() {

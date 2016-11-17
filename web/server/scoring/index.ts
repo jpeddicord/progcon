@@ -6,7 +6,7 @@
  */
 
 import * as moment from 'moment';
-import winston from 'winston';
+import * as winston from 'winston';
 import * as dbContests from '../db/contests';
 import * as dbSubmissions from '../db/submissions';
 import * as dbUsers from '../db/users';

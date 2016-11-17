@@ -48,7 +48,7 @@ gulp.task('dev-server', ['build-server'], () => {
 });
 
 gulp.task('dev', ['dev-server'], () => {
-  gulp.watch(['server/**/*.(js|ts)'], {debounceDelay: 500}, ['dev-server']);
+  gulp.watch(['server/**/*.@(js|ts)'], {debounceDelay: 500}, ['dev-server']);
 
   const compiler = webpack(require('./webpack.config.js'));
   new WebpackDevServer(compiler, {
