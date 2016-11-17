@@ -16,13 +16,13 @@ export default class SafetyBox extends React.Component<{}, State> {
     armed: false,
   };
 
-  timeout = null;
+  timeout: any = null;
 
   componentWillUnmount() {
     clearTimeout(this.timeout);
   }
 
-  arm = e => {
+  arm = (e: any) => {
     this.setState({armed: true});
     this.timeout = setTimeout(() => {
       this.setState({armed: false});

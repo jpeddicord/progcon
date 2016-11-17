@@ -18,7 +18,7 @@ export function initBalancer() {
   }
 }
 
-function createBroker(addr) {
+function createBroker(addr: string) {
   const socket = nanomsg.socket('req');
   socket.connect(addr);
   return new Broker(socket);

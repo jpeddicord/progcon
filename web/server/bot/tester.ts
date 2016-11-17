@@ -10,7 +10,7 @@ import { pickBroker } from './balancer';
 import * as dbSubmissions from '../db/submissions';
 import { updateScore } from '../scoring';
 
-export async function testAnswer(submissionId, submissionTime, userId, contestId, problem, answer) {
+export async function testAnswer(submissionId: number, submissionTime: Date, userId: number, contestId: number, problem: string, answer: string) {
   // find the least-loaded broker
   const broker = pickBroker();
 
@@ -38,7 +38,7 @@ export async function testAnswer(submissionId, submissionTime, userId, contestId
 }
 
 // re-run a submission for a user
-export async function regradeSubmission(submissionId) {
+export async function regradeSubmission(submissionId: number) {
   const sub = await dbSubmissions.getSubmission(submissionId);
   if (sub == null) {
     throw new Error('submission does not exist');

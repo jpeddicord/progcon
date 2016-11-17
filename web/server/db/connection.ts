@@ -15,7 +15,7 @@ if (process.env.NODE_ENV === 'development') {
   monitor.attach(opts);
 }
 
-let db;
+let db: any;
 
 export function connect() {
   db = pgp(opts)(config.database);

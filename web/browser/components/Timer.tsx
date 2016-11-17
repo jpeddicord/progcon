@@ -14,7 +14,7 @@ interface Props {
   format?: string;
 }
 interface State {
-  elapsed: number;
+  elapsed: number | null;
 }
 
 export default class Timer extends React.Component<Props, State> {
@@ -23,10 +23,10 @@ export default class Timer extends React.Component<Props, State> {
   }
 
   state = {
-    elapsed: null,
+    elapsed: null as number | null,
   };
 
-  timeout = null;
+  timeout: any = null;
 
   componentDidMount() {
     this.timeout = setInterval(this.updateTime, 30 * 1000);
@@ -49,6 +49,10 @@ export default class Timer extends React.Component<Props, State> {
   };
 
   render() {
+    if (this.state.elapsed == null) {
+      return <span/>;
+    }
+
     const display = (moment.duration(this.state.elapsed, 'seconds') as any).format(this.props.format);
     return (
       <span>

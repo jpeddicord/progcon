@@ -127,7 +127,7 @@ routes.get('/leaderboard', async (ctx, next) => {
   ctx.body = {leaderboard};
 });
 
-async function contestHasProblem(ctx, next): Promise<void> {
+async function contestHasProblem(ctx: any, next: Function): Promise<void> {
   const problemName = ctx.params.problem;
   const contest = await getContestCached(ctx.params.contest_id, ctx);
   if (contest == null || !contest.problems.includes(problemName)) {
@@ -136,7 +136,7 @@ async function contestHasProblem(ctx, next): Promise<void> {
   await next();
 }
 
-async function contestIsActive(ctx, next): Promise<void> {
+async function contestIsActive(ctx: any, next: Function): Promise<void> {
   const contest = await getContestCached(ctx.params.contest_id, ctx);
   if (contest == null) {
     throw new NotFoundError('Contest is not active');
@@ -144,9 +144,9 @@ async function contestIsActive(ctx, next): Promise<void> {
   await next();
 }
 
-async function getContestCached(id, ctx): Promise<dbContests.Contest> {
+async function getContestCached(id: string, ctx: any): Promise<dbContests.Contest | null> {
   const cacheKey = `contest/${id}`;
-  let contest: dbContests.Contest & {_active?: boolean};
+  let contest: dbContests.Contest & {_active?: boolean} | null = null;
 
   // admin will always bypass cache
   if (!ctx.state.user.admin) {
@@ -161,7 +161,7 @@ async function getContestCached(id, ctx): Promise<dbContests.Contest> {
     contest = await dbContests.getActiveContest(id);
     if (contest == null) {
       // failing that, look up without "active" criteria
-      contest = await dbContests.getContest(id);
+      contest = await dbContests.getContest(id) as dbContests.Contest;
       contest._active = false;
     } else {
       contest._active = true;

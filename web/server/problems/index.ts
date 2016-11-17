@@ -7,7 +7,7 @@
 
 import { loadProblems } from './loader';
 
-let problemCache = null;
+let problemCache: Map<string, any> = new Map();
 
 export async function mapProblems() {
   const problemList = await loadProblems();
@@ -22,6 +22,6 @@ export function getProblems() {
   return problemCache;
 }
 
-export function getProblem(name) {
+export function getProblem(name: string) {
   return problemCache.get(name).toJS();
 }

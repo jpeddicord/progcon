@@ -29,7 +29,7 @@ interface Props {
 }
 
 export default class SubmissionStatus extends React.Component<Props, {}> {
-  static timeScoreFormat(seconds, str = 'd[d] hh[h]:mm[m]:ss[s]') {
+  static timeScoreFormat(seconds: number, str = 'd[d] hh[h]:mm[m]:ss[s]') {
     return (moment.duration(seconds, 'seconds') as any).format(str);
   }
 
@@ -50,7 +50,7 @@ export default class SubmissionStatus extends React.Component<Props, {}> {
     let penaltyTime = 0;
     if (submission != null) {
       penaltyCount = submission.penalties.length;
-      penaltySeconds = submission.penalties.reduce((sum, x) => sum + x, 0);
+      penaltySeconds = submission.penalties.reduce((sum: number, x: number) => sum + x, 0);
       penaltyTime = SubmissionStatus.timeScoreFormat(penaltySeconds, 'H[h] mm[m]');
     }
 

@@ -13,7 +13,7 @@ import { tryAuth, issueUserToken, generateUserPassword, rateLimiter } from './au
 import { config } from '../config';
 import * as dbContests from '../db/contests';
 import * as dbUsers from '../db/users';
-import { AuthError, RequestError } from '../util/errors';
+import { AuthError, RequestError, NotFoundError } from '../util/errors';
 
 const routes = new Router();
 
@@ -38,8 +38,12 @@ routes.post('/contests/:contest_id/register', rateLimiter, async (ctx, next) => 
     throw new RequestError('Please enter your name');
   }
 
-  // validate the registration code
   const contest = await dbContests.getContest(ctx.params.contest_id);
+  if (contest == null) {
+    throw new NotFoundError('Contest doesn\'t exist');
+  }
+
+  // validate the registration code
   if (code.toLowerCase() !== contest.code.toLowerCase()) {
     throw new AuthError('Invalid registration code');
   }

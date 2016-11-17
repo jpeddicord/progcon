@@ -22,11 +22,11 @@ export function listContests(): Promise<Contest[]> {
   return db().any('select id, title from contests');
 }
 
-export function getContest(id: number): Promise<Contest | null> {
+export function getContest(id: number | string): Promise<Contest | null> {
   return db().oneOrNone('select * from contests where id = $1', [id]);
 }
 
-export function getActiveContest(id: number): Promise<Contest | null> {
+export function getActiveContest(id: number | string): Promise<Contest | null> {
   return db().oneOrNone(
     'select * from contests where id = $1 and start_time is not null and start_time < now() and (end_time > now() or end_time is null)',
     [id],

@@ -13,7 +13,7 @@ import { config } from '../config';
 import * as dbUsers from '../db/users';
 import { AccessError } from '../util/errors';
 
-export async function tryAuth(userId, pass) {
+export async function tryAuth(userId: string, pass: string) {
   if (userId === 'admin') {
     const hash = await crypto.pbkdf2(pass, '', 1000000, 16, 'sha256');
     if (hash.toString('hex') !== config.admin.passwordHash) {
@@ -48,7 +48,7 @@ export async function tryAuth(userId, pass) {
   }
 }
 
-export function issueUserToken(id, contest) {
+export function issueUserToken(id: number, contest: number) {
   const claims = {
     id,
     contest,
@@ -85,7 +85,7 @@ export const rateLimiter = koaConvert(koaLimit({
 /**
  * Middleware that requires an admin session.
  */
-export async function adminOnly(ctx, next) {
+export async function adminOnly(ctx: any, next: Function) {
   if (ctx.state.user.admin !== true) {
     throw new AccessError('no access');
   }
@@ -97,7 +97,7 @@ export async function adminOnly(ctx, next) {
  *
  * This can either be because they're an administrator, or they're registered for it.
  */
-export async function contestAccess(ctx, next) {
+export async function contestAccess(ctx: any, next: Function) {
   const url_id = ctx.params.contest_id;
   if (ctx.state.user.admin === true) {
     await next();

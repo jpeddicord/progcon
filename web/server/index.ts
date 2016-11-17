@@ -45,7 +45,7 @@ app.use((ctx, next) => {
   </html>`;
 });
 
-export function start(port) {
+export function start(port: number) {
   winston.info('Loading configuration');
   load()
     .then(config => {

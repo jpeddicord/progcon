@@ -16,12 +16,14 @@ const TIME_PENALTY = 10 * 60;
 /**
  * Update single submission and re-calculate total scores.
  */
-export async function updateScore(contestId, userId, submissionId, submissionTime, problem, result, meta) {
+export async function updateScore(contestId: number, userId: number, submissionId: number,
+                                  submissionTime: Date, problem: string,
+                                  result: dbSubmissions.SubmissionResult, meta: any) {
   // calculate the score
   let subTimeScore;
   if (result === 'successful') {
-    const contest = await dbContests.getContest(contestId);
-    const start = moment(contest.start_time);
+    const contest = await dbContests.getContest(contestId) as dbContests.Contest;
+    const start = moment(contest.start_time as Object);
     const subTime = moment(submissionTime);
     subTimeScore = subTime.diff(start, 'seconds');
   } else {
@@ -46,7 +48,7 @@ export async function updateScore(contestId, userId, submissionId, submissionTim
 /**
  * Calculate and save the score for a user.
  */
-export async function recalculateTotalScore(userId) {
+export async function recalculateTotalScore(userId: number) {
   winston.debug(`Re-calculating score for ${userId}`);
 
   // find all of the completed problems (incompletes don't count towards time)
@@ -56,10 +58,10 @@ export async function recalculateTotalScore(userId) {
   // add up the total time score
   let total = 0;
   let problemsCompleted = [];
-  let partialProblemScores = {};
+  let partialProblemScores: {[key: string]: number[]} = {};
   for (let sub of subs) {
     // add the first successful score
-    let scores = [sub.time_score];
+    let scores = [sub.time_score as number];
 
     // and then add the penalties
     const penalties = await dbSubmissions.getProblemPenalties(userId, sub.problem);

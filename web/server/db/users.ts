@@ -7,6 +7,7 @@
 
 import db from './connection';
 
+export type ProblemScores = {[key: string]: number[]};
 export interface User {
   id: number;
   contest_id: number;
@@ -14,7 +15,7 @@ export interface User {
   password?: string;
   problems_completed: string[];
   time_score: number;
-  problem_scores: any;
+  problem_scores: ProblemScores;
   meta?: any;
 }
 

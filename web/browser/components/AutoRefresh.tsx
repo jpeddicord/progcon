@@ -27,7 +27,7 @@ export default class AutoRefresh extends React.Component<Props, State> {
     enabled: true,
   };
 
-  interval = null;
+  interval: any = null;
 
   componentDidMount() {
     this.startRefreshing();
@@ -42,7 +42,7 @@ export default class AutoRefresh extends React.Component<Props, State> {
     this.interval = setInterval(func, interval);
   }
 
-  onClick = e => {
+  onClick = (e: any) => {
     if (this.state.enabled) {
       this.setState({enabled: false});
       clearInterval(this.interval);

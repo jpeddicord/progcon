@@ -8,7 +8,7 @@
 
 export class RequestError extends Error {
   status: number;
-  constructor(message) {
+  constructor(message: string) {
     super(message);
     this.name = 'RequestError';
     this.message = message;
@@ -18,7 +18,7 @@ export class RequestError extends Error {
 }
 
 export class AuthError extends RequestError {
-  constructor(message) {
+  constructor(message: string) {
     super(message);
     this.name = 'AuthError';
     this.status = 401;
@@ -26,7 +26,7 @@ export class AuthError extends RequestError {
 }
 
 export class AccessError extends RequestError {
-  constructor(message) {
+  constructor(message: string) {
     super(message);
     this.name = 'AccessError';
     this.status = 403;
@@ -34,7 +34,7 @@ export class AccessError extends RequestError {
 }
 
 export class NotFoundError extends RequestError {
-  constructor(message) {
+  constructor(message: string) {
     super(message);
     this.name = 'NotFoundError';
     this.status = 404;

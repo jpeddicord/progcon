@@ -14,7 +14,7 @@ import { config } from '../config';
 
 export async function loadProblems() {
   winston.info(`Reading problems from ${config.problems.paths.length} paths`);
-  let problems = [];
+  let problems: any[] = []; // FIXME: define the real structure of this
   for (let path of config.problems.paths) {
     const p = await loadProblemsFromPath(path);
     problems = problems.concat(p);
@@ -23,7 +23,7 @@ export async function loadProblems() {
   return problems;
 }
 
-async function loadProblemsFromPath(problemPath) {
+async function loadProblemsFromPath(problemPath: string) {
   const files = await fs.readdir(problemPath);
   let problems = [];
   for (let name of files) {
@@ -38,16 +38,16 @@ async function loadProblemsFromPath(problemPath) {
   return problems;
 }
 
-async function loadProblem(name, dir) {
+async function loadProblem(name: string, dir: string) {
   const problemToml = path.join(dir, 'problem.toml');
   const data = await fs.readFile(problemToml);
   const info = toml.parse(data);
 
   const meta = {
     name,
-    description: null,
-    stub: null,
-    stub_name: null,
+    description: null as string | null,
+    stub: null as string | null,
+    stub_name: null as string | null,
   };
 
   // load the problem description for the website

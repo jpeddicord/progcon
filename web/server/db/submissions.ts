@@ -7,7 +7,7 @@
 
 import db from './connection';
 
-export type SubmissionResult = 'successful' | 'failed_tests' | 'bad_compile' | 'crashed' | 'timeout' | 'internal_error';
+export type SubmissionResult = 'successful' | 'failed_tests' | 'bad_compile' | 'crashed' | 'timeout' | 'internal_error' | null;
 export interface Submission {
   id: number;
   user_id: number;
@@ -52,7 +52,7 @@ export async function getProblemPenalties(user: number, problem: string): Promis
     'select time_score from submissions where user_id = $1 and problem = $2 and result != $3 and result is not null order by submission_time desc',
     [user, problem, 'successful'],
   );
-  return penalties.map(p => p.time_score);
+  return penalties.map((p: any) => p.time_score);
 }
 
 export async function createSubmission(user: number, contest: number, problem: string, answer: string): Promise<{id: number, submission_time: Date}> {
@@ -63,7 +63,7 @@ export async function createSubmission(user: number, contest: number, problem: s
   return sub;
 }
 
-export async function updateSubmission(id: number, timeScore: number, result: SubmissionResult, meta: any = null): Promise<void> {
+export async function updateSubmission(id: number, timeScore: number | null, result: SubmissionResult, meta: any = null): Promise<void> {
   await db().none(
     'update submissions set (time_score, result, meta) = ($2, $3, $4) where id = $1',
     [id, timeScore, result, meta],

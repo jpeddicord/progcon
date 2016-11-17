@@ -13,7 +13,7 @@ interface Props {
 }
 interface State {
   ready: boolean;
-  selected: string;
+  selected: string | null;
 }
 // Some items below should have type casts removed once React bindings have mapped types:
 // https://github.com/Microsoft/TypeScript/pull/12114
@@ -27,17 +27,17 @@ export default class SolutionUploader extends React.Component<Props, State> {
     selected: null,
   };
 
-  handleDrop = e => {
+  handleDrop = (e: any) => {
     e.stopPropagation();
     e.preventDefault();
     this.handleFiles(e.dataTransfer.files);
   };
 
-  handlePicker = e => {
+  handlePicker = (e: any) => {
     this.handleFiles(e.target.files);
   };
 
-  handleFiles = files => {
+  handleFiles = (files: FileList) => {
     if (files.length !== 1) {
       alertify.error('This form only accepts one file.');
       return;
@@ -62,7 +62,7 @@ export default class SolutionUploader extends React.Component<Props, State> {
     reader.readAsText(files[0]);
   }
 
-  handleSubmit = e => {
+  handleSubmit = (e: any) => {
     const { onSubmit } = this.props;
     if (this.state.ready) {
       onSubmit(this.fileContent);

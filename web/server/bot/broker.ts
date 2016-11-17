@@ -5,6 +5,12 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
+interface Item {
+  data: string;
+  resolve: Function;
+  reject: Function;
+}
+
 /**
  * Nanomsg socket wrapper to queue REQ/REP calls while waiting for responses.
  */
@@ -12,10 +18,10 @@ export default class Broker {
   socket: any;
 
   _waiting = false;
-  _queue = [];
-  _active = null;
+  _queue: Item[] = [];
+  _active: Item | null = null;
 
-  constructor(socket) {
+  constructor(socket: any) {
     this.socket = socket;
     this.socket.on('data', this._recv);
   }
@@ -29,7 +35,7 @@ export default class Broker {
    *
    * Returns a Promise that resolves on message response.
    */
-  send(data) {
+  send(data: string) {
     return new Promise((resolve, reject) => {
       this._queue.push({data, resolve, reject});
       this._drain();
@@ -48,14 +54,18 @@ export default class Broker {
     }
     this._waiting = true;
 
-    this._active = this._queue.shift();
+    this._active = this._queue.shift() as Item;
     this.socket.send(this._active.data);
   };
 
   /**
    * Receive a response, resolve the promise, and continue draining the queue.
    */
-  _recv = buf => {
+  _recv = (buf: string) => {
+    if (this._active == null) {
+      throw new Error('Internal state error: broker._active is null');
+    }
+
     this._active.resolve(buf);
     this._active = null;
     this._waiting = false;

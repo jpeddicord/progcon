@@ -24,7 +24,7 @@ export function launchBots() {
 /**
  * Launch a single bot and track it
  */
-function launch(socket, problemLibraryPaths, logLevel, logFile) {
+function launch(socket: string, problemLibraryPaths: string[], logLevel: string, logFile: string) {
   const stream = fs.createWriteStream(logFile, {flags: 'a'});
   const child = spawn('progcon-bot', [socket, ...problemLibraryPaths], {
     env: {
@@ -44,7 +44,7 @@ function launch(socket, problemLibraryPaths, logLevel, logFile) {
   });
 }
 
-function recover(pid, fn, delay) {
+function recover(pid: number, fn: Function, delay: number) {
   winston.warn(`Bot ${pid} has exited! Restarting in ${delay}ms.`);
   setTimeout(fn, delay);
 }

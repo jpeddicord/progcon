@@ -10,7 +10,8 @@
     "sourceMap": false,
     "allowJs": true,
     "jsx": "react",
-    "noImplicitAny": false
+    "noImplicitAny": true,
+    "strictNullChecks": true
   },
   "include": [
     "server/**/*.ts",

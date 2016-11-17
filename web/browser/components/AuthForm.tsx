@@ -11,7 +11,7 @@ import { alertServerError } from '../util/alert';
 import { fetchJSON } from '../util/fetch';
 import { saveToken } from '../util/token';
 
-async function auth(user, pass) {
+async function auth(user: string, pass: string) {
   try {
     const json = await fetchJSON.post('/api/auth', {user, pass});
     saveToken(json.token);
@@ -22,7 +22,7 @@ async function auth(user, pass) {
 }
 
 export default class AuthForm extends React.Component<{}, {}> {
-  submit = e => {
+  submit = (e: any) => {
     const fields = e.target.elements;
     e.preventDefault();
 
