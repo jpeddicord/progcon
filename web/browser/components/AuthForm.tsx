@@ -27,7 +27,7 @@ export default class AuthForm extends React.Component<{}, {}> {
     e.preventDefault();
 
     auth(fields.user.value, fields.pass.value);
-  };
+  }
 
   render() {
     return (

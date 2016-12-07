@@ -44,7 +44,7 @@ class ContestEditor extends React.Component<Props, {}> {
       code: nully(fields.code.value),
       problems: fields.problems.value.trim().split('\n'),
     }));
-  };
+  }
 
   render() {
     const { active } = this.props;

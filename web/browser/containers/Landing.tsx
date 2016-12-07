@@ -28,7 +28,7 @@ class Landing extends React.Component<Props, {}> {
     if (contests.length === 1) {
       browserHistory.replace(`/contests/${contests[0].id}`);
     }
-  };
+  }
 
   render() {
     const { contests } = this.props;

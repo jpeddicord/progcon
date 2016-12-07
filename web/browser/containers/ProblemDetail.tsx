@@ -28,19 +28,19 @@ class ProblemDetail extends React.Component<Props, {}> {
   fetchProblem = () => {
     const { dispatch, params: { contest_id, problem_name } } = this.props;
     dispatch(fetchProblem(contest_id, problem_name));
-  };
+  }
 
   downloadStub = e => {
     const { problems, params: { problem_name } } = this.props;
     const problem = problems[problem_name];
     triggerTextDownload(problem.stub_name, problem.stub);
-  };
+  }
 
   submitAnswer = content => {
     const { dispatch, params: { contest_id, problem_name } } = this.props;
 
     dispatch(submitAnswer(contest_id, problem_name, content));
-  };
+  }
 
   render() {
     const { problems, contest, params: { problem_name } } = this.props;

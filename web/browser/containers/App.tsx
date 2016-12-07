@@ -32,7 +32,7 @@ class App extends React.Component<Props, {}> {
       clearToken();
       window.location.reload();
     }
-  };
+  }
 
   render() {
     return (

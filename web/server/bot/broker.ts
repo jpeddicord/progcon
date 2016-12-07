@@ -56,7 +56,7 @@ export default class Broker {
 
     this._active = this._queue.shift() as Item;
     this.socket.send(this._active.data);
-  };
+  }
 
   /**
    * Receive a response, resolve the promise, and continue draining the queue.
@@ -71,6 +71,6 @@ export default class Broker {
     this._waiting = false;
 
     this._drain();
-  };
+  }
 
 }

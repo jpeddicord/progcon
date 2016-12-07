@@ -21,7 +21,7 @@ export default class AutoRefresh extends React.Component<Props, State> {
   static defaultProps = {
     icon: 'fa-refresh',
     spinClass: 'fa-spin',
-  }
+  };
 
   state = {
     enabled: true,
@@ -50,7 +50,7 @@ export default class AutoRefresh extends React.Component<Props, State> {
       this.setState({enabled: true});
       this.startRefreshing();
     }
-  };
+  }
 
   render() {
     const { icon, spinClass } = this.props;

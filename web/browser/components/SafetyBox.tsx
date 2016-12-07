@@ -27,7 +27,7 @@ export default class SafetyBox extends React.Component<{}, State> {
     this.timeout = setTimeout(() => {
       this.setState({armed: false});
     }, 10 * 1000);
-  };
+  }
 
   render() {
     const { children } = this.props;

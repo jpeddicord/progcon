@@ -31,11 +31,11 @@ export default class SolutionUploader extends React.Component<Props, State> {
     e.stopPropagation();
     e.preventDefault();
     this.handleFiles(e.dataTransfer.files);
-  };
+  }
 
   handlePicker = (e: any) => {
     this.handleFiles(e.target.files);
-  };
+  }
 
   handleFiles = (files: FileList) => {
     if (files.length !== 1) {
@@ -68,7 +68,7 @@ export default class SolutionUploader extends React.Component<Props, State> {
       onSubmit(this.fileContent);
     }
     this.setState({ready: false, selected: null});
-  };
+  }
 
   render() {
     const colorClass = this.state.ready ? 'card-info' : '';

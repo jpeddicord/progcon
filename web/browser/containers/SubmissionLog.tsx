@@ -34,18 +34,18 @@ class SubmissionLog extends React.Component<Props, State> {
   fetchSubmissions = () => {
     const { dispatch, contestId } = this.props;
     dispatch(fetchSubmissions(contestId));
-  };
+  }
 
   loadDetails = id => {
     const { dispatch } = this.props;
     dispatch(fetchSubmissionDetail(id));
     this.setState({selectedSubmission: id});
-  };
+  }
 
   rerun = id => {
     const { dispatch } = this.props;
     dispatch(rerunSubmission(id));
-  };
+  }
 
   render() {
     const { contestId, submissionSet, submissionDetails } = this.props;

@@ -72,7 +72,7 @@ export default class SubmissionStatus extends React.Component<Props, {}> {
         break;
       case 'pending': {
         const pendingTotalTimeScore = SubmissionStatus.timeScoreFormat(
-          submission.submission_time.diff(contestStartTime, 'seconds') + penaltySeconds
+          submission.submission_time.diff(contestStartTime, 'seconds') + penaltySeconds,
         );
         text = (
           <span>

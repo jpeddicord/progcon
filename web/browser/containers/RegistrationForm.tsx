@@ -28,7 +28,7 @@ class RegistrationForm extends React.Component<Props, {}> {
     }
 
     dispatch(registerForContest(contest_id, fields.code.value, fields.name.value, meta));
-  };
+  }
 
   render() {
     const { extraFields } = this.props;

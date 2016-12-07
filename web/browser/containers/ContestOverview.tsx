@@ -43,7 +43,7 @@ class ContestOverview extends React.Component<Props, {}> {
     }
 
     return (<ProblemCard key={index} contestId={contest_id} name={problem} />);
-  };
+  }
 
   render() {
     const { active } = this.props;

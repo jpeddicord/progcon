@@ -44,7 +44,7 @@ class UserManager extends React.Component<Props, State> {
 
     dispatch(updateUser(contestId, fields.userId.value, fields.name.value, fields.meta.value));
     this.setState({editing: null});
-  };
+  }
 
   render() {
     const { userList, users } = this.props;

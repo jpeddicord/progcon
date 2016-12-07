@@ -30,7 +30,7 @@ class Leaderboard extends React.Component<Props, {}> {
   fetchLeaderboard = () => {
     const { dispatch, params: { contest_id } } = this.props;
     dispatch(fetchLeaderboard(contest_id));
-  };
+  }
 
   render() {
     const { active, leaderboard } = this.props;

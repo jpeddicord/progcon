@@ -29,7 +29,7 @@ class AdminView extends React.Component<Props, {}> {
     e.preventDefault();
 
     dispatch(createContest(fields.title.value));
-  };
+  }
 
   render() {
     const { contests } = this.props;

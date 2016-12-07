@@ -20,7 +20,7 @@ interface State {
 export default class Timer extends React.Component<Props, State> {
   static defaultProps = {
     format: 'd[d] hh[h]:mm[m]',
-  }
+  };
 
   state = {
     elapsed: null as number | null,
@@ -46,7 +46,7 @@ export default class Timer extends React.Component<Props, State> {
     this.setState({
       elapsed: moment().diff(this.props.startTime, 'seconds'),
     });
-  };
+  }
 
   render() {
     if (this.state.elapsed == null) {
