@@ -20,7 +20,7 @@ if (process.env.NODE_ENV == null) {
   process.env.NODE_ENV = 'development';
 }
 
-const tsServerProject = ts.createProject('tsconfig.json', {typescript: require('typescript')});
+const tsServerProject = ts.createProject('server/tsconfig.json', {typescript: require('typescript')});
 gulp.task('build-server', () => {
   return gulp.src('server/**/*.@(ts|js)')
     .pipe(plumber())

@@ -38,7 +38,7 @@ module.exports = {
     loaders: [
       {
         test: /\.tsx?$/,
-        exclude: /node_modules/,
+        exclude: /server/,
         loader: 'ts-loader',
       },
       {
@@ -65,7 +65,7 @@ module.exports = {
     },
   },
   resolve: {
-    extensions: ['', '.ts', '.tsx'],
+    extensions: ['', '.ts', '.tsx', '.js'],
   },
   output: {
     path: path.join(__dirname, 'build/browser'),
