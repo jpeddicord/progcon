@@ -9,9 +9,9 @@ import * as crypto from 'mz/crypto';
 import * as koaConvert from 'koa-convert';
 import * as koaJWT from 'koa-jwt';
 import * as koaLimit from 'koa-better-ratelimit';
-import { config } from '../config';
 import * as dbUsers from '../db/users';
 import { AccessError } from '../util/errors';
+const { config } = require('../config');
 
 export async function tryAuth(userId: string, pass: string) {
   if (userId === 'admin') {

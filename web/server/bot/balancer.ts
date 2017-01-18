@@ -7,7 +7,7 @@
 
 import * as nanomsg from 'nanomsg';
 import Broker from './broker';
-import { config } from '../config';
+const { config } = require('../config');
 
 const brokers = new Set();
 

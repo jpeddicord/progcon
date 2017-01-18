@@ -16,9 +16,9 @@ import * as winston from 'winston';
 import apiRoutes from './api';
 import { initBalancer } from './bot/balancer';
 import { launchBots } from './bot/process';
-import { load } from './config';
 import { connect } from './db/connection';
 import { mapProblems } from './problems';
+const { load } = require('./config');
 
 const app = new Koa();
 

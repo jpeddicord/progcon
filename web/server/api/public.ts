@@ -10,10 +10,10 @@
  */
 import * as Router from 'koa-router';
 import { tryAuth, issueUserToken, generateUserPassword, rateLimiter } from './auth';
-import { config } from '../config';
 import * as dbContests from '../db/contests';
 import * as dbUsers from '../db/users';
 import { AuthError, RequestError, NotFoundError } from '../util/errors';
+const { config } = require('../config');
 
 const routes = new Router();
 
