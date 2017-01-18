@@ -25,47 +25,44 @@ const plugins = [
     $: 'jquery',
     jQuery: 'jquery',
   }),
-  new webpack.NoErrorsPlugin(),
+  new webpack.NoEmitOnErrorsPlugin(),
 ];
 if (prod) {
-  plugins.push(new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}}));
+  plugins.push(new webpack.optimize.UglifyJsPlugin());
 }
 
 module.exports = {
   // future TODO: move font-awesome elsewhere (vendor css or something)
   entry: ['font-awesome/css/font-awesome.css', './styles/style.scss', './browser/app.tsx'],
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.tsx?$/,
-        exclude: /server/,
-        loader: 'ts-loader',
+        loader: 'awesome-typescript-loader',
+        options: {
+          configFileName: 'browser/tsconfig.json',
+        },
       },
       {
         test: /\.css$/,
-        loaders: ['style', 'css'],
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.scss$/,
-        loaders: ['style', 'css', 'sass'],
+        use: ['style-loader', 'css-loader', 'sass-loader'],
       },
       {
         test: /\.(woff2?|svg)(\?v=[\d\.]+)?$/,
-        loader: 'url?limit=10000',
+        loader: 'url-loader?limit=10000',
       },
       {
         test: /\.(ttf|eot)(\?v=[\d\.]+)?$/,
-        loader: 'file',
+        loader: 'file-loader',
       },
     ],
   },
-  ts: {
-    compilerOptions: {
-      target: 'es5',
-    },
-  },
   resolve: {
-    extensions: ['', '.ts', '.tsx', '.js'],
+    extensions: ['.ts', '.tsx', '.js'],
   },
   output: {
     path: path.join(__dirname, 'build/browser'),

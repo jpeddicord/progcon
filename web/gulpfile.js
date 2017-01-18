@@ -20,7 +20,7 @@ if (process.env.NODE_ENV == null) {
   process.env.NODE_ENV = 'development';
 }
 
-const tsServerProject = ts.createProject('server/tsconfig.json', {typescript: require('typescript')});
+const tsServerProject = ts.createProject('server/tsconfig.json');
 gulp.task('build-server', () => {
   return gulp.src('server/**/*.@(ts|js)')
     .pipe(plumber())
@@ -30,7 +30,7 @@ gulp.task('build-server', () => {
 
 gulp.task('build-browser', () => {
   return gulp.src('browser/app.js')
-    .pipe(webpackStream(require('./webpack.config.js')))
+    .pipe(webpackStream(require('./webpack.config.js'), webpack))
     .pipe(gulp.dest('build/browser'));
 });
 
