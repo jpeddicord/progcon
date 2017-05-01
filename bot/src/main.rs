@@ -6,7 +6,8 @@
  */
 
 extern crate env_logger;
-#[macro_use] extern crate log;
+#[macro_use]
+extern crate log;
 extern crate nanomsg;
 extern crate rustc_serialize;
 extern crate tempdir;
@@ -38,7 +39,9 @@ fn main() {
     let problem_dirs = args.split_off(2);
 
     let mut socket_commands = Socket::new(Protocol::Rep).unwrap();
-    let mut _endpoint_commands = socket_commands.bind(&socket_path).expect("couldn't bind to endpoint");
+    let mut _endpoint_commands = socket_commands
+        .bind(&socket_path)
+        .expect("couldn't bind to endpoint");
 
     let mut library = ProblemLibrary::new();
 
@@ -46,7 +49,9 @@ fn main() {
     for dir in problem_dirs {
         info!("Scanning {}", dir);
         let library_path = current_dir().unwrap().join(dir);
-        library.scan_dir(library_path.as_path()).expect("error scanning directory");
+        library
+            .scan_dir(library_path.as_path())
+            .expect("error scanning directory");
     }
 
     info!("Started up. Listening for commands.");
@@ -61,7 +66,11 @@ fn main() {
 
         let resp = match handle_message(&msg, &library) {
             Ok(s) => s,
-            Err(e) => Response::new_error(e.description().to_string()).encode().unwrap(),
+            Err(e) => {
+                Response::new_error(e.description().to_string())
+                    .encode()
+                    .unwrap()
+            }
         };
         trace!("<<< {}", resp);
 
@@ -76,7 +85,9 @@ fn handle_message(msg: &str, library: &ProblemLibrary) -> Result<String, Box<Err
     // read in the submission
     let sub = try!(Submission::parse(msg));
     info!("Running submission {} (user {}, problem {})",
-          sub.get_id(), sub.get_user(), sub.get_problem_name());
+          sub.get_id(),
+          sub.get_user(),
+          sub.get_problem_name());
 
     // load the problem
     let problem = library.get_problem_from_submission(&sub);
@@ -95,10 +106,10 @@ fn handle_message(msg: &str, library: &ProblemLibrary) -> Result<String, Box<Err
 
             let encoded = try!(resp.encode());
             Ok(encoded)
-        },
+        }
         None => {
             warn!("Invalid problem");
             Err(From::from("invalid problem"))
-        },
+        }
     }
 }

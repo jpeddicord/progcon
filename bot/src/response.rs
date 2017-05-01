@@ -13,11 +13,11 @@ use submission::Submission;
 #[derive(Debug)]
 pub enum SubmissionResult {
     Successful,
-    FailedTests{pass: u8, fail: u8, diff: String},
+    FailedTests { pass: u8, fail: u8, diff: String },
     BadCompile,
     Crashed,
     Timeout,
-    InternalError
+    InternalError,
 }
 
 impl ToJson for SubmissionResult {
@@ -25,7 +25,7 @@ impl ToJson for SubmissionResult {
         // this syntax doesn't feel right... but rustc complains without the prefixes
         let string = match *self {
             SubmissionResult::Successful => "successful",
-            SubmissionResult::FailedTests{..} => "failed_tests",
+            SubmissionResult::FailedTests { .. } => "failed_tests",
             SubmissionResult::BadCompile => "bad_compile",
             SubmissionResult::Crashed => "crashed",
             SubmissionResult::Timeout => "timeout",
@@ -47,13 +47,17 @@ pub struct Response {
 impl Response {
     pub fn new(sub: &Submission, result: SubmissionResult) -> Response {
         let meta = match result {
-            SubmissionResult::FailedTests{pass, fail, ref diff} => {
+            SubmissionResult::FailedTests {
+                pass,
+                fail,
+                ref diff,
+            } => {
                 let mut map = BTreeMap::new();
                 map.insert("pass".to_string(), pass.to_json());
                 map.insert("fail".to_string(), fail.to_json());
                 map.insert("diff".to_string(), diff.to_json());
                 Json::Object(map)
-            },
+            }
             _ => Json::Null,
         };
 

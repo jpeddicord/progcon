@@ -42,9 +42,11 @@ impl Tester for JavaTester {
 
         // compile it
         debug!("Launching javac (compiling)");
-        let out = try!(Command::new("javac").arg("Runner.java").arg(&filename)
-            .current_dir(&self.workdir)
-            .output());
+        let out = try!(Command::new("javac")
+                           .arg("Runner.java")
+                           .arg(&filename)
+                           .current_dir(&self.workdir)
+                           .output());
         if !out.status.success() {
             error!("{}", String::from_utf8_lossy(&out.stderr));
             return Ok(SubmissionResult::BadCompile);
@@ -94,7 +96,11 @@ impl Tester for JavaTester {
         }
         if fail > 0 {
             debug!("Failed {}, passed {}", fail, pass);
-            return Ok(SubmissionResult::FailedTests{pass: pass, fail: fail, diff: stderr.to_string()});
+            return Ok(SubmissionResult::FailedTests {
+                          pass: pass,
+                          fail: fail,
+                          diff: stderr.to_string(),
+                      });
         }
 
         debug!("Passed all {} tests", pass);
@@ -109,7 +115,8 @@ impl JavaTester {
         let mut sub: Vec<String> = vec![];
         for test in &problem.get_tests() {
             sub.push(format!(
-                "java -Xmx256m -Djava.security.manager -Djava.security.policy==none.policy Runner < {path}/{test}.in > {test}.actual\n\
+                "java -Xmx256m -Djava.security.manager -Djava.security.policy==none.policy \
+                 Runner < {path}/{test}.in > {test}.actual\n\
                  status=$?\n\
                  [ $status -eq 0 ] || exit $status\n\
                  diff -Bbu --label {test}.expected {path}/{test}.out {test}.actual >&2\n\

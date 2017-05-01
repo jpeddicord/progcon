@@ -36,7 +36,8 @@ fn real_main() -> i32 {
     // find out what we're working with
     let mut args: Vec<String> = env::args().collect();
     if args.len() < 4 {
-        println!("usage: contest-exec {}workingdir timeout_secs command", PREFIX);
+        println!("usage: contest-exec {}workingdir timeout_secs command",
+                 PREFIX);
         return 1;
     }
     let workdir = args[1].clone();
@@ -101,7 +102,12 @@ fn pick_uid() -> Result<Lock, Box<Error>> {
     Lock::new(path, uid)
 }
 
-fn su_exec(workdir: &Path, uid: u32, timeout: u8, command: String, args: &[String]) -> Result<Option<i32>, Box<Error>> {
+fn su_exec(workdir: &Path,
+           uid: u32,
+           timeout: u8,
+           command: String,
+           args: &[String])
+           -> Result<Option<i32>, Box<Error>> {
     // claim our working directory
     // Drop will delete the directory
     let _owned = OwnedDir::new(workdir, uid);
@@ -123,23 +129,20 @@ fn su_exec(workdir: &Path, uid: u32, timeout: u8, command: String, args: &[Strin
     try!(env::set_current_dir(&workdir));
 
     // run it!
-    let mut run = try!(Command::new(command)
-                               .args(args)
-                               .spawn());
+    let mut run = try!(Command::new(command).args(args).spawn());
     let pid = run.id() as i32;
 
     // wait up to the timeout
-    match run.wait_timeout(Duration::new(timeout as u64, 0)).unwrap() {
+    match run.wait_timeout(Duration::new(timeout as u64, 0))
+              .unwrap() {
         // exited on-time; pass the result up
-        Some(status) => {
-            Ok(status.code())
-        },
+        Some(status) => Ok(status.code()),
         // did not exit on time, so kill the process group
         None => {
             unsafe {
                 kill(-pid, 9);
             }
             Ok(None)
-        },
+        }
     }
 }

@@ -45,9 +45,9 @@ impl Lock {
         try!(File::create(path));
         try!(own_path(path, uid));
         Ok(Lock {
-            path: path.to_path_buf(),
-            uid: uid,
-        })
+               path: path.to_path_buf(),
+               uid: uid,
+           })
     }
 }
 
@@ -64,9 +64,7 @@ pub struct OwnedDir {
 impl OwnedDir {
     pub fn new(path: &Path, uid: u32) -> Result<OwnedDir, Box<Error>> {
         try!(own_dir(path, uid));
-        Ok(OwnedDir {
-            path: path.to_path_buf(),
-        })
+        Ok(OwnedDir { path: path.to_path_buf() })
     }
 }
 

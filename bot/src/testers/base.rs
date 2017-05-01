@@ -8,7 +8,7 @@
 use std::error::Error;
 use std::path::PathBuf;
 use tempdir::TempDir;
-use problems::{Problem};
+use problems::Problem;
 use response::SubmissionResult;
 
 const WORKDIR_TEMP: &'static str = "/var/tmp/";

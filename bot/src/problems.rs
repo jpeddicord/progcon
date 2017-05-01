@@ -21,9 +21,7 @@ pub struct ProblemLibrary {
 
 impl ProblemLibrary {
     pub fn new() -> ProblemLibrary {
-        ProblemLibrary {
-            problems: HashMap::new(),
-        }
+        ProblemLibrary { problems: HashMap::new() }
     }
 
     pub fn scan_dir(&mut self, dir: &Path) -> Result<(), Box<Error>> {
@@ -133,7 +131,8 @@ impl Problem {
         }
 
         // and test
-        let test_result = try!(tester.test(String::new())); // REVIEW: pass in tests here, not during build step
+        // REVIEW: pass in tests here, not during build step
+        let test_result = try!(tester.test(String::new()));
 
         Ok(test_result)
     }
