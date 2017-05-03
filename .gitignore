@@ -2,3 +2,4 @@ target/
 .tern-project
 *.sqlite
 *.env
+/docker/build
