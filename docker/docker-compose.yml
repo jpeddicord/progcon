@@ -1,0 +1,10 @@
+version: "3"
+services:
+  progcon:
+    build: .
+    image: jpeddicord/progcon:latest
+    network_mode: host
+    volumes:
+      - ./data/conf:/opt/progcon/conf
+      - ./data/problems:/opt/progcon-problems
+      - ./data/logs:/opt/progcon/logs

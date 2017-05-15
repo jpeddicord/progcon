@@ -24,7 +24,7 @@ install-base:
 	install -m 0755 bot/contest-exec/target/x86_64-unknown-linux-musl/release/contest-exec $(DESTDIR)/bin
 	# configuration
 	[ -e $(DESTDIR)/conf/config.js ] || cp $(DESTDIR)/web/server/config.template.js $(DESTDIR)/conf/config.js
-	ln -sf $(DESTDIR)/conf/config.js $(DESTDIR)/web/server/config.js
+	ln -sf ../../conf/config.js $(DESTDIR)/web/server/config.js
 
 install: install-base
 	chown root:root $(DESTDIR)/bin/contest-exec
