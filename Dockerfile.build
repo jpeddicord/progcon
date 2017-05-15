@@ -1,0 +1,22 @@
+FROM node:6-alpine
+
+RUN apk add --no-cache cmake curl git make
+RUN mkdir /build
+
+# get us some rustttt
+RUN cd /build && \
+    curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable -y && \
+    rustup target add x86_64-unknown-linux-musl
+ENV PATH=/root/.cargo/bin:$PATH
+
+# see https://github.com/thehydroimpulse/nanomsg.rs/blob/master/Makefile
+RUN cd /build && \
+    git clone -b 1.0.0 --depth 1 https://github.com/nanomsg/nanomsg.git nanomsg-1.0.0 && \
+    (cd nanomsg-1.0.0 && mkdir build && cd build && cmake .. && cmake --build .) && \
+    (cd nanomsg-1.0.0/build && cmake --build . --target install)
+
+COPY ./bot /build/bot
+COPY ./web /build/web
+COPY ./Makefile /build/Makefile
+
+RUN cd /build && make

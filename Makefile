@@ -5,10 +5,10 @@ DESTDIR=/opt/progcon
 all: bot contest-exec web
 
 bot:
-	cd bot && cargo build --release --target=x86_64-unknown-linux-musl
+	cd bot && cargo build --release
 
 contest-exec:
-	cd bot/contest-exec && cargo build --release --target=x86_64-unknown-linux-musl
+	cd bot/contest-exec && cargo build --release
 
 web:
 	cd web && npm run release

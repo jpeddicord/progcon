@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:6-alpine
 CMD ["/opt/progcon/bin/progcon-server"]
 
 VOLUME /opt/progcon/conf /opt/progcon-problems /opt/progcon/logs

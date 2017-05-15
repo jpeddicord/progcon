@@ -1,0 +1,7 @@
+*
+!bot
+!web
+!Makefile
+bot/**/target/
+web/**/build/
+web/**/node_modules/
