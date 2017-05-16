@@ -17,7 +17,7 @@ web:
 install-base:
 	install -d $(DESTDIR)/bin $(DESTDIR)/conf $(DESTDIR)/web
 	# web runtime
-	rsync -rv web/build/ $(DESTDIR)/web
+	rsync -r web/build/ $(DESTDIR)/web
 	install -T web/bin/run-server.js $(DESTDIR)/bin/progcon-server
 	# bot
 	install bot/target/x86_64-unknown-linux-musl/release/progcon-bot $(DESTDIR)/bin

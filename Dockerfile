@@ -6,6 +6,7 @@
 ### webapp stage
 FROM node:6 AS web
 WORKDIR /build
+ENV NPM_CONFIG_LOGLEVEL warn
 RUN apt-get update && apt-get install -y build-essential && \
     mkdir -p web/build
 
@@ -21,7 +22,6 @@ RUN cd /build/web && \
 COPY ./web web
 COPY ./Makefile Makefile
 RUN make web
-RUN node -v
 
 
 
@@ -77,6 +77,5 @@ VOLUME /opt/progcon/conf /opt/progcon-problems /opt/progcon/logs
 
 COPY --from=install /opt /opt/
 RUN chmod 4755 /opt/progcon/bin/contest-exec
-RUN node -v
 
 USER 1000
