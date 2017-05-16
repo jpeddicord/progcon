@@ -13,3 +13,8 @@ toml = "0.2.1"
 [dependencies.nanomsg]
 version = "0.6.1"
 features = ["bundled", "no_anl"]
+
+# explicit bin section to abuse cargo fetch for docker caching
+[[bin]]
+name = "progcon-bot"
+path = "src/main.rs"

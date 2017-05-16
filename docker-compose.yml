@@ -5,6 +5,6 @@ services:
     image: jpeddicord/progcon:latest
     network_mode: host
     volumes:
-      - ./data/conf:/opt/progcon/conf
-      - ./data/problems:/opt/progcon-problems
-      - ./data/logs:/opt/progcon/logs
+      - ./docker/data/conf:/opt/progcon/conf
+      - ./docker/data/problems:/opt/progcon-problems
+      - ./docker/data/logs:/opt/progcon/logs
