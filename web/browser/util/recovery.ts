@@ -5,7 +5,7 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-import alertify from 'alertify.js';
+import * as alertify from 'alertify.js';
 import { triggerTextDownload } from './download';
 
 export function saveRecoveryCode(userId, recoveryCode) {
