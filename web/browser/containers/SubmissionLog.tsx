@@ -157,7 +157,7 @@ class SubmissionDetails extends React.Component<SubmissionDetailsProps, {}> {
     // keys are used below to force react to re-mount each code block.
     // otherwise, hljs will not update its highlighted view.
     return (
-      <div>
+      <div className="submission-details">
         <br/>
         <div className="pull-xs-right">
           <button className="btn btn-sm btn-info" onClick={e => this.props.rerun(id)}>Re-test this submission</button>
@@ -169,10 +169,17 @@ class SubmissionDetails extends React.Component<SubmissionDetailsProps, {}> {
             {answer}
           </code>
         </pre>
-        {meta != null ?
+        {meta != null && meta.diff != null ?
           <pre key={`diff-${id}`} className="pre-scrollable">
             <code className="diff" ref={ref => this.diff = ref}>
               {meta.diff}
+            </code>
+          </pre>
+        : ''}
+        {meta != null && meta.stderr != null ?
+          <pre key={`stderr-${id}`} className="pre-scrollable">
+            <code>
+              {meta.stderr}
             </code>
           </pre>
         : ''}
