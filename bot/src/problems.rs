@@ -11,7 +11,7 @@ use std::fs::{File, copy, read_dir};
 use std::io::Read;
 use std::path::{Path, PathBuf};
 use toml;
-use response::SubmissionResult;
+use response::{SubmissionResult, SubmissionStatus};
 use submission::Submission;
 use testers::base::set_up_workdir;
 
@@ -126,7 +126,7 @@ impl Problem {
 
         // compile...
         let compile_result = try!(tester.build(sub.get_answer(), self));
-        if let SubmissionResult::BadCompile = compile_result {
+        if let SubmissionStatus::BadCompile = compile_result.status {
             return Ok(compile_result);
         }
 

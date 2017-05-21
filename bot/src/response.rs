@@ -5,14 +5,33 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-use serde_json::{self, Error, Value};
+use serde_json::{self, Error};
 use submission::Submission;
+
+#[derive(Debug)]
+pub struct SubmissionResult {
+    pub status: SubmissionStatus,
+    pub meta: SubmissionMeta,
+}
+
+impl SubmissionResult {
+    pub fn new(status: SubmissionStatus) -> SubmissionResult {
+        SubmissionResult {
+            status,
+            meta: SubmissionMeta::None,
+        }
+    }
+
+    pub fn with_meta(status: SubmissionStatus, meta: SubmissionMeta) -> SubmissionResult {
+        SubmissionResult { status, meta }
+    }
+}
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "snake_case")]
-pub enum SubmissionResult {
+pub enum SubmissionStatus {
     Successful,
-    FailedTests { pass: u8, fail: u8, diff: String },
+    FailedTests,
     BadCompile,
     Crashed,
     Timeout,
@@ -20,37 +39,31 @@ pub enum SubmissionResult {
 }
 
 #[derive(Debug, Serialize)]
+#[serde(untagged)]
+pub enum SubmissionMeta {
+    None,
+    GeneralFailure { stderr: String },
+    TestFailures { pass: u8, fail: u8, diff: String },
+    InternalError(String),
+}
+
+#[derive(Debug, Serialize)]
 pub struct Response {
     id: u32,
     user: u32,
     problem: String,
-    result: String,
-    meta: Value,
+    result: SubmissionStatus,
+    meta: SubmissionMeta,
 }
 
 impl Response {
     pub fn new(sub: &Submission, result: SubmissionResult) -> Response {
-        let meta = match result {
-            SubmissionResult::FailedTests {
-                pass,
-                fail,
-                ref diff,
-            } => {
-                json!({
-                    "pass": pass,
-                    "fail": fail,
-                    "diff": diff,
-                })
-            }
-            _ => Value::Null,
-        };
-
         Response {
             id: sub.get_id(),
             user: sub.get_user(),
             problem: sub.get_problem_name(),
-            result: Response::result_string(&result),
-            meta,
+            result: result.status,
+            meta: result.meta,
         }
     }
 
@@ -59,8 +72,8 @@ impl Response {
             id: 0,
             user: 0,
             problem: String::new(),
-            result: Response::result_string(&SubmissionResult::InternalError),
-            meta: Value::String(msg),
+            result: SubmissionStatus::InternalError,
+            meta: SubmissionMeta::InternalError(msg),
         }
     }
 
@@ -68,14 +81,7 @@ impl Response {
         serde_json::to_string(&self)
     }
 
-    pub fn result_string(result: &SubmissionResult) -> String {
-        match *result {
-            SubmissionResult::FailedTests{..} => "failed_tests".to_string(),
-            _ => serde_json::to_string(&result).expect("could not serialize SubmissionResult"),
-        }
-    }
-
-    pub fn get_result(&self) -> &str {
+    pub fn get_status(&self) -> &SubmissionStatus {
         &self.result
     }
 }

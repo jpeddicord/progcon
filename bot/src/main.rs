@@ -9,12 +9,11 @@
 extern crate log;
 #[macro_use]
 extern crate serde_derive;
-#[macro_use]
-extern crate serde_json;
 
 extern crate env_logger;
 extern crate nanomsg;
 extern crate serde;
+extern crate serde_json;
 extern crate tempdir;
 extern crate toml;
 
@@ -107,7 +106,7 @@ fn handle_message(msg: &str, library: &ProblemLibrary) -> Result<String, Box<Err
             }
 
             let resp = Response::new(&sub, result.unwrap());
-            info!("Result: {}", resp.get_result());
+            info!("Result: {:?}", resp.get_status());
 
             let encoded = try!(resp.encode());
             Ok(encoded)

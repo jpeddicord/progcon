@@ -11,7 +11,7 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use problems::Problem;
-use response::SubmissionResult;
+use response::{SubmissionResult as SR, SubmissionStatus as SS, SubmissionMeta as SM};
 use testers::base::Tester;
 
 pub struct JavaTester {
@@ -29,7 +29,7 @@ impl JavaTester {
 }
 
 impl Tester for JavaTester {
-    fn build(&mut self, input: String, problem: &Problem) -> Result<SubmissionResult, Box<Error>> {
+    fn build(&mut self, input: String, problem: &Problem) -> Result<SR, Box<Error>> {
         let filename = format!("{}.java", self.problem);
         let target = self.workdir.as_path().join(&filename);
 
@@ -48,17 +48,19 @@ impl Tester for JavaTester {
                            .current_dir(&self.workdir)
                            .output());
         if !out.status.success() {
-            error!("{}", String::from_utf8_lossy(&out.stderr));
-            return Ok(SubmissionResult::BadCompile);
+            let stderr = String::from_utf8_lossy(&out.stderr);
+            error!("{}", stderr);
+            return Ok(SR::with_meta(SS::BadCompile,
+                                    SM::GeneralFailure { stderr: stderr.to_string() }));
         }
 
         // create a shell script to run it in its sandbox
         try!(self.build_shell_script(problem));
-        Ok(SubmissionResult::Successful)
+        Ok(SR::new(SS::Successful))
     }
 
     #[allow(unused_variables)] // REVIEW: testdata is unused due to structure of java grader
-    fn test(&mut self, testdata: String) -> Result<SubmissionResult, Box<Error>> {
+    fn test(&mut self, testdata: String) -> Result<SR, Box<Error>> {
         debug!("Launching testing script");
         let out = try!(Command::new("contest-exec")
                                .arg(self.workdir.as_os_str())
@@ -78,9 +80,10 @@ impl Tester for JavaTester {
             warn!("Exited unsuccessfully");
             if let Some(222) = out.status.code() {
                 warn!("Killed (timeout)");
-                return Ok(SubmissionResult::Timeout);
+                return Ok(SR::new(SS::Timeout));
             }
-            return Ok(SubmissionResult::Crashed);
+            return Ok(SR::with_meta(SS::Crashed,
+                                    SM::GeneralFailure { stderr: stderr.to_string() }));
         }
 
         // scan stdout for pass/fail messages
@@ -96,15 +99,16 @@ impl Tester for JavaTester {
         }
         if fail > 0 {
             debug!("Failed {}, passed {}", fail, pass);
-            return Ok(SubmissionResult::FailedTests {
-                          pass: pass,
-                          fail: fail,
-                          diff: stderr.to_string(),
-                      });
+            return Ok(SR::with_meta(SS::FailedTests,
+                                    SM::TestFailures {
+                                        pass,
+                                        fail,
+                                        diff: stderr.to_string(),
+                                    }));
         }
 
         debug!("Passed all {} tests", pass);
-        Ok(SubmissionResult::Successful)
+        Ok(SR::new(SS::Successful))
     }
 }
 
