@@ -29,7 +29,3 @@ install-base:
 install: install-base
 	chown root:root $(DESTDIR)/bin/contest-exec
 	chmod 4755 $(DESTDIR)/bin/contest-exec
-
-docker:
-	$(MAKE) DESTDIR=$(shell pwd)/docker/build install-base
-	cd docker && sudo docker build -t progcon .

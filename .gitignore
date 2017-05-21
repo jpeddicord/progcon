@@ -1,3 +1,4 @@
+/data/
 target/
 .tern-project
 *.sqlite
