@@ -5,8 +5,7 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-use std::collections::BTreeMap;
-use serde_json::{self, Error, Map, Value};
+use serde_json::{self, Error, Value};
 use submission::Submission;
 
 #[derive(Debug, Serialize)]
@@ -60,7 +59,7 @@ impl Response {
             id: 0,
             user: 0,
             problem: String::new(),
-            result: "internal_error".to_owned(),
+            result: Response::result_string(&SubmissionResult::InternalError),
             meta: Value::String(msg),
         }
     }

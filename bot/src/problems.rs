@@ -125,7 +125,7 @@ impl Problem {
         };
 
         // compile...
-        let compile_result = try!(tester.build(sub.get_answer(), &self));
+        let compile_result = try!(tester.build(sub.get_answer(), self));
         if let SubmissionResult::BadCompile = compile_result {
             return Ok(compile_result);
         }

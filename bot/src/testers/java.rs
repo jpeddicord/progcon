@@ -37,7 +37,7 @@ impl Tester for JavaTester {
         {
             debug!("Writing input to {}", &target.display());
             let mut f = try!(File::create(&target));
-            try!(f.write_all(&input.as_bytes()));
+            try!(f.write_all(input.as_bytes()));
         }
 
         // compile it
@@ -53,7 +53,7 @@ impl Tester for JavaTester {
         }
 
         // create a shell script to run it in its sandbox
-        try!(self.build_shell_script(&problem));
+        try!(self.build_shell_script(problem));
         Ok(SubmissionResult::Successful)
     }
 
