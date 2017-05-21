@@ -58,12 +58,21 @@ pub struct Response {
 
 impl Response {
     pub fn new(sub: &Submission, result: SubmissionResult) -> Response {
+        let meta = match result.meta {
+            SubmissionMeta::GeneralFailure { stderr } => {
+                let mut trunc = stderr.clone();
+                trunc.truncate(8000);
+                SubmissionMeta::GeneralFailure { stderr: trunc }
+            }
+            _ => result.meta,
+        };
+
         Response {
             id: sub.get_id(),
             user: sub.get_user(),
             problem: sub.get_problem_name(),
             result: result.status,
-            meta: result.meta,
+            meta,
         }
     }
 
