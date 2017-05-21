@@ -11,7 +11,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import StatusNav from '../containers/StatusNav';
 import { fetchConfig } from '../modules/common';
-import { clearToken } from '../util/token';
+import { fetchJSON } from '../util/fetch';
 
 interface Props {
   dispatch: Function;
@@ -29,7 +29,7 @@ class App extends React.Component<Props, {}> {
         .confirm('Sign out? You will need a recovery code to sign back in.');
     result.event.preventDefault();
     if (result.buttonClicked === 'ok') {
-      clearToken();
+      await fetchJSON.post('/api/auth/logout', {});
       window.location.reload();
     }
   }

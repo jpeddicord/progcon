@@ -9,7 +9,7 @@
  * Public routes that require no authentication.
  */
 import * as Router from 'koa-router';
-import { tryAuth, issueUserToken, generateUserPassword, rateLimiter } from './auth';
+import { tryAuth, generateUserPassword, rateLimiter, setSignedCookie } from './auth';
 import * as dbContests from '../db/contests';
 import * as dbUsers from '../db/users';
 import { AuthError, RequestError, NotFoundError } from '../util/errors';
@@ -51,22 +51,27 @@ routes.post('/contests/:contest_id/register', rateLimiter, async (ctx, next) => 
   // set up a contest-specific user account
   // note: meta information is not validated, so don't trust its value unless audited!
   const password = await generateUserPassword();
-  const user = await dbUsers.registerUser(name, password, ctx.params.contest_id, meta);
+  const userId = await dbUsers.registerUser(name, password, ctx.params.contest_id, meta);
 
-  // issue a token for the newly-created user
-  const jwt = issueUserToken(user, contest.id);
-  ctx.body = {token: jwt, id: user, password: password};
+  // issue a cookie for the newly-created user
+  setSignedCookie(ctx, userId, contest.id);
+  ctx.body = {id: userId, password: password};
 });
 
 // alternative authentication. not expected to be used for most contest participants,
 // but can be used in case someone loses their session. also used for admin auth.
 routes.post('/auth', rateLimiter, async (ctx, next) => {
-  const jwt = await tryAuth(ctx.request.body.user, ctx.request.body.pass);
-  if (jwt != null) {
-    ctx.body = {token: jwt};
+  const success = await tryAuth(ctx, ctx.request.body.user, ctx.request.body.pass);
+  if (success) {
+    ctx.body = {};
   } else {
     ctx.status = 401;
   }
+});
+
+routes.post('/auth/logout', async (ctx, next) => {
+  ctx.cookies.set('progcon', undefined, {signed: true});
+  ctx.body = {};
 });
 
 export default routes.routes();

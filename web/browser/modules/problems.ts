@@ -7,7 +7,7 @@
 
 import * as moment from 'moment';
 import { alertServerError } from '../util/alert';
-import { fetchJSONAuth } from '../util/fetch';
+import { fetchJSON } from '../util/fetch';
 
 const RECEIVE_PROBLEM = 'app/contests/receive-problem';
 
@@ -45,7 +45,7 @@ export function receiveProblem(problem) {
 export function fetchProblem(contestId, name) {
   return async dispatch => {
     try {
-      const json = await fetchJSONAuth(`/api/contests/${contestId}/problems/${name}`);
+      const json = await fetchJSON(`/api/contests/${contestId}/problems/${name}`);
       dispatch(receiveProblem(json));
     } catch (err) {
       alertServerError(err);
@@ -56,7 +56,7 @@ export function fetchProblem(contestId, name) {
 export function submitAnswer(contestId, name, answer) {
   return async dispatch => {
     try {
-      await fetchJSONAuth.post(`/api/contests/${contestId}/problems/${name}`, {answer});
+      await fetchJSON.post(`/api/contests/${contestId}/problems/${name}`, {answer});
       dispatch(fetchProblem(contestId, name));
     } catch (err) {
       alertServerError(err);

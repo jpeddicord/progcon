@@ -6,7 +6,7 @@
  */
 
 import { alertServerError } from '../util/alert';
-import { fetchJSONAuth } from '../util/fetch';
+import { fetchJSON } from '../util/fetch';
 
 const RECEIVE_USERS = 'app/submissions/receive-users';
 
@@ -44,7 +44,7 @@ export function receiveUsers(users) {
 export function fetchUsers(contestId) {
   return async dispatch => {
     try {
-      const json = await fetchJSONAuth(`/api/contests/${contestId}/users`);
+      const json = await fetchJSON(`/api/contests/${contestId}/users`);
       dispatch(receiveUsers(json.users));
     } catch (err) {
       alertServerError(err);
@@ -55,7 +55,7 @@ export function fetchUsers(contestId) {
 export function updateUser(contestId, userId, name, meta) {
   return async dispatch => {
     try {
-      await fetchJSONAuth.post(`/api/users/${userId}`, {name, meta});
+      await fetchJSON.post(`/api/users/${userId}`, {name, meta});
       dispatch(fetchUsers(contestId));
     } catch (err) {
       alertServerError(err);

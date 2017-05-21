@@ -6,16 +6,11 @@
  */
 
 import 'whatwg-fetch';
-import { loadToken, injectTokenHeader } from './token';
-
-interface FetchFunction {
-  (): any;
-
-}
 
 export async function fetchJSON(url: string, options: any = {}) {
   const resp = await fetch(url, {
     ...options,
+    credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
       ...options.headers,
@@ -26,22 +21,13 @@ export async function fetchJSON(url: string, options: any = {}) {
     const msg = await resp.text();
     const err = new Error(msg);
     (err as any).server = true;
+    (err as any).code = resp.status;
     throw err;
   }
 
   return resp.json();
 }
 export namespace fetchJSON {
-  export let post: Function;
-}
-
-export async function fetchJSONAuth(url: string, options: any = {}) {
-  // load or fetch our token
-  let token = loadToken();
-
-  return fetchJSON(url, injectTokenHeader(options, token));
-}
-export namespace fetchJSONAuth {
   export let post: Function;
 }
 
@@ -59,4 +45,3 @@ function addPostMethod(fn) {
 }
 
 addPostMethod(fetchJSON);
-addPostMethod(fetchJSONAuth);

@@ -6,7 +6,7 @@
  */
 
 import * as Router from 'koa-router';
-import { jwtMiddleware } from './auth';
+import { authMiddleware } from './auth';
 import adminRoutes from './admin';
 import contestRoutes from './contest';
 import publicRoutes from './public';
@@ -34,7 +34,7 @@ routes.use(publicRoutes);
 
 /* * * * * * * * * * * * * * * * * * * */
 // auth required for routes below this
-routes.use(jwtMiddleware);
+routes.use(authMiddleware);
 /* * * * * * * * * * * * * * * * * * * */
 
 routes.use(contestRoutes);

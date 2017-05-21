@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
 import ProblemCard from '../components/ProblemCard';
 import { fetchContestDetail } from '../modules/contests';
-import { loadToken } from '../util/token';
 
 interface Props {
   dispatch: Function;
@@ -21,12 +20,6 @@ interface Props {
 class ContestOverview extends React.Component<Props, {}> {
   componentDidMount() {
     const { dispatch, active, params: { contest_id } } = this.props;
-
-    // if not authenticated, then send over to the registration form
-    if (loadToken() == null) {
-      browserHistory.replace(`/contests/${contest_id}/register`);
-      return;
-    }
 
     // fetch contest data if we don't have it
     if (active == null || active.id !== parseInt(contest_id)) {

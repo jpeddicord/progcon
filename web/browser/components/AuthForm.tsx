@@ -9,12 +9,10 @@ import * as React from 'react';
 import { browserHistory } from 'react-router';
 import { alertServerError } from '../util/alert';
 import { fetchJSON } from '../util/fetch';
-import { saveToken } from '../util/token';
 
 async function auth(user: string, pass: string) {
   try {
-    const json = await fetchJSON.post('/api/auth', {user, pass});
-    saveToken(json.token);
+    await fetchJSON.post('/api/auth', {user, pass});
     browserHistory.push('/');
   } catch (err) {
     alertServerError(err);

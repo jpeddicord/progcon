@@ -6,7 +6,7 @@
  */
 
 import { alertServerError } from '../util/alert';
-import { fetchJSONAuth } from '../util/fetch';
+import { fetchJSON } from '../util/fetch';
 
 const RECEIVE_SUBMISSIONS = 'app/submissions/receive-submissions';
 const RECEIVE_SUBMISSION_DETAIL = 'app/submissions/receive-submission-detail';
@@ -61,7 +61,7 @@ export function receiveSubmissionDetail(submissionId, details) {
 export function fetchSubmissions(contestId) {
   return async dispatch => {
     try {
-      const json = await fetchJSONAuth(`/api/contests/${contestId}/submissions`);
+      const json = await fetchJSON(`/api/contests/${contestId}/submissions`);
       dispatch(receiveSubmissions(contestId, json.submissions));
     } catch (err) {
       alertServerError(err);
@@ -72,7 +72,7 @@ export function fetchSubmissions(contestId) {
 export function fetchSubmissionDetail(submissionId) {
   return async dispatch => {
     try {
-      const json = await fetchJSONAuth(`/api/submissions/${submissionId}`);
+      const json = await fetchJSON(`/api/submissions/${submissionId}`);
       dispatch(receiveSubmissionDetail(submissionId, json));
     } catch (err) {
       alertServerError(err);
@@ -83,7 +83,7 @@ export function fetchSubmissionDetail(submissionId) {
 export function rerunSubmission(submissionId) {
   return async dispatch => {
     try {
-      await fetchJSONAuth.post(`/api/submissions/${submissionId}/rerun`);
+      await fetchJSON.post(`/api/submissions/${submissionId}/rerun`);
     } catch (err) {
       alertServerError(err);
     }

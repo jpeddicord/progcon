@@ -8,10 +8,8 @@ const config = {
     user: '',
     password: '',
   },
-  jwt: {
-    // set this to a random string
-    secret: '',
-  },
+  // set this to a random string
+  secret: '',
   admin: {
     // generate this with:
     // crypto.pbkdf2Sync('password', '', 1000000, 16, 'sha256');

@@ -50,6 +50,7 @@ export function start(port: number) {
   load()
     .then(config => {
       winston.level = config.logLevel;
+      app.keys = [config.secret];
 
       winston.info('Starting grading robots');
       launchBots();
