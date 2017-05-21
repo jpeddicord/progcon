@@ -6,11 +6,11 @@
  */
 
 use std::collections::BTreeMap;
-use std::error::Error;
-use rustc_serialize::json::{self, ToJson, Json};
+use serde_json::{self, Error, Map, Value};
 use submission::Submission;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "snake_case")]
 pub enum SubmissionResult {
     Successful,
     FailedTests { pass: u8, fail: u8, diff: String },
@@ -20,28 +20,13 @@ pub enum SubmissionResult {
     InternalError,
 }
 
-impl ToJson for SubmissionResult {
-    fn to_json(&self) -> Json {
-        // this syntax doesn't feel right... but rustc complains without the prefixes
-        let string = match *self {
-            SubmissionResult::Successful => "successful",
-            SubmissionResult::FailedTests { .. } => "failed_tests",
-            SubmissionResult::BadCompile => "bad_compile",
-            SubmissionResult::Crashed => "crashed",
-            SubmissionResult::Timeout => "timeout",
-            SubmissionResult::InternalError => "internal_error",
-        };
-        Json::String(string.to_string())
-    }
-}
-
-#[derive(RustcEncodable, Debug)]
+#[derive(Debug, Serialize)]
 pub struct Response {
     id: u32,
     user: u32,
     problem: String,
-    result: Json,
-    meta: Json,
+    result: String,
+    meta: Value,
 }
 
 impl Response {
@@ -52,21 +37,21 @@ impl Response {
                 fail,
                 ref diff,
             } => {
-                let mut map = BTreeMap::new();
-                map.insert("pass".to_string(), pass.to_json());
-                map.insert("fail".to_string(), fail.to_json());
-                map.insert("diff".to_string(), diff.to_json());
-                Json::Object(map)
+                json!({
+                    "pass": pass,
+                    "fail": fail,
+                    "diff": diff,
+                })
             }
-            _ => Json::Null,
+            _ => Value::Null,
         };
 
         Response {
             id: sub.get_id(),
             user: sub.get_user(),
             problem: sub.get_problem_name(),
-            result: result.to_json(),
-            meta: meta,
+            result: Response::result_string(&result),
+            meta,
         }
     }
 
@@ -75,23 +60,23 @@ impl Response {
             id: 0,
             user: 0,
             problem: String::new(),
-            result: SubmissionResult::InternalError.to_json(),
-            meta: Json::String(msg),
+            result: "internal_error".to_owned(),
+            meta: Value::String(msg),
         }
     }
 
-    pub fn encode(&self) -> Result<String, Box<Error>> {
-        match json::encode(&self) {
-            Ok(s) => Ok(s),
-            Err(e) => Err(Box::new(e)),
+    pub fn encode(&self) -> Result<String, Error> {
+        serde_json::to_string(&self)
+    }
+
+    pub fn result_string(result: &SubmissionResult) -> String {
+        match *result {
+            SubmissionResult::FailedTests{..} => "failed_tests".to_string(),
+            _ => serde_json::to_string(&result).expect("could not serialize SubmissionResult"),
         }
     }
 
-    pub fn get_result_string(&self) -> String {
-        if let Json::String(ref s) = self.result {
-            s.clone()
-        } else {
-            "unknown".to_string()
-        }
+    pub fn get_result(&self) -> &str {
+        &self.result
     }
 }

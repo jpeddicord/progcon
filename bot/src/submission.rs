@@ -5,13 +5,12 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
-use std::error::Error;
 use std::path::Path;
-use rustc_serialize::json;
+use serde_json::{self, Error};
 use testers::new_tester;
 use testers::base::Tester;
 
-#[derive(RustcDecodable, Debug)]
+#[derive(Debug, Deserialize)]
 pub struct Submission {
     id: u32,
     user: u32,
@@ -20,11 +19,8 @@ pub struct Submission {
 }
 
 impl Submission {
-    pub fn parse(encoded: &str) -> Result<Submission, Box<Error>> {
-        match json::decode(encoded) {
-            Ok(sub) => Ok(sub),
-            Err(e) => Err(Box::new(e)),
-        }
+    pub fn parse(encoded: &str) -> Result<Submission, Error> {
+        serde_json::from_str(encoded)
     }
 
     pub fn get_tester(&self, workdir: &Path) -> Option<Box<Tester>> {
