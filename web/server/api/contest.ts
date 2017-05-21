@@ -20,16 +20,17 @@ import { getProblem } from '../problems';
 import { RequestError, NotFoundError } from '../util/errors';
 
 const routes = new Router({prefix: '/contests/:contest_id'});
-routes.use(contestAccess);
+// BROKEN: https://github.com/alexmingoia/koa-router/issues/347
+// routes.use(contestAccess);
 
 // get a single contest's details
-routes.get('/', contestIsActive, async (ctx, next) => {
+routes.get('/', contestAccess, contestIsActive, async (ctx, next) => {
   const id = ctx.params.contest_id;
   const contest = await getContestCached(id, ctx);
   ctx.body = contest;
 });
 
-routes.get('/problems/:problem', contestIsActive, contestHasProblem, async (ctx, next) => {
+routes.get('/problems/:problem', contestAccess, contestIsActive, contestHasProblem, async (ctx, next) => {
   // sanity check
   const problemName = ctx.params.problem;
   const problem = getProblem(problemName);
@@ -64,7 +65,7 @@ routes.get('/problems/:problem', contestIsActive, contestHasProblem, async (ctx,
   }
 });
 
-routes.post('/problems/:problem', contestIsActive, contestHasProblem, async (ctx, next) => {
+routes.post('/problems/:problem', contestAccess, contestIsActive, contestHasProblem, async (ctx, next) => {
   const userId = ctx.state.user.id;
   const contestId = ctx.params.contest_id;
   const problem = ctx.params.problem;
@@ -90,7 +91,7 @@ routes.post('/problems/:problem', contestIsActive, contestHasProblem, async (ctx
   ctx.body = {id: sub.id};
 });
 
-routes.get('/score', async (ctx, next) => {
+routes.get('/score', contestAccess, async (ctx, next) => {
   const userId = ctx.state.user.id;
   const user = await dbUsers.getUser(userId);
 
@@ -106,7 +107,7 @@ routes.get('/score', async (ctx, next) => {
   };
 });
 
-routes.get('/leaderboard', async (ctx, next) => {
+routes.get('/leaderboard', contestAccess, async (ctx, next) => {
   // check cache for leaderboard
   const id = ctx.params.contest_id;
   const cacheKey = `contest/${id}/leaderboard`;

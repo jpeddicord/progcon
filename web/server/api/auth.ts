@@ -25,7 +25,7 @@ export async function tryAuth(ctx: Context, userId: string, pass: string): Promi
       id: -1,
       admin: true,
     }), {
-      maxAge: 1000 * 60 * 60 * 2, // 2 days
+      maxAge: 1000 * 60 * 60 * 24 * 2, // 2 days
       domain: ctx.request.hostname,
       httpOnly: true,
       signed: true,
@@ -58,7 +58,7 @@ export function setSignedCookie(ctx: Context, id: number, contest: number): void
     id,
     contest,
   }), {
-    maxAge: 1000 * 60 * 60 * 5, // 5 days
+    maxAge: 1000 * 60 * 60 * 24 * 5, // 5 days
     domain: ctx.request.hostname,
     httpOnly: true,
     signed: true,
