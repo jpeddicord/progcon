@@ -5,6 +5,7 @@
  * Copyright (c) 2016 Jacob Peddicord <jacob@peddicord.net>
  */
 
+use std::io::Error as IOError;
 use std::error::Error;
 use std::ffi::CString;
 use std::fs::{File, remove_file, remove_dir_all};
@@ -15,12 +16,17 @@ use walkdir::WalkDir;
 pub fn own_path(path: &Path, uid: u32) -> Result<(), Box<Error>> {
     let path_str = match path.to_str() {
         Some(s) => s,
-        None => return Err(From::from(format!("empty CString from path {}", path.display()))),
+        None => return Err(From::from(format!("empty string from path {}", path.display()))),
     };
+    // path and pointer must be separate! otherwise cpath will get deallocated too soon
+    // (you can see it happen easily on a musl libc build)
+    let cpath = try!(CString::new(path_str));
+    let ptr = cpath.as_ptr();
     unsafe {
-        let path_ptr = try!(CString::new(path_str)).as_ptr();
-        if chown(path_ptr, uid, uid) != 0 {
-            return Err(From::from(format!("chown failed on path {}", path.display())));
+        if chown(ptr, uid, uid) != 0 {
+            return Err(From::from(format!("chown failed on path {}: {:?}",
+                                          path.display(),
+                                          IOError::last_os_error())));
         }
     }
     Ok(())
