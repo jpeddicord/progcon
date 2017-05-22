@@ -74,6 +74,8 @@ RUN make install
 FROM node:6-alpine
 CMD ["/opt/progcon/bin/progcon-server"]
 VOLUME /opt/progcon/conf /opt/progcon-problems /opt/progcon/logs
+RUN apk add --no-cache diffutils openjdk8 && \
+    ln -s /usr/lib/jvm/default-jvm/bin/javac /usr/bin/javac
 
 COPY --from=install /opt /opt/
 RUN chmod 4755 /opt/progcon/bin/contest-exec
