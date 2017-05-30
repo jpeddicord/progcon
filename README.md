@@ -25,9 +25,9 @@ Building
 
 ### Requirements
 
-* NodeJS 6.x
-* nanomsg 1.0
-* Rust 1.17 & Cargo
+* NodeJS ^7.6
+* nanomsg ^1.0
+* Rust ^1.17 & Cargo
 * Docker (optional)
 
 ### Building

@@ -4,7 +4,7 @@
 #  web --^
 
 ### webapp stage
-FROM node:6 AS web
+FROM node:7 AS web
 WORKDIR /build
 ENV NPM_CONFIG_LOGLEVEL warn
 RUN apt-get update && apt-get install -y build-essential && \
@@ -71,7 +71,7 @@ RUN make install
 
 
 ### final image
-FROM node:6-alpine
+FROM node:7-alpine
 CMD ["/opt/progcon/bin/progcon-server"]
 VOLUME /opt/progcon/conf /opt/progcon-problems /opt/progcon/logs
 RUN apk add --no-cache diffutils openjdk8 && \
