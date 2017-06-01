@@ -30,9 +30,16 @@ export default class AuthForm extends React.Component<{}, {}> {
   render() {
     return (
       <form onSubmit={this.submit}>
-        user id: <input type="text" name="user" /><br/>
-        password: <input type="password" name="pass" /><br/>
-        <button type="submit">login</button>
+        <fieldset className="form-group">
+          <label htmlFor="userId">User ID (number)</label>
+          <input type="text" name="user" id="userId" className="form-control" required />
+        </fieldset>
+        <fieldset className="form-group">
+          <label htmlFor="recoveryCode">Recovery Code</label>
+          <input type="password" name="pass" id="recoveryCode" className="form-control" required />
+        </fieldset>
+
+        <button type="submit" className="btn btn-lg btn-primary">Login</button>
       </form>
     );
   }

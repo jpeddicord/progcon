@@ -7,6 +7,7 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 import { registerForContest } from '../modules/contests';
 
 interface Props {
@@ -53,6 +54,9 @@ class RegistrationForm extends React.Component<Props, {}> {
         })}
 
         <button type="submit" className="btn btn-lg btn-primary">Register</button>
+
+        <br/><br/>
+        <p><small><Link to="/auth">Have a recovery code?</Link></small></p>
       </form>
     );
   }
