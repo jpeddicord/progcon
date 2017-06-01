@@ -33,7 +33,7 @@ export default class SafetyBox extends React.Component<{}, State> {
     const { children } = this.props;
 
     return (
-      <div style={{position: 'relative'}}>
+      <div style={{position: 'relative', padding: '10px'}}>
         { this.state.armed ? '' :
           <div className="caution-stripes" onDoubleClick={this.arm} title="Control is locked. Double-click to arm."/>
         }
