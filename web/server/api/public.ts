@@ -50,7 +50,7 @@ routes.post('/contests/:contest_id/register', rateLimiter, async (ctx, next) => 
 
   // set up a contest-specific user account
   // note: meta information is not validated, so don't trust its value unless audited!
-  const password = await generateUserPassword();
+  const password = generateUserPassword();
   const userId = await dbUsers.registerUser(name, password, ctx.params.contest_id, meta);
 
   // issue a cookie for the newly-created user

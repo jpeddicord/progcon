@@ -10,6 +10,7 @@ import * as Cookies from 'cookies';
 import { Context } from 'koa';
 import * as koaConvert from 'koa-convert';
 import * as koaLimit from 'koa-better-ratelimit';
+import { alphabets, character as generate } from 'passhelp';
 import * as dbUsers from '../db/users';
 import { AccessError, AuthError } from '../util/errors';
 const { config } = require('../config');
@@ -71,10 +72,8 @@ export function setSignedCookie(ctx: Context, id: number, contest: number): void
  * This will only be used in the event a user lost their session during the contest. Passwords
  * are still scoped to a single contest session; they're never re-used for anything else.
  */
-export async function generateUserPassword() {
-  // TODO: use passhelp
-  const buf = await crypto.randomBytes(4);
-  return buf.toString('hex');
+export function generateUserPassword(): string {
+  return generate(8, alphabets.alphanumeric_friendly);
 }
 
 /**
