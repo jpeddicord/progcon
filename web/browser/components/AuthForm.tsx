@@ -13,7 +13,13 @@ import { fetchJSON } from '../util/fetch';
 async function auth(user: string, pass: string) {
   try {
     await fetchJSON.post('/api/auth', {user, pass});
-    browserHistory.push('/');
+
+    // XXX: kinda hacky. maybe indicate this server-side instead?
+    if (user === 'admin') {
+      browserHistory.push('/admin');
+    } else {
+      browserHistory.push('/');
+    }
   } catch (err) {
     alertServerError(err);
   }
