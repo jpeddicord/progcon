@@ -15,8 +15,6 @@ interface State {
   ready: boolean;
   selected: string | null;
 }
-// Some items below should have type casts removed once React bindings have mapped types:
-// https://github.com/Microsoft/TypeScript/pull/12114
 
 export default class SolutionUploader extends React.Component<Props, State> {
   pickerRef: HTMLElement;
@@ -49,14 +47,14 @@ export default class SolutionUploader extends React.Component<Props, State> {
     reader.addEventListener('load', e => {
       const content = (e.target as FileReader).result;
       this.fileContent = content;
-      this.setState({ready: true, selected: name} as State);
+      this.setState({ready: true, selected: name});
     });
 
     reader.addEventListener('error', e => {
       const err = (e.target as FileReader).error.name;
       alertify.error(`Couldn't read file: ${err}`);
       this.fileContent = null;
-      this.setState({ready: false} as State);
+      this.setState({ready: false});
     });
 
     reader.readAsText(files[0]);
@@ -81,9 +79,11 @@ export default class SolutionUploader extends React.Component<Props, State> {
           <p className="card-text">
             {this.state.selected != null ? this.state.selected : 'Pick a file or drag and drop here'}
           </p>
-          <input type="file" style={{display: 'none'}} name="picker" onChange={this.handlePicker} ref={ref => this.pickerRef = ref} />
-          <button className="btn btn-link" type="button" onClick={e => this.pickerRef.click()}>Pick File</button>
-          <button className="btn btn-warning" type="button" onClick={this.handleSubmit} disabled={!this.state.ready}>Submit</button>
+          <div>
+            <input type="file" style={{display: 'none'}} name="picker" onChange={this.handlePicker} ref={ref => this.pickerRef = ref} />
+            <button className="btn btn-link" type="button" onClick={e => this.pickerRef.click()}>Pick File</button>
+            <button className="btn btn-warning" type="button" onClick={this.handleSubmit} disabled={!this.state.ready}>Submit</button>
+          </div>
 
       </div>
     );

@@ -53,7 +53,7 @@ class App extends React.Component<Props, {}> {
           <div className="container">
             <div className="row">
               <div className="col-md-12">
-                <div className="pull-xs-right">
+                <div className="float-right">
                   <small>
                     <button className="btn btn-link btn-sm" onClick={this.logout}>logout</button>
                   </small>

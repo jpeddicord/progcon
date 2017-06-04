@@ -29,36 +29,27 @@ class StatusNav extends React.Component<Props, {}> {
     }
 
     return (
-      <nav className="navbar navbar-full navbar-dark bg-inverse">
-      <Link className="navbar-brand" to="/">the programming contest</Link>
+      <nav className="navbar navbar-toggleable navbar-inverse bg-inverse">
+        <Link className="navbar-brand" to="/">the programming contest</Link>
 
-      { active != null && active.id != null ?
-        <div>
-          <ul className="nav navbar-nav">
-            <li className="nav-item">
-              <Link className="nav-link" to={`/contests/${active.id}`}>Problems</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to={`/contests/${active.id}/leaderboard`}>Leaderboard</Link>
-            </li>
-          </ul>
-          <ul className="nav navbar-nav pull-xs-right">
-            {display != null ? <li className="nav-item">
-              {/* FIXME: css abuse in bootstrap v4 alpha*/}
-              <a className="nav-link">
+        {active != null && active.id != null ?
+          <div className="collapse navbar-collapse justify-content-between">
+            <div className="navbar-nav">
+              <Link className="nav-item nav-link" to={`/contests/${active.id}`}>Problems</Link>
+              <Link className="nav-item nav-link" to={`/contests/${active.id}/leaderboard`}>Leaderboard</Link>
+            </div>
+            <div className="navbar-nav navbar-text">
+              {display != null ? <a className="nav-item mr-3">
                 <i className="fa fa-flag-checkered" /> {display}
-              </a>
-            </li> : ''}
-            <li className="nav-item">
-              <a className="nav-link">
+              </a> : ''}
+              <a className="nav-item">
                 <i className="fa fa-clock-o" /> <Timer startTime={active.start_time} />
               </a>
-            </li>
-          </ul>
-        </div>
-      : ''}
-    </nav>
-  );
+            </div>
+          </div>
+        : ''}
+      </nav>
+    );
   }
 
 }

@@ -60,7 +60,7 @@ class SubmissionLog extends React.Component<Props, State> {
 
     return (
       <div>
-        <div className="pull-xs-right">
+        <div className="float-right">
           <AutoRefresh func={this.fetchSubmissions} interval={10 * 1000} />
         </div>
 
@@ -159,7 +159,7 @@ class SubmissionDetails extends React.Component<SubmissionDetailsProps, {}> {
     return (
       <div className="submission-details">
         <br/>
-        <div className="pull-xs-right">
+        <div className="float-right">
           <button className="btn btn-sm btn-info" onClick={e => this.props.rerun(id)}>Re-test this submission</button>
         </div>
         <h3>Submission {id}</h3>

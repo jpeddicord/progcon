@@ -51,13 +51,13 @@ class ContestDashboard extends React.Component<Props, {}> {
           <h3>Controls</h3>
           <SafetyBox>
             <div className="row">
-              <div className="col-xs-6">
+              <div className="col-6">
                 <button className="btn btn-block btn-success"
                   onClick={this.bindCommand('start')}>
                   Start
                 </button>
               </div>
-              <div className="col-xs-6">
+              <div className="col-6">
                 <button className="btn btn-block btn-warning"
                   onClick={this.bindCommand('end')}>
                   End

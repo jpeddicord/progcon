@@ -43,7 +43,7 @@ class Leaderboard extends React.Component<Props, {}> {
 
     return (
       <div>
-        <div className="pull-xs-right">
+        <div className="float-right">
           <AutoRefresh func={this.fetchLeaderboard} interval={10 * 1000} />
         </div>
 
