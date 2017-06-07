@@ -37,13 +37,13 @@ class ContestEditor extends React.Component<Props, {}> {
     }
 
     dispatch(updateContest(active.id, {
-      title: nully(fields.title.value),
-      start_time: nully(fields.start_time.value),
-      end_time: nully(fields.end_time.value),
-      mode: fields.mode.value,
-      code: nully(fields.code.value),
-      problems: fields.problems.value.trim().split('\n'),
-      archived: fields.archived.value === 'true',
+      title: nully(fields.contest_title.value),
+      start_time: nully(fields.contest_start_time.value),
+      end_time: nully(fields.contest_end_time.value),
+      mode: fields.contest_mode.value,
+      code: nully(fields.contest_code.value),
+      problems: fields.contest_problems.value.trim().split('\n'),
+      archived: fields.contest_archived.checked,
     }));
   }
 
@@ -55,15 +55,58 @@ class ContestEditor extends React.Component<Props, {}> {
 
     return (
       <SafetyBox>
-        <form onSubmit={this.saveContest}>
-          title: <input name="title" type="text" defaultValue={active.title} /><br/>
-          start time: <input name="start_time" type="text" defaultValue={startTime} /><br/>
-          end time: <input name="end_time" type="text" defaultValue={endTime} /><br/>
-          reg mode: <select disabled name="mode" defaultValue={active.mode}><option value="code">registration code</option></select><br/>
-          reg code: <input name="code" type="text" defaultValue={active.code} /><br/>
-          problems: <textarea name="problems" defaultValue={active.problems.join('\n')} /><br/>
-          archived: <input type="checkbox" name="archived" value="true" defaultChecked={active.archived} /><br/>
-          <button type="submit">save</button>
+        <form onSubmit={this.saveContest} className="container">
+          <div className="form-group row">
+            <label htmlFor="contest_title" className="col-3 col-form-label col-form-label-sm">Title</label>
+            <div className="col-9">
+              <input id="contest_title" type="text" defaultValue={active.title} className="form-control form-control-sm" />
+            </div>
+          </div>
+
+          <div className="form-group row">
+            <label htmlFor="contest_start_time" className="col-3 col-form-label col-form-label-sm">Start Time</label>
+            <div className="col-9">
+              <input id="contest_start_time" type="text" defaultValue={startTime} className="form-control form-control-sm" />
+            </div>
+          </div>
+
+          <div className="form-group row">
+            <label htmlFor="contest_end_time" className="col-3 col-form-label col-form-label-sm">End Time</label>
+            <div className="col-9">
+              <input id="contest_end_time" type="text" defaultValue={endTime} className="form-control form-control-sm" />
+            </div>
+          </div>
+
+          <div className="form-group row">
+            <label htmlFor="contest_mode" className="col-3 col-form-label col-form-label-sm">Registration Mode</label>
+            <div className="col-9">
+              <select disabled id="contest_mode" defaultValue={active.mode} className="form-control form-control-sm"><option value="code">registration code</option></select>
+            </div>
+          </div>
+
+          <div className="form-group row">
+            <label htmlFor="contest_code" className="col-3 col-form-label col-form-label-sm">Registration Code</label>
+            <div className="col-9">
+              <input id="contest_code" type="text" defaultValue={active.code} className="form-control form-control-sm" />
+            </div>
+          </div>
+
+          <div className="form-group row">
+            <label htmlFor="contest_problems" className="col-3 col-form-label col-form-label-sm">Problems</label>
+            <div className="col-9">
+              <textarea id="contest_problems" defaultValue={active.problems.join('\n')} rows={6} className="form-control form-control-sm" />
+            </div>
+          </div>
+
+          <div className="form-group row">
+            <div className="form-check col">
+              <label htmlFor="contest_archived" className="form-check-label">
+                <input id="contest_archived" type="checkbox" value="true" defaultChecked={active.archived} className="form-check-input" /> Archived
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" className="btn btn-primary">Save</button>
         </form>
       </SafetyBox>
     );

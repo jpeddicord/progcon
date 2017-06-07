@@ -36,13 +36,13 @@ class UserManager extends React.Component<Props, State> {
     const fields = e.target.elements;
 
     try {
-      JSON.parse(fields.meta.value);
+      JSON.parse(fields.user_meta.value);
     } catch (err) {
       alertify.error(`Not valid JSON: ${err}`);
       return;
     }
 
-    dispatch(updateUser(contestId, fields.userId.value, fields.name.value, fields.meta.value));
+    dispatch(updateUser(contestId, fields.user_id.value, fields.user_name.value, fields.user_meta.value));
     this.setState({editing: null});
   }
 
@@ -62,18 +62,16 @@ class UserManager extends React.Component<Props, State> {
     }
 
     return (
-      <div style={{maxHeight: '300px', overflowY: 'scroll'}}>
-        <ul>
+      <div style={{maxHeight: '350px', overflowY: 'scroll'}}>
+        <div className="list-group">
           {userList.map(id => {
             return (
-              <li key={id}>
-                <button className="btn btn-sm btn-link" onClick={e => this.setState({editing: id})}>
-                  {users[id].name}
-                </button>
-              </li>
+              <button key={id} className="list-group-item list-group-item-action" onClick={e => this.setState({editing: id})}>
+                {users[id].name}
+              </button>
             );
           })}
-        </ul>
+        </div>
       </div>
     );
   }
@@ -85,14 +83,26 @@ interface UserEditorProps {
   onSubmit: (e) => void;
 }
 function UserEditor(props: UserEditorProps) {
+  const userJSON = JSON.stringify(props.user.meta, null, 2);
+
   return (
     <div>
-      <button className="btn btn-sm" onClick={props.exitForm}>back</button>
-      <form onSubmit={props.onSubmit}>
-        <input type="hidden" name="userId" defaultValue={props.user.id} /><br/>
-        <input type="text" name="name" defaultValue={props.user.name} /><br/>
-        <textarea name="meta" defaultValue={JSON.stringify(props.user.meta)} /><br/>
-        <button className="btn btn-sm btn-primary">Save</button>
+      <button className="btn" onClick={props.exitForm}>Back</button>
+
+      <form onSubmit={props.onSubmit} className="mt-2">
+        <input type="hidden" name="user_id" defaultValue={props.user.id} />
+
+        <div className="form-group">
+          <label htmlFor="user_name">Name</label>
+          <input type="text" id="user_name" defaultValue={props.user.name} required className="form-control" />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="user_meta">Metadata</label>
+          <textarea id="user_meta" defaultValue={userJSON} rows={8} style={{fontFamily: 'monospace'}} className="form-control" />
+        </div>
+
+        <button className="btn btn-primary">Save</button>
       </form>
     </div>
   );

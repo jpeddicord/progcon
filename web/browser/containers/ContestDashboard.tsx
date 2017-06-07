@@ -7,6 +7,7 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 import SafetyBox from '../components/SafetyBox';
 import ContestEditor from '../containers/ContestEditor';
 import SubmissionLog from '../containers/SubmissionLog';
@@ -42,33 +43,49 @@ class ContestDashboard extends React.Component<Props, {}> {
     }
 
     return (
-      <div className="row">
-        <div className="col-md-8">
-          <SubmissionLog />
+      <div>
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item">
+            <Link to="/admin">Contests</Link>
+          </li>
+          <li className="breadcrumb-item active">{active.title}</li>
+        </ol>
+
+        <div className="row">
+
+          <div className="col-lg-6">
+            <h3>Contest Details</h3>
+            <ContestEditor />
+          </div>
+
+          <div className="col-lg-6 mt-4 mt-lg-0">
+            <h3>Controls</h3>
+            <SafetyBox>
+              <div className="row">
+                <div className="col">
+                  <button className="btn btn-block btn-success"
+                    onClick={this.bindCommand('start')}>
+                    Start
+                </button>
+                </div>
+                <div className="col">
+                  <button className="btn btn-block btn-warning"
+                    onClick={this.bindCommand('end')}>
+                    End
+                </button>
+                </div>
+              </div>
+            </SafetyBox>
+
+            <h3 className="mt-4">Users</h3>
+            <UserManager />
+          </div>
         </div>
 
-        <div className="col-md-4">
-          <h3>Controls</h3>
-          <SafetyBox>
-            <div className="row">
-              <div className="col-6">
-                <button className="btn btn-block btn-success"
-                  onClick={this.bindCommand('start')}>
-                  Start
-                </button>
-              </div>
-              <div className="col-6">
-                <button className="btn btn-block btn-warning"
-                  onClick={this.bindCommand('end')}>
-                  End
-                </button>
-              </div>
-            </div>
-          </SafetyBox>
-          <br/><h3>Contest Details</h3>
-          <ContestEditor />
-          <br/><h3>Users</h3>
-          <UserManager />
+        <div className="row mt-5">
+          <div className="col">
+            <SubmissionLog />
+          </div>
         </div>
       </div>
 

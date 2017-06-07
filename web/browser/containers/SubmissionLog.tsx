@@ -157,13 +157,12 @@ class SubmissionDetails extends React.Component<SubmissionDetailsProps, {}> {
     // keys are used below to force react to re-mount each code block.
     // otherwise, hljs will not update its highlighted view.
     return (
-      <div className="submission-details">
+      <div className="submission-details" style={{minHeight: '800px'}}>
         <br/>
         <div className="float-right">
           <button className="btn btn-sm btn-info" onClick={e => this.props.rerun(id)}>Re-test this submission</button>
         </div>
         <h3>Submission {id}</h3>
-        <h4>Submitted Answer</h4>
         <pre key={`ans-${id}`} className="pre-scrollable" ref={ref => this.code = ref}>
           <code className="java">
             {answer}

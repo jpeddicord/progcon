@@ -21,9 +21,9 @@ export interface Contest {
 
 export function listContests(all: boolean = false): Promise<Contest[]> {
   if (all) {
-    return db().any('select id, title from contests');
+    return db().any('select id, title, archived from contests');
   }
-  return db().any('select id, title from contests where archived = false');
+  return db().any('select id, title, archived from contests where archived = false');
 }
 
 export function getContest(id: number | string): Promise<Contest | null> {

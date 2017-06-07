@@ -37,16 +37,19 @@ class AdminView extends React.Component<Props, {}> {
       <div>
         <h2>Contests</h2>
 
-        <form onSubmit={this.createContest}>
-          <input type="text" name="title" required />
-          <button type="submit">create</button>
+        <form className="form-inline mb-4" onSubmit={this.createContest}>
+          <input type="text" name="title" placeholder="Contest name" required className="form-control" />
+          <button type="submit" className="btn btn-primary">Create</button>
         </form>
 
-        <ul>
+        <div className="list-group">
           {contests.map((c, i) => (
-            <li key={i}><Link to={`/admin/contests/${c.id}`}>{c.title}</Link></li>
+            <Link key={i} to={`/admin/contests/${c.id}`} className="list-group-item">
+              {c.title}&nbsp;
+              {c.archived && <em>(archived)</em>}
+            </Link>
           ))}
-        </ul>
+        </div>
       </div>
     );
   }

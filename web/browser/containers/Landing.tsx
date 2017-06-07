@@ -44,11 +44,12 @@ class Landing extends React.Component<Props, {}> {
     return (
       <div>
         <p>Select a contest to participate in:</p>
-        <ul>
+
+        <div className="list-group">
           {contests.map((c, i) => (
-            <li key={i}><Link to={`/contests/${c.id}`}>{c.title}</Link></li>
+            <Link key={i} to={`/contests/${c.id}`} className="list-group-item">{c.title}</Link>
           ))}
-        </ul>
+        </div>
       </div>
     );
   }
