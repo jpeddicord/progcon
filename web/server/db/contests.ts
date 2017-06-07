@@ -16,10 +16,14 @@ export interface Contest {
   mode: RegistrationMode;
   code: string;
   problems: string[];
+  archived: boolean;
 }
 
-export function listContests(): Promise<Contest[]> {
-  return db().any('select id, title from contests');
+export function listContests(all: boolean = false): Promise<Contest[]> {
+  if (all) {
+    return db().any('select id, title from contests');
+  }
+  return db().any('select id, title from contests where archived = false');
 }
 
 export function getContest(id: number | string): Promise<Contest | null> {
@@ -41,10 +45,10 @@ export async function createContest(title: string): Promise<number> {
   return row.id;
 }
 
-export function updateContest(id: number, title: string, start_time: Date, end_time: Date, mode: RegistrationMode, code: string, problems: string[]): Promise<void> {
+export function updateContest(id: number, title: string, start_time: Date, end_time: Date, mode: RegistrationMode, code: string, problems: string[], archived: boolean): Promise<void> {
   return db().none(
-    'update contests set (title, start_time, end_time, mode, code, problems) = ($2, $3, $4, $5, $6, $7) where id = $1',
-    [id, title, start_time, end_time, mode, code, problems],
+    'update contests set (title, start_time, end_time, mode, code, problems, archived) = ($2, $3, $4, $5, $6, $7, $8) where id = $1',
+    [id, title, start_time, end_time, mode, code, problems, archived],
   );
 }
 

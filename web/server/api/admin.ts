@@ -28,11 +28,12 @@ routes.post('/contests/', async (ctx, next) => {
 // edit a contest
 routes.post('/contests/:contest_id', async (ctx, next) => {
   const body = ctx.request.body;
-  const { title, start_time, end_time, mode, code, problems } = body;
-  await dbContests.updateContest(ctx.params.contest_id, title, start_time, end_time, mode, code, problems);
+  const { title, start_time, end_time, mode, code, problems, archived } = body;
+  await dbContests.updateContest(ctx.params.contest_id, title, start_time, end_time, mode, code, problems, archived);
   ctx.body = {id: ctx.params.contest_id, ...body};
 });
 
+// start/stop a contest
 routes.post('/contests/:contest_id/control', async (ctx, next) => {
   const body = ctx.request.body;
   const id = ctx.params.contest_id;
@@ -47,26 +48,31 @@ routes.post('/contests/:contest_id/control', async (ctx, next) => {
   }
 });
 
+// view contest submissions
 routes.get('/contests/:contest_id/submissions', async (ctx, next) => {
   const subs = await dbSubmissions.getContestSubmissions(ctx.params.contest_id);
   ctx.body = {submissions: subs};
 });
 
+// view a specific submission
 routes.get('/submissions/:submission_id', async (ctx, next) => {
   const sub = await dbSubmissions.getSubmission(ctx.params.submission_id);
   ctx.body = sub;
 });
 
+// re-run a submission
 routes.post('/submissions/:submission_id/rerun', async (ctx, next) => {
   const sub = regradeSubmission(ctx.params.submission_id);
   ctx.body = sub;
 });
 
+// get all users for a contest
 routes.get('/contests/:contest_id/users', async (ctx, next) => {
   const users = await dbUsers.getContestUsers(ctx.params.contest_id);
   ctx.body = {users};
 });
 
+// update a user
 routes.post('/users/:user_id', async (ctx, next) => {
   const body = ctx.request.body;
   await dbUsers.updateUser(ctx.params.user_id, body.name, body.meta);

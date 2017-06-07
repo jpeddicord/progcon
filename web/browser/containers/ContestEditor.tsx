@@ -43,6 +43,7 @@ class ContestEditor extends React.Component<Props, {}> {
       mode: fields.mode.value,
       code: nully(fields.code.value),
       problems: fields.problems.value.trim().split('\n'),
+      archived: fields.archived.value === 'true',
     }));
   }
 
@@ -61,6 +62,7 @@ class ContestEditor extends React.Component<Props, {}> {
           reg mode: <select disabled name="mode" defaultValue={active.mode}><option value="code">registration code</option></select><br/>
           reg code: <input name="code" type="text" defaultValue={active.code} /><br/>
           problems: <textarea name="problems" defaultValue={active.problems.join('\n')} /><br/>
+          archived: <input type="checkbox" name="archived" value="true" defaultChecked={active.archived} /><br/>
           <button type="submit">save</button>
         </form>
       </SafetyBox>

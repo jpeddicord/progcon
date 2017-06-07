@@ -80,10 +80,10 @@ export function receiveScore(score) {
   };
 }
 
-export function fetchContests() {
+export function fetchContests(all: boolean = false) {
   return async dispatch => {
     try {
-      const json = await fetchJSON('/api/contests/');
+      const json = await fetchJSON(`/api/contests/${all ? '?all=1' : ''}`);
       dispatch(receiveContests(json.contests));
     } catch (err) {
       alertServerError(err);

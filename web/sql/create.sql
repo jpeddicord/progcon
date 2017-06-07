@@ -8,7 +8,8 @@ create table if not exists contests (
     end_time timestamp with time zone,
     mode registration_mode not null default 'code',
     code text,
-    problems text[] not null default array[]::text[]
+    problems text[] not null default array[]::text[],
+    archived boolean not null default false
 );
 
 create table if not exists users (

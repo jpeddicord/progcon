@@ -26,7 +26,8 @@ routes.get('/config', async (ctx, next) => {
 
 // list contests
 routes.get('/contests/', async (ctx, next) => {
-  const contests = await dbContests.listContests();
+  const all: boolean = ctx.query.all != null;
+  const contests = await dbContests.listContests(all);
   ctx.body = {contests};
 });
 

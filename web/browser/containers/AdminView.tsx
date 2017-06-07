@@ -19,7 +19,7 @@ class AdminView extends React.Component<Props, {}> {
   componentDidMount() {
     const { dispatch, contests } = this.props;
     if (contests == null || contests.length === 0) {
-      dispatch(fetchContests());
+      dispatch(fetchContests(true));
     }
   }
 
@@ -35,9 +35,7 @@ class AdminView extends React.Component<Props, {}> {
     const { contests } = this.props;
     return (
       <div>
-        admin stuff.
-
-        <h2>contests</h2>
+        <h2>Contests</h2>
 
         <form onSubmit={this.createContest}>
           <input type="text" name="title" required />
