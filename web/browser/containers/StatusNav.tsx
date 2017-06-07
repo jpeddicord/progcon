@@ -59,4 +59,4 @@ export default connect(state => {
     active: state.contests.active,
     score: state.contests.score,
   };
-})(StatusNav);
+})(StatusNav) as React.ComponentClass<{}>;

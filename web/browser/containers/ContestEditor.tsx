@@ -73,4 +73,4 @@ export default connect(state => {
   return {
     active: state.contests.active,
   };
-})(ContestEditor);
+})(ContestEditor) as React.ComponentClass<{}>;

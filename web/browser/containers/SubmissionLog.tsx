@@ -194,4 +194,4 @@ export default connect(state => {
     submissionSet: state.submissions.contests,
     submissionDetails: state.submissions.details,
   };
-})(SubmissionLog);
+})(SubmissionLog) as React.ComponentClass<{}>;

@@ -105,4 +105,4 @@ export default connect(state => {
     userList: state.users.list,
     users: state.users.users,
   };
-})(UserManager);
+})(UserManager) as React.ComponentClass<{}>;
