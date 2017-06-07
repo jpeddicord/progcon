@@ -8,6 +8,7 @@ FROM node:7 AS web
 WORKDIR /build
 ENV NPM_CONFIG_LOGLEVEL warn
 RUN apt-get update && apt-get install -y build-essential && \
+    npm install -g npm@5 && npm -v && \
     mkdir -p web/build
 
 # cached npm environments
